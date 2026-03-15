@@ -235,7 +235,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .dd-proj{font-size:9px;font-weight:600;color:var(--tx3);margin-bottom:2px}
 .dd-name{font-size:12px;color:var(--tx)}
 .dd-st{margin-left:auto;font-size:9px;font-weight:700}
-.dd-st.done{color:#2a9a60}.dd-st.plan{color:var(--tx3)}
+.dd-st.done{color:#c0392b}.dd-st.plan{color:var(--tx3)}
 .dd-empty{padding:14px;text-align:center;font-size:11px;color:var(--tx3)}
 .recent-hd{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--tx3);text-transform:uppercase;margin-bottom:10px}
 .recent-list{display:flex;flex-direction:column;gap:5px}
@@ -292,11 +292,11 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-title-col{font-size:13px;color:var(--tx);display:flex;align-items:center;gap:7px}
 .ep-status-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0}
 .ep-status-badge.done{background:#ffe4e4;color:#c0392b}
-.ep-status-badge.wip{background:#fff3e0;color:#e07000}
+.ep-status-badge.wip{background:#F9F4CA;color:#F9CB4C}
 .ep-status-badge.plan{background:#f0f0f0;color:#aaa}
 .ep-date-col{font-size:10px;color:var(--tx3)}
 .ep-status{font-size:10px;font-weight:700;text-align:right}
-.ep-status.done{color:#2a9a60}.ep-status.plan{color:var(--tx3)}
+.ep-status.done{color:#c0392b}.ep-status.plan{color:var(--tx3)}
 
 /* ── YOUTUBE-STYLE EPISODE LIST ── */
 .yt-ep-list{display:flex;flex-direction:column;gap:0;padding:12px 0 24px;max-width:700px;margin:0 auto;width:calc(100% - 40px)}
@@ -309,7 +309,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .yt-ep-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:6px;line-height:1.4}
 .yt-ep-meta{font-size:11px;color:var(--tx3)}
 .yt-ep-status{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-top:6px}
-.yt-ep-status.done{background:#e6f7ef;color:#2a9a60}
+.yt-ep-status.done{background:#ffe4e4;color:#c0392b}
 .yt-ep-status.wip{color:#666}
 .yt-ep-status.plan{background:#f0f0f0;color:#999}
 
@@ -364,7 +364,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-picker-num{font-size:10px;color:var(--tx3);font-weight:500;min-width:28px}
 .ep-picker-t{font-size:13px;color:var(--tx)}
 .ep-picker-st{margin-left:auto;font-size:9px;font-weight:700}
-.ep-picker-st.done{color:#2a9a60}.ep-picker-st.plan{color:var(--tx3)}
+.ep-picker-st.done{color:#c0392b}.ep-picker-st.plan{color:var(--tx3)}
 
 /* ── CHAR LIST ── */
 .char-page{padding:22px 24px}
@@ -468,32 +468,6 @@ body.nav-pinned #nav-backdrop{display:none!important}
   .ep-nav-btn{max-width:40%;padding:6px 10px;font-size:11px}
 }
 
-/* ── ADMIN ── */
-#admin-btn{position:fixed;bottom:14px;left:14px;z-index:999;width:32px;height:32px;border-radius:50%;background:var(--bd2);border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;opacity:.35;transition:opacity .15s}
-#admin-btn:hover{opacity:1}
-#admin-btn.on{background:#e03030;opacity:1;color:#fff}
-.admin-row-overlay{display:none}
-body.admin-mode .admin-row-overlay{display:flex;align-items:center;gap:6px;margin-left:auto}
-body.admin-mode .admin-normal-date{display:none!important}
-body.admin-mode .admin-edit-date{display:inline!important}
-body.admin-mode .admin-hide{display:none!important}
-body.admin-mode .admin-show{display:inline-flex!important}
-body.admin-mode .ep-row{cursor:default}
-.admin-status-btn{font-size:9px;font-weight:700;padding:3px 9px;border-radius:12px;border:none;cursor:pointer;transition:all .12s}
-.admin-status-btn.done{background:#ffe4e4;color:#c0392b}
-.admin-status-btn.wip{background:#fff3e0;color:#e07000}
-.admin-status-btn.plan{background:#f0f0f0;color:#999}
-.admin-date-input{font-size:10px;padding:3px 6px;border:1px solid var(--bd);border-radius:5px;font-family:var(--fn);width:100px;color:var(--tx)}
-.admin-edit-btn{font-size:10px;padding:3px 8px;border:1px solid var(--bd);border-radius:5px;background:transparent;cursor:pointer;color:var(--tx2)}
-.admin-edit-btn:hover{background:var(--bg);color:var(--tx)}
-
-/* Admin mode indicator bar */
-#admin-bar{display:none;position:fixed;top:48px;left:0;right:0;z-index:500;background:#e03030;color:#fff;font-size:11px;font-weight:600;text-align:center;padding:5px;letter-spacing:.5px}
-body.admin-mode #admin-bar{display:block}
-body.admin-mode #content{margin-top:calc(48px + 28px)}
-/* Highlight editable rows in admin */
-body.admin-mode .ep-row:hover{background:#fff8f0!important}
-
 /* Google Translate */
 .goog-te-banner-frame,.goog-te-menu-frame{display:none!important}
 body{top:0!important}
@@ -579,7 +553,7 @@ body{top:0!important}
    파일 공개 설정 (에피소드 텍스트 / 커버 이미지 모두):
    Drive에서 파일 우클릭 → 공유 → 링크가 있는 모든 사용자 → 뷰어
 ══════════════════════════════════════════════════════ */
-const DRIVE_API_KEY = "AIzaSyDeMjPYDMSvwbuVjJ3lfpVEZV0J_bTb02s";
+const DRIVE_API_KEY = "AIzaSyCdYIWKrbj8wi70EBKOycOYAlo7Q-l4MOg";
 
 /* ── Google Sheets 동기화 설정 ── */
 const SHEETS_ID = "19UUoMegsFTR3jeAo-dml6DSZEmWsqv6zM6EaiJPGbfk";
@@ -808,28 +782,6 @@ function buildWorkLog(){
 }
 buildWorkLog();
 
-// Restore saved episode data and rebuild calendar
-(function(){
-  try{
-    const LS_EP="biz_ep_data";
-    const data=JSON.parse(localStorage.getItem(LS_EP)||"{");
-    if(typeof data==='object'){
-      Object.entries(VOLUMES).forEach(([pid,vols])=>{
-        if(!Array.isArray(vols))return;
-        vols.forEach(v=>{
-          v.episodes.forEach(e=>{
-            const k=`${pid}_${v.id}_${e.id}`;
-            if(data[k]){e.status=data[k].status;e.date=data[k].date;}
-          });
-        });
-      });
-      // Rebuild WORK_LOG with restored data
-      Object.keys(WORK_LOG).forEach(k=>delete WORK_LOG[k]);
-      buildWorkLog();
-    }
-  }catch(e){}
-})();
-
 /* ── STATE ── */
 const S={
   view:"home",
@@ -961,7 +913,7 @@ function renderDefaultSub(proj){
   const vols=VOLUMES[proj.id]||[];
   const allEps=vols.flatMap(v=>v.episodes);
   const cnt=s=>allEps.filter(e=>e.status===s).length;
-  const stClr={"완료":"#2a9a60","작업중":proj.acc,"예정":"#999"};
+  const stClr={"완료":"#c0392b","작업중":"#F9CB4C","예정":"#999"};
   const hasNovel=vols.some(v=>v.type==="웹소설");
   const hasWebtoon=vols.some(v=>v.type==="웹툰");
   const tabs=["ALL",...(hasNovel?["웹소설"]:[]),(hasWebtoon?["웹툰"]:[])].flat();
@@ -993,7 +945,7 @@ function renderYtSub(proj){
   const vols=VOLUMES[proj.id]||[];
   const allEps=vols.flatMap(v=>v.episodes);
   const cnt=s=>allEps.filter(e=>e.status===s).length;
-  const stClr={"완료":"#2a9a60","작업중":proj.acc,"예정":"#999"};
+  const stClr={"완료":"#c0392b","작업중":"#F9CB4C","예정":"#999"};
   const hasCover=vols.some(v=>v.type==="커버곡");
   const hasOther=vols.some(v=>v.type==="그 외");
   const tabs=["ALL",...(hasCover?["커버곡"]:[]),(hasOther?["그 외"]:[])].flat();
@@ -1197,7 +1149,7 @@ function renderCalendar(){
         <div>
           <div class="cal-top-row"><button class="cal-nav-btn" onclick="prevMonth()">&#8249;</button><span class="cal-month-lbl">${monthStr}</span><button class="cal-nav-btn" onclick="nextMonth()">&#8250;</button></div>
           <div class="cal-full"><div class="cal-dnames">${DNAMES.map((n,i)=>`<div class="cal-dn ${DCLS[i]}">${n}</div>`).join("")}</div><div class="cal-grid-rows">${cellsHtml}</div></div>
-          ${S.selDay?`<div class="day-detail"><div class="dd-hd">${y}.${String(m+1).padStart(2,"0")}.${String(S.selDay).padStart(2,"0")}</div>${selWork.length?selWork.map(w=>`<div class="dd-row"><div class="dd-bar" style="background:${w.acc}"></div><div><div class="dd-proj">${w.proj}</div><div class="dd-name">${w.title}</div></div><div class="dd-st ${stClass(w.status)}" style="${w.status==="작업중"?`color:${w.acc}`:""}">${w.status}</div></div>`).join(""):`<div class="dd-empty">작업 기록 없음</div>`}</div>`:""}
+          ${S.selDay?`<div class="day-detail"><div class="dd-hd">${y}.${String(m+1).padStart(2,"0")}.${String(S.selDay).padStart(2,"0")}</div>${selWork.length?selWork.map(w=>`<div class="dd-row"><div class="dd-bar" style="background:${w.acc}"></div><div><div class="dd-proj">${w.proj}</div><div class="dd-name">${w.title}</div></div><div class="dd-st ${stClass(w.status)}" style="${w.status==="작업중"?`color:#F9CB4C`:""}">${w.status}</div></div>`).join(""):`<div class="dd-empty">작업 기록 없음</div>`}</div>`:""}
         </div>
         <div><div class="recent-hd">Recent</div><div class="recent-list">${recent.map(w=>`<div class="r-item" style="border-left-color:${w.acc}"><div class="r-top"><span class="r-proj" style="color:${w.acc}">${w.proj}</span><span class="r-date">${w.date.slice(5)}</span></div><div class="r-title">${w.title}</div></div>`).join("")}</div></div>
       </div>
@@ -1257,18 +1209,14 @@ function renderEpList(){
       ${eps.map(e=>{
         const pid=S.activeProj, vid=S.activeVol;
         const stCls=stClass(e.status);
-        const wipStyle=e.status==="작업중"?`background:color-mix(in srgb,${proj.acc} 12%,transparent);color:${proj.acc}`:"";
+        const wipStyle=e.status==="작업중"?`background:#F9F4CA;color:#F9CB4C`:"";
         return `<div class="ep-row" onclick="clickEp(${e.id})">
           <span class="ep-num">${e.id}</span>
           <span class="ep-title-col">
             <span class="ep-title-text">${e.title}</span>
-            <span class="admin-hide ep-status-badge ${stCls}" style="${wipStyle}">${e.status}</span>
-            <button class="admin-status-btn ${stCls} admin-show" style="display:none" onclick="event.stopPropagation();adminCycleStatus('${pid}',${vid},${e.id},'${e.status}')">${e.status}</button>
+            <span class="ep-status-badge ${stCls}" style="${wipStyle}">${e.status}</span>
           </span>
-          <span class="ep-date-col admin-normal-date">${e.date||"&mdash;"}</span>
-          <span class="ep-date-col admin-edit-date" style="display:none"><input class="admin-date-input" type="date" value="${e.date||""}" onchange="adminSetDate('${pid}',${vid},${e.id},this.value)" onclick="event.stopPropagation()"></span>
-          <div class="admin-row-overlay">
-          </div>
+          <span class="ep-date-col">${e.date||"&mdash;"}</span>
         </div>`;
       }).join("")}
     </div>`;
@@ -1350,7 +1298,7 @@ function renderContentView(){
           ${epObj.date?`<span class="postype-date">${epObj.date}</span>`:""}
           <span class="postype-status-badge" style="${
             epObj.status==='완료' ? 'background:#ffe4e4;color:#c0392b' :
-            epObj.status==='작업중' ? `background:color-mix(in srgb,${proj.acc} 12%,transparent);color:${proj.acc}` :
+            epObj.status==='작업중' ? `background:#F9F4CA;color:#F9CB4C` :
             'background:#f0f0f0;color:#aaa'
           }">${epObj.status}</span>
         </div>
@@ -1404,7 +1352,7 @@ function openEpPicker(){
     <div class="ep-picker-item ${e.id===S.activeEp?"current":""}" style="--curr-acc:${proj.acc}" onclick="pickEp(${e.id})">
       <span class="ep-picker-num">${e.id}</span>
       <span class="ep-picker-t">${e.title}</span>
-      <span class="ep-picker-st ${stClass(e.status)}" style="${e.status==="작업중"?`color:${proj.acc}`:""}">${e.status}</span>
+      <span class="ep-picker-st ${stClass(e.status)}" style="${e.status==="작업중"?`color:#F9CB4C`:""}">${e.status}</span>
     </div>`).join("");
   document.getElementById("ep-picker-modal").classList.remove("hidden");
 }
@@ -1674,152 +1622,89 @@ window.openChar = function(id){ S.activeChar=id; S.view="chardetail"; render(); 
 window.closeChar = function(){ S.activeChar=null; S.view="charlist"; renderCharList(); };
 
 
-/* ═══ ADMIN ═══ */
-const ADMIN_PW = "0000";
-const LS_EP = "biz_ep_data";
-
-/* ── Sheets 저장 ── */
-async function saveEpData(){
-  // 1) localStorage에도 저장 (오프라인 백업)
-  const data={};
-  Object.entries(VOLUMES).forEach(([pid,vols])=>{
-    if(!Array.isArray(vols))return;
-    vols.forEach(v=>{
-      v.episodes.forEach(e=>{
-        data[`${pid}_${v.id}_${e.id}`]={status:e.status,date:e.date};
-      });
-    });
-  });
-  localStorage.setItem(LS_EP,JSON.stringify(data));
-
-  // 2) Sheets에 저장
-  try{
-    // 전체 데이터를 한 행으로 직렬화해서 A1에 저장
-    const payload = JSON.stringify(data);
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEETS_ID}/values/episodes!A1?valueInputOption=RAW&key=${DRIVE_API_KEY}`;
-    await fetch(url, {
-      method:"PUT",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({values:[[payload]]})
-    });
-  }catch(e){
-    console.warn("Sheets 저장 실패 (localhost 미리보기에서는 정상):", e.message);
-  }
-}
-
 /* ── Sheets 불러오기 ── */
 async function loadEpDataFromSheets(){
   try{
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEETS_ID}/values/episodes!A1?key=${DRIVE_API_KEY}`;
+    // A:F 전체 범위 읽기 (헤더 포함)
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEETS_ID}/values/episodes!A:F?key=${DRIVE_API_KEY}`;
     const res = await fetch(url);
-    if(!res.ok) throw new Error("Sheets fetch 실패");
+    if(!res.ok) throw new Error("Sheets fetch 실패 " + res.status);
     const json = await res.json();
-    const raw = json?.values?.[0]?.[0];
-    if(!raw) return false; // 시트가 비어있음
-    const data = JSON.parse(raw);
-    Object.entries(VOLUMES).forEach(([pid,vols])=>{
-      if(!Array.isArray(vols))return;
-      vols.forEach(v=>{
-        v.episodes.forEach(e=>{
-          const k=`${pid}_${v.id}_${e.id}`;
-          if(data[k]){e.status=data[k].status;e.date=data[k].date;}
+    const rows = json?.values;
+    if(!rows || rows.length < 2) return false;
+
+    // 프로젝트 이름 → ID 매핑
+    const projMap = {
+      "블러드하이스쿨": "blood-highschool",
+      "X project":      "x-project",
+      "x-project":      "x-project",
+      "biz-OC-doll":    "biz-oc-doll",
+      "biz-oc-doll":    "biz-oc-doll",
+    };
+
+    // 날짜 정규화: "2026. 3. 16" → "2026-03-16"
+    function normalizeDate(v){
+      if(!v) return null;
+      // 이미 YYYY-MM-DD 형식
+      if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+      // "2026. 3. 16" 형식
+      const m = v.match(/(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/);
+      if(m) return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+      return null;
+    }
+
+    // 데이터 파싱 (1행은 헤더라 건너뜀)
+    const data = {};
+    rows.slice(1).forEach(row => {
+      const projName = (row[0]||"").trim();
+      const volId    = (row[2]||"").toString().trim();
+      const epId     = (row[3]||"").toString().trim();
+      const status   = (row[4]||"").trim();
+      const date     = (row[5]||"").trim();
+      // 빈 행 스킵
+      if(!projName || !volId || !epId) return;
+      const pid = projMap[projName];
+      if(!pid) return;
+      const vid = parseInt(volId);
+      const eid = parseInt(epId);
+      if(isNaN(vid) || isNaN(eid)) return;
+      const k = `${pid}_${vid}_${eid}`;
+      data[k] = {
+        status: status || "예정",
+        date:   normalizeDate(date)
+      };
+    });
+
+    // VOLUMES에 반영
+    Object.entries(VOLUMES).forEach(([pid, vols]) => {
+      if(!Array.isArray(vols)) return;
+      vols.forEach(v => {
+        v.episodes.forEach(e => {
+          const k = `${pid}_${v.id}_${e.id}`;
+          if(data[k]){ e.status = data[k].status; e.date = data[k].date; }
         });
       });
     });
-    // Sheets 데이터로 localStorage도 갱신
-    localStorage.setItem(LS_EP, JSON.stringify(data));
+
     return true;
   }catch(e){
-    console.warn("Sheets 불러오기 실패, localStorage 사용:", e.message);
+    console.warn("Sheets 불러오기 실패:", e.message);
     return false;
   }
 }
 
-/* ── localStorage 불러오기 (오프라인 백업) ── */
-function loadEpData(){
-  try{
-    const data=JSON.parse(localStorage.getItem(LS_EP)||"{}");
-    Object.entries(VOLUMES).forEach(([pid,vols])=>{
-      if(!Array.isArray(vols))return;
-      vols.forEach(v=>{
-        v.episodes.forEach(e=>{
-          const k=`${pid}_${v.id}_${e.id}`;
-          if(data[k]){e.status=data[k].status;e.date=data[k].date;}
-        });
-      });
-    });
-  }catch(e){}
-}
-
-// 시작시 Sheets에서 먼저 불러오고, 실패하면 localStorage 사용
-loadEpData(); // 일단 localStorage로 빠르게 렌더
+// 시작: 먼저 빈 화면 없이 렌더하고, Sheets 데이터 오면 갱신
 render();
 loadEpDataFromSheets().then(ok=>{
-  if(ok){ rebuildWorkLog(); render(); } // Sheets 성공하면 다시 렌더
+  if(ok){ rebuildWorkLog(); render(); }
 });
-
-function toggleAdmin(){
-  if(document.body.classList.contains("admin-mode")){
-    document.body.classList.remove("admin-mode");
-    document.getElementById("admin-btn").classList.remove("on");
-    render();
-    return;
-  }
-  const authed = sessionStorage.getItem("biz_admin");
-  if(!authed){
-    const pw = prompt("관리자 비밀번호:");
-    if(pw !== ADMIN_PW){ alert("비밀번호가 틀렸습니다."); return; }
-    sessionStorage.setItem("biz_admin","1");
-  }
-  document.body.classList.add("admin-mode");
-  document.getElementById("admin-btn").classList.add("on");
-  render();
-}
 
 function rebuildWorkLog(){
   Object.keys(WORK_LOG).forEach(k=>delete WORK_LOG[k]);
   buildWorkLog();
 }
 
-function adminCycleStatus(projId, volId, epId, current){
-  const cycle = {"예정":"작업중","작업중":"완료","완료":"예정"};
-  const vols = VOLUMES[projId];
-  if(!Array.isArray(vols)) return;
-  const vol = vols.find(v=>v.id===volId);
-  if(!vol) return;
-  const ep = vol.episodes.find(e=>e.id===epId);
-  if(!ep) return;
-  ep.status = cycle[current]||"예정";
-  saveEpData();
-  rebuildWorkLog();
-  renderEpList();
-}
-
-function adminSetDate(projId, volId, epId, val){
-  const vols = VOLUMES[projId];
-  if(!Array.isArray(vols)) return;
-  const vol = vols.find(v=>v.id===volId);
-  if(!vol) return;
-  const ep = vol.episodes.find(e=>e.id===epId);
-  if(!ep) return;
-  ep.date = val||null;
-  saveEpData();
-  rebuildWorkLog();
-  renderEpList();
-}
-
-// (초기 render는 위 loadEpData 블록에서 실행됨)
-
 </script>
-
-<!-- ADMIN BUTTON -->
-<button id="admin-btn" onclick="toggleAdmin()" title="관리자 모드">⚙</button>
-
-<!-- ADMIN MODE BAR -->
-<div id="admin-bar">🔧 관리자 모드 활성화 — 상태/날짜/본문 수정 가능</div>      </div>
-    </div>
-      </div>
-</div>
 
 </body>
 </html>
