@@ -196,9 +196,10 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-r-title{font-size:13px;font-weight:400;color:var(--tx3);line-height:1.4}
 .home-r-status{font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;display:inline-block;flex-shrink:0}
 .home-r-status.done{background:#ffe4e4;color:#c0392b}
-.home-r-item.is-done .home-r-proj{color:#bbb!important}
-.home-r-item.is-done .home-r-date{color:#bbb}
-.home-r-item.is-done .home-r-title{color:#bbb}
+.home-r-item.is-wip .home-r-proj{color:#bbb!important}
+.home-r-item.is-wip .home-r-date{color:#bbb}
+.home-r-item.is-wip .home-r-title{color:#bbb}
+.home-r-item.is-done .home-r-title{color:#1a1a1a;font-weight:500}
 .home-r-status.wip{background:#fff9e0;color:#d4a017}
 .home-r-status.plan{background:var(--bg);color:var(--tx3);border:1px solid var(--bd)}
 .home-r-empty{padding:28px;text-align:center;font-size:11px;color:var(--tx3)}
@@ -1163,7 +1164,7 @@ function renderHome(){
         const navCall = w.projId==="biz-oc-doll"
           ? `goRecentWork('${w.projId}',null,${w.epId},'${w.dollCatId||""}')`
           : `goRecentWork('${w.projId}',${w.volId},${w.epId},null)`;
-        return `<div class="home-r-item${stCls==='done'?' is-done':''}" style="border-left-color:${stCls==='done'?'#ddd':w.acc}" onclick="${navCall}" title="${w.title} 바로가기">
+        return `<div class="home-r-item${stCls==='wip'?' is-wip':''}" style="border-left-color:${stCls==='wip'?'#ddd':w.acc}" onclick="${navCall}" title="${w.title} 바로가기">
           <div class="home-r-top">
             <span class="home-r-proj" style="color:${w.acc}">${w.proj}</span>
             <span class="home-r-date">${w.date}</span>
