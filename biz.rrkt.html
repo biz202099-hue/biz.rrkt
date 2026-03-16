@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>biz.rrkt</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -13,8 +13,8 @@
   --fn:'Inter','Noto Sans KR',sans-serif;
   --sm-w:290px;
 }
-html,body{height:100%;overflow:hidden;font-size:14px}
-body{background:var(--bg);color:var(--tx);font-family:var(--fn);-webkit-font-smoothing:antialiased}
+html{height:100%;overflow:hidden;font-size:14px}
+body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:var(--fn);-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
 button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
 /* #app removed - content is direct body child */
@@ -160,7 +160,7 @@ button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
 .doll-banner-count{font-size:11px;color:var(--tx3);margin-top:auto}
 
 /* ── CONTENT ── */
-#content{display:block;margin-top:48px;height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto;overflow-x:hidden;background:var(--bg);transition:margin-top .28s ease,height .28s ease}
+#content{display:block;margin-top:48px;height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg);transition:margin-top .28s ease,height .28s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
 #nav-backdrop{display:none;position:fixed;inset:0;top:48px;z-index:150}
 #nav-backdrop.show{display:block}
 body.nav-pinned #nav-backdrop{display:none!important}
@@ -447,7 +447,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .char-stat-v{font-size:15px;font-weight:700;color:var(--tx)}
 
 /* ── MOBILE ── */
-.mob-menu{display:none;position:fixed;top:48px;left:0;right:0;background:var(--sb);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px #0000001a;z-index:300;max-height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto}
+.mob-menu{display:none;position:fixed;top:48px;left:0;right:0;background:var(--sb);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px #0000001a;z-index:300;max-height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .mob-menu.open{display:block}
 .mob-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 20px;background:transparent;border:none;border-bottom:1px solid var(--bd);color:var(--tx2);font-size:14px;font-weight:500;text-align:left;cursor:pointer}
 .mob-nav-item:hover,.mob-nav-item.active{color:var(--tx);background:var(--bg)}
@@ -477,7 +477,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 @media(max-width:768px){.topbar-right{display:none!important}}
 @media(max-width:768px){
   #nav-layer{display:none!important}
-  #content{margin-top:48px;height:calc(100vh - 48px);height:calc(100dvh - 48px)}
+  #content{margin-top:48px;height:calc(100vh - 48px);height:calc(100dvh - 48px);-webkit-overflow-scrolling:touch;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
   .topbar-right{gap:4px}
   .home-body{grid-template-columns:1fr}
   .home-about-card{max-width:100%}
@@ -491,9 +491,9 @@ body.nav-pinned #nav-backdrop{display:none!important}
   .ep-title-col{font-size:12px}
   .ep-date-col{font-size:9px}
   .ep-status{font-size:9px}
-  .vol-banner,.char-detail-hero,.content-info{padding:14px 16px}
+  .vol-banner,.char-detail-hero,.content-info{padding:14px 20px}
   .ep-board{margin:12px auto 18px}
-  .postype-wrap,.intro-body{padding:20px 16px 48px}
+  .postype-wrap,.intro-body{padding:20px 20px 48px}
   .intro-hero{padding:20px 16px}
   .yt-ep-list{padding:8px 12px}
   .yt-ep-thumb{width:120px;height:68px}
