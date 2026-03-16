@@ -324,7 +324,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .yt-ep-status.plan{background:#f0f0f0;color:#999}
 
 /* ── POSTYPE-STYLE CONTENT ── */
-.postype-wrap{max-width:700px;margin:0 auto;padding:40px 24px 60px}
+.postype-wrap{max-width:700px;margin:0 auto;padding:40px clamp(16px,4vw,40px) 60px;min-width:0;width:100%}
 .postype-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--bd)}
 .postype-series-lbl{font-size:13px;color:var(--tx3);margin-bottom:8px;font-family:var(--fn);cursor:pointer;display:inline-block}
 .postype-series-lbl:hover{color:var(--tx)}
@@ -342,7 +342,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .postype-hint{margin-top:32px;padding:20px;border:1px dashed var(--bd2);border-radius:10px;font-size:12px;color:var(--tx3);text-align:center;font-family:var(--fn)}
 
 /* ── EP NAV (prev/next + picker) ── */
-.ep-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 24px;max-width:700px;margin:0 auto;width:100%}
+.ep-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px clamp(12px,3vw,24px);max-width:700px;margin:0 auto;width:100%;min-width:0}
 .ep-nav-outer{border-top:1px solid var(--bd);background:var(--sb);padding-bottom:32px}
 .ep-nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1px solid var(--bd);border-radius:7px;color:var(--tx2);font-size:12px;font-weight:500;transition:all .12s;min-width:0;max-width:260px}
 .ep-nav-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
@@ -453,6 +453,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .mob-lang-btn{font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--bd);border-radius:5px;background:var(--bg);color:var(--tx2)}
 .mob-lang-btn:hover{background:var(--tx);color:#fff}
 @media(min-width:769px){.mob-menu,.mob-lang-row{display:none!important}}
+.postype-text{white-space:pre-wrap;word-break:keep-all;line-height:1.7;font-size:17px}
 @media(max-width:768px){.topbar-right{display:none!important}}
 @media(max-width:768px){
   #nav-layer{display:none!important}
@@ -470,13 +471,16 @@ body.nav-pinned #nav-backdrop{display:none!important}
   .ep-status{font-size:9px}
   .vol-banner,.char-detail-hero,.content-info{padding:14px 16px}
   .ep-board{margin:12px 10px 18px}
-  .postype-wrap,.intro-body{padding:20px 16px}
+  .postype-wrap,.intro-body{padding:20px 16px 48px}
   .intro-hero{padding:20px 16px}
   .yt-ep-list{padding:8px 12px}
   .yt-ep-thumb{width:120px;height:68px}
   .ep-nav{padding:10px 12px}
   .ep-nav-btn{max-width:40%;padding:6px 10px;font-size:11px}
   .postype-text{font-size:15px}
+  /* 좁은 화면: 중간 breadcrumb 숨기고 현재 제목만 */
+  .tb-crumb,.tb-arr,.tb-sep{display:none!important}
+  .tb-cur{max-width:calc(100vw - 120px)}
 }
 
 /* Google Translate */
@@ -489,7 +493,6 @@ body{top:0!important}
 .postype-loading{display:flex;align-items:center;gap:10px;color:var(--tx3);font-size:13px;padding:32px 0}
 .postype-spinner{width:18px;height:18px;border:2px solid var(--bd);border-top-color:var(--tx3);border-radius:50%;animation:ptSpin .7s linear infinite;flex-shrink:0}
 @keyframes ptSpin{to{transform:rotate(360deg)}}
-.postype-text{white-space:pre-wrap;word-break:keep-all;line-height:1.7;font-size:17px}
 .postype-error{background:#fff5f5;border:1px solid #ffd0d0;border-radius:8px;padding:16px 20px;color:#c03030;font-size:12px;line-height:1.7}
 .postype-error pre{margin-top:8px;font-size:11px;white-space:pre-wrap;color:#a03030}
 </style>
