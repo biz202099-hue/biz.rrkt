@@ -190,10 +190,11 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-recent-grid{display:grid;grid-template-columns:1fr;gap:6px}
 .home-r-item{padding:10px 12px;background:var(--bg);border:1px solid var(--bd);border-left-width:3px;border-radius:7px;cursor:pointer;transition:all .12s}
 .home-r-item:hover{background:color-mix(in srgb,var(--bd) 30%,var(--bg));transform:translateX(2px)}
-.home-r-top{display:flex;justify-content:space-between;margin-bottom:4px;align-items:center}
-.home-r-proj{font-size:9px;font-weight:600}.home-r-date{font-size:9px;color:var(--tx3)}
-.home-r-title{font-size:11px;color:var(--tx2);line-height:1.4}
-.home-r-status{font-size:8px;font-weight:600;margin-top:4px;padding:1px 5px;border-radius:3px;display:inline-block}
+.home-r-top{display:flex;justify-content:space-between;margin-bottom:5px;align-items:center}
+.home-r-proj{font-size:11px;font-weight:700}.home-r-date{font-size:10px;color:var(--tx3)}
+.home-r-title-row{display:flex;align-items:center;gap:7px}
+.home-r-title{font-size:13px;font-weight:500;color:var(--tx);line-height:1.4}
+.home-r-status{font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;display:inline-block;flex-shrink:0}
 .home-r-status.done{background:#ffe4e4;color:#c0392b}
 .home-r-status.wip{background:#fff9e0;color:#d4a017}
 .home-r-status.plan{background:var(--bg);color:var(--tx3);border:1px solid var(--bd)}
@@ -1161,10 +1162,12 @@ function renderHome(){
         return `<div class="home-r-item" style="border-left-color:${w.acc}" onclick="${navCall}" title="${w.title} 바로가기">
           <div class="home-r-top">
             <span class="home-r-proj" style="color:${w.acc}">${w.proj}</span>
-            <span class="home-r-date">${w.date.slice(5)}</span>
+            <span class="home-r-date">${w.date}</span>
           </div>
-          <div class="home-r-title">${w.title}</div>
-          <span class="home-r-status ${stCls}">${w.status}</span>
+          <div class="home-r-title-row">
+            <span class="home-r-title">${w.title}</span>
+            <span class="home-r-status ${stCls}">${w.status}</span>
+          </div>
         </div>`;
       }).join("");
 
