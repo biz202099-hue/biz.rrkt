@@ -786,8 +786,8 @@ const S={
   activeProj:null,activeVol:null,activeEp:null,
   activeDollCat:null,
   subOpen:false,subTab:"ALL",
-  calY:2026,calM:2,selDay:null,
-  homeMiniM:2,homeMiniY:2026,
+  calY:new Date().getFullYear(),calM:new Date().getMonth(),selDay:null,
+  homeMiniM:new Date().getMonth(),homeMiniY:new Date().getFullYear(),
   charFilter:"ALL",charSearch:"",activeChar:null,
   navPinned:false,
   hoveredProj:null,
@@ -1013,16 +1013,10 @@ function renderMobMenu(){
     let sub="";
     // links
     sub+=`<div class="mob-sub-links">`;
-    if(p.id==='x-project'){
-      sub+=`<a class="mob-sub-link" href="Xproject.html">소개글</a>`;
-      sub+=`<a class="mob-sub-link" href="${p.youtubeUrl||"#"}" target="_blank">YouTube</a>`;
-      sub+=`</div>`;
-    } else {
-      sub+=`<button class="mob-sub-link" onclick="goIntro('${p.id}');closeMobMenu()">소개글</button>`;
-      if(p.subType==="doll") sub+=`<button class="mob-sub-link" onclick="goDollChar();closeMobMenu()">캐릭터 일람</button>`;
-      if(p.subType==="youtube") sub+=`<a class="mob-sub-link" href="${p.youtubeUrl||"#"}" target="_blank">YouTube</a>`;
-      sub+=`</div>`;
-    }
+    sub+=`<button class="mob-sub-link" onclick="goIntro('${p.id}');closeMobMenu()">소개글</button>`;
+    if(p.subType==="doll") sub+=`<button class="mob-sub-link" onclick="goDollChar();closeMobMenu()">캐릭터 일람</button>`;
+    if(p.subType==="youtube") sub+=`<a class="mob-sub-link" href="${p.youtubeUrl||"#"}" target="_blank">YouTube</a>`;
+    sub+=`</div>`;
     // doll categories
     if(p.subType==="doll"){
       sub+=`<div style="display:flex;flex-direction:column;gap:8px;padding:10px 16px">`;
@@ -1113,7 +1107,7 @@ function renderHome(){
     const ds_=ds(y,m,d),hasW=!!WORK_LOG[ds_],dow=(firstDay+d-1)%7;
     let cls="hmc-cell";
     if(hasW)cls+=" has-w";
-    if(y===2026&&m===2&&d===14)cls+=" today";
+    const _tn=new Date();if(y===_tn.getFullYear()&&m===_tn.getMonth()&&d===_tn.getDate())cls+=" today";
     if(dow===0)cls+=" sun-c";if(dow===6)cls+=" sat-c";
     const dot=hasW?WORK_LOG[ds_][0].acc:null;
     miniCells+=`<div class="${cls}"><span>${d}</span>${dot?`<div class="hmc-dot" style="background:${dot}"></div>`:""}</div>`;
@@ -1174,7 +1168,7 @@ function renderCalendar(){
   for(let d=1;d<=daysInMonth;d++){const ds_=ds(y,m,d);cells.push({d,work:WORK_LOG[ds_]||[],dow:(firstDay+d-1)%7});}
   const cellsHtml=cells.map(c=>{
     if(!c)return`<div class="cal-cell empty"></div>`;
-    const isToday=y===2026&&m===2&&c.d===14,isSel=S.selDay===c.d;
+    const _tn=new Date(),isToday=y===_tn.getFullYear()&&m===_tn.getMonth()&&c.d===_tn.getDate(),isSel=S.selDay===c.d;
     let cls="cal-cell";
     if(c.work.length)cls+=" has-work";if(isToday)cls+=" today";if(isSel)cls+=" sel";
     if(c.dow===0)cls+=" sun-col";if(c.dow===6)cls+=" sat-col";
