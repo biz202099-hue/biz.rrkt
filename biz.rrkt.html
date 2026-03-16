@@ -447,7 +447,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .char-stat-v{font-size:15px;font-weight:700;color:var(--tx)}
 
 /* ── MOBILE ── */
-.mob-menu{display:none;position:fixed;top:48px;left:0;right:0;background:var(--sb);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px #0000001a;z-index:300;max-height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mob-menu{display:none;position:fixed;top:48px;left:0;right:0;background:var(--sb);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px #0000001a;z-index:300;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);height:calc(100dvh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .mob-menu.open{display:block}
 .mob-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 20px;background:transparent;border:none;border-bottom:1px solid var(--bd);color:var(--tx2);font-size:14px;font-weight:500;text-align:left;cursor:pointer}
 .mob-nav-item:hover,.mob-nav-item.active{color:var(--tx);background:var(--bg)}
@@ -1078,6 +1078,7 @@ function render(){
     if(ct){
       ct.style.marginTop = "48px";
       ct.style.height = "calc(100vh - 48px)";
+      ct.style.height = "calc(100dvh - 48px)";
       if(ct._mobScrollHandler){
         ct.removeEventListener("scroll", ct._mobScrollHandler);
         ct._mobScrollHandler = null;
