@@ -218,7 +218,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .hmc-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:4px;gap:2px;font-size:9px;color:var(--tx3)}
 .hmc-cell.has-w{cursor:pointer;color:var(--tx)}
 .hmc-cell.has-w:hover{background:var(--bg)}
-.hmc-cell.today{font-weight:700;color:#3558c0}
+.hmc-cell.today{font-weight:800;color:#fff}
+.hmc-cell.today span:first-child{background:#3558c0;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800}
 .hmc-cell.sun-c{color:#c03030}.hmc-cell.sat-c{color:#3a5cb0}
 .hmc-dot{width:4px;height:4px;border-radius:50%}
 .home-widget{background:var(--sb);border:1px solid var(--bd);border-radius:10px;padding:12px 14px}
@@ -252,12 +253,12 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .cal-cell{min-height:110px;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:6px 6px}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell.empty{background:transparent}
-.cal-cell.today{background:#f0f4ff}
+.cal-cell.today{background:#eef2ff;border-top:2px solid #3558c0}
 .cal-cell.sel{background:#f0f0f0}
 .cal-cell.has-work{cursor:pointer}
 .cal-cell.has-work:hover{background:#ebebeb}
 .cal-day-num{font-size:13px;font-weight:600;color:var(--tx3);margin-bottom:5px;display:block}
-.cal-cell.today .cal-day-num{color:#3558c0;font-weight:700}
+.cal-cell.today .cal-day-num{color:#fff;font-weight:800;background:#3558c0;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
 .cal-cell.sun-col .cal-day-num{color:#c03030}
 .cal-cell.sat-col .cal-day-num{color:#3a5cb0}
 .cal-cell.has-work .cal-day-num,.cal-cell.sel .cal-day-num{color:var(--tx)}
