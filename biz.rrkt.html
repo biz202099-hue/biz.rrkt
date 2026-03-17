@@ -189,8 +189,9 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-recent-panel-lbl{font-size:13px;font-weight:700;letter-spacing:0.5px;color:var(--tx2);text-transform:none}
 .home-recent-body{padding:8px}
 .home-recent-grid{display:grid;grid-template-columns:1fr;gap:4px}
-.home-r-item{padding:6px 12px;background:var(--bg);border:1px solid var(--bd);border-left-width:3px;border-radius:7px;cursor:pointer;transition:all .12s}
-.home-r-item:hover{background:color-mix(in srgb,var(--bd) 30%,var(--bg));transform:translateX(2px)}
+.home-r-item{padding:6px 12px;background:var(--bg);border:1px solid var(--bd);border-left-width:3px;border-radius:7px;cursor:default;transition:all .12s}
+.home-r-item.is-done{cursor:pointer}
+.home-r-item.is-done:hover{background:color-mix(in srgb,var(--bd) 30%,var(--bg));transform:translateX(2px)}
 .home-r-top{display:flex;justify-content:space-between;margin-bottom:3px;align-items:center}
 .home-r-proj{font-size:11px;font-weight:500}.home-r-date{font-size:10px;color:var(--tx3)}
 .home-r-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -387,7 +388,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-row{display:grid;grid-template-columns:44px 1fr 90px auto;padding:11px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s;align-items:center}
 .ep-row:last-child{border-bottom:none}
 .ep-row:hover{background:#ebebeb}
-.ep-row-locked{cursor:default;opacity:.5}
+.ep-row-locked{cursor:default}
 .ep-row-locked:hover{background:transparent}
 .ep-num{font-size:11px;color:var(--tx3);font-weight:500}
 .ep-title-col{font-size:13px;color:var(--tx);display:flex;align-items:center;gap:7px}
@@ -1489,7 +1490,7 @@ function renderHome(){
         }
         const rel=relTime(w.date);
         const isDone=stCls==='done', isWip=stCls==='wip';
-        return `<div class="home-r-item${isDone?' is-done':isWip?' is-wip':''}" style="border-left-color:${isWip?'#ddd':w.acc}" onclick="${navCall}" title="${w.title} 바로가기">
+        return `<div class="home-r-item${isDone?' is-done':isWip?' is-wip':''}" style="border-left-color:${isWip?'#ddd':w.acc}" ${isDone?`onclick="${navCall}"`:''}  title="${w.title} 바로가기">
           <div class="home-r-top">
             <span class="home-r-proj" style="color:${w.acc}">${w.proj}</span>
             <span class="home-r-date">${w.date}${rel?` <span class="home-r-reltime">· ${rel}</span>`:''}</span>
@@ -1978,7 +1979,7 @@ function clickVol(pid,volId){
 }
 function clickEp(epId){
   const vols=VOLUMES[S.activeProj]||[];
-  const vol=vols.find?.(v=>v.id===S.activeVol);
+  const vol=Array.isArray(vols)?vols.find(v=>v.id===S.activeVol):null;
   const ep=vol?.episodes?.find(e=>e.id===epId);
   if(ep&&ep.status!=="완료") return;
   S.activeEp=epId;S.view="content";render();
