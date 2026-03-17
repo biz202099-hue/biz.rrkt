@@ -396,7 +396,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-status-badge.done{background:#ffe4e4;color:#c0392b}
 .ep-status-badge.wip{background:#F9F4CA;color:#F9CB4C}
 .ep-status-badge.plan{background:#f0f0f0;color:#aaa}
-.ep-date-col{font-size:10px;color:var(--tx3)}
+.ep-date-col{font-size:10px;color:var(--tx3);text-align:right}
 .ep-status{font-size:10px;font-weight:700;text-align:right}
 .ep-status.done{color:#c0392b}.ep-status.plan{color:var(--tx3)}
 
@@ -792,6 +792,9 @@ const VOLUMES = {
       {id:10, title:"10화 오레사마 학교 정복!!",     date:null, status:"예정", textId:null},
       {id:11, title:"11화 저주BOY미친BABY",          date:null, status:"예정", textId:null},
       {id:12, title:"12화 용 형제의 서열 정리",      date:null, status:"예정", textId:null},
+      {id:13, title:"번외 1화", date:null, status:"예정", textId:null},
+      {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
+      {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
     {id:2, label:"[웹소설]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹소설", tags:["판타지","미스터리"],
      coverId:null,
@@ -809,18 +812,80 @@ const VOLUMES = {
       {id:10, title:"10화", date:null, status:"예정", textId:null},
       {id:11, title:"11화", date:null, status:"예정", textId:null},
       {id:12, title:"12화", date:null, status:"예정", textId:null},
+      {id:13, title:"번외 1화", date:null, status:"예정", textId:null},
+      {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
+      {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
     {id:3, label:"[웹소설]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹소설", tags:["판타지","액션"],
      coverId:null,
      synopsis:"이제 순진하지만은 않은 쿠로. -새로운 종족이 나타난다.",
      episodes:[
-      {id:15, title:"미공개", date:null, status:"예정", textId:null},
+      {id:1,  title:"1화",  date:null, status:"예정", textId:null},
+      {id:2,  title:"2화",  date:null, status:"예정", textId:null},
+      {id:3,  title:"3화",  date:null, status:"예정", textId:null},
+      {id:4,  title:"4화",  date:null, status:"예정", textId:null},
+      {id:5,  title:"5화",  date:null, status:"예정", textId:null},
+      {id:6,  title:"6화",  date:null, status:"예정", textId:null},
+      {id:7,  title:"7화",  date:null, status:"예정", textId:null},
+      {id:8,  title:"8화",  date:null, status:"예정", textId:null},
+      {id:9,  title:"9화",  date:null, status:"예정", textId:null},
+      {id:10, title:"10화", date:null, status:"예정", textId:null},
+      {id:11, title:"11화", date:null, status:"예정", textId:null},
+      {id:12, title:"12화", date:null, status:"예정", textId:null},
+      {id:13, title:"번외 1화", date:null, status:"예정", textId:null},
+      {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
+      {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
-    {id:4, label:"[웹툰]블러드하이스쿨 ~용의 부활~", sub:"웹툰판", grad:"150deg,#1a0000,#900000,#cc3020", type:"웹툰", tags:["웹툰","판타지"],
+    {id:4, label:"[웹툰]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#1a0000,#900000,#cc3020", type:"웹툰", tags:["웹툰","판타지"],
      coverId:null,
      synopsis:"웹소설 1부를 웹툰으로 각색한 버전.",
      episodes:[
-      {id:1, title:"웹툰 1화", date:null, status:"예정", textId:null},
+      {id:1,  title:"1화",  date:null, status:"예정", textId:null},
+      {id:2,  title:"2화",  date:null, status:"예정", textId:null},
+      {id:3,  title:"3화",  date:null, status:"예정", textId:null},
+      {id:4,  title:"4화",  date:null, status:"예정", textId:null},
+      {id:5,  title:"5화",  date:null, status:"예정", textId:null},
+      {id:6,  title:"6화",  date:null, status:"예정", textId:null},
+      {id:7,  title:"7화",  date:null, status:"예정", textId:null},
+      {id:8,  title:"8화",  date:null, status:"예정", textId:null},
+      {id:9,  title:"9화",  date:null, status:"예정", textId:null},
+      {id:10, title:"10화", date:null, status:"예정", textId:null},
+      {id:11, title:"11화", date:null, status:"예정", textId:null},
+      {id:12, title:"12화", date:null, status:"예정", textId:null},
+    ]},
+    {id:5, label:"[웹툰]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹툰", tags:["웹툰","판타지"],
+     coverId:null,
+     synopsis:"웹소설 2부를 웹툰으로 각색한 버전.",
+     episodes:[
+      {id:1,  title:"1화",  date:null, status:"예정", textId:null},
+      {id:2,  title:"2화",  date:null, status:"예정", textId:null},
+      {id:3,  title:"3화",  date:null, status:"예정", textId:null},
+      {id:4,  title:"4화",  date:null, status:"예정", textId:null},
+      {id:5,  title:"5화",  date:null, status:"예정", textId:null},
+      {id:6,  title:"6화",  date:null, status:"예정", textId:null},
+      {id:7,  title:"7화",  date:null, status:"예정", textId:null},
+      {id:8,  title:"8화",  date:null, status:"예정", textId:null},
+      {id:9,  title:"9화",  date:null, status:"예정", textId:null},
+      {id:10, title:"10화", date:null, status:"예정", textId:null},
+      {id:11, title:"11화", date:null, status:"예정", textId:null},
+      {id:12, title:"12화", date:null, status:"예정", textId:null},
+    ]},
+    {id:6, label:"[웹툰]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹툰", tags:["웹툰","판타지"],
+     coverId:null,
+     synopsis:"웹소설 3부를 웹툰으로 각색한 버전.",
+     episodes:[
+      {id:1,  title:"1화",  date:null, status:"예정", textId:null},
+      {id:2,  title:"2화",  date:null, status:"예정", textId:null},
+      {id:3,  title:"3화",  date:null, status:"예정", textId:null},
+      {id:4,  title:"4화",  date:null, status:"예정", textId:null},
+      {id:5,  title:"5화",  date:null, status:"예정", textId:null},
+      {id:6,  title:"6화",  date:null, status:"예정", textId:null},
+      {id:7,  title:"7화",  date:null, status:"예정", textId:null},
+      {id:8,  title:"8화",  date:null, status:"예정", textId:null},
+      {id:9,  title:"9화",  date:null, status:"예정", textId:null},
+      {id:10, title:"10화", date:null, status:"예정", textId:null},
+      {id:11, title:"11화", date:null, status:"예정", textId:null},
+      {id:12, title:"12화", date:null, status:"예정", textId:null},
     ]},
   ],
   "x-project": [
@@ -1781,12 +1846,12 @@ function renderEpList(){
               <span style="font-size:8px;font-weight:600;color:#ffffffcc">EP.${e.id}</span>
             </div>
           </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:500;color:${canRead?"var(--tx)":"var(--tx3)"};line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div>
+          <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+            <div style="font-size:13px;font-weight:500;color:${canRead?"var(--tx)":"var(--tx3)"};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div>
+            <span class="ep-status-badge ${stCls}" style="${wipStyle};flex-shrink:0">${e.status}</span>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div style="display:flex;align-items:center;flex-shrink:0">
             <span style="font-size:10px;color:var(--tx3)">${e.date||"—"}</span>
-            <span class="ep-status-badge ${stCls}" style="${wipStyle}">${e.status}</span>
           </div>
         </div>`;
       }).join("")}
@@ -1807,7 +1872,7 @@ function renderEpList(){
     </div>
     </div>
     <div class="ep-board">
-      <div class="ep-board-head"><span>#</span><span>제목</span><span>날짜</span><span></span></div>
+      <div class="ep-board-head"><span>#</span><span>제목</span><span style="text-align:right">날짜</span><span></span></div>
       ${eps.map(e=>{
         const pid=S.activeProj, vid=S.activeVol;
         const stCls=stClass(e.status);
