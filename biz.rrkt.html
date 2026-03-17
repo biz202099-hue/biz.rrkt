@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>biz.rrkt</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='white' stroke='%23111' stroke-width='1.5'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='22' font-weight='700' fill='%23111'>B</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -11,7 +12,7 @@
   --bg:#ffffff;--sb:#fff;--sm:#fafafa;--bd:#e2e2e2;--bd2:#c6c6c6;
   --tx:#1a1a1a;--tx2:#5f5f5f;--tx3:#a0a0a0;
   --fn:'Inter','Noto Sans KR',sans-serif;
-  --sm-w:290px;
+  --sm-w:240px;
 }
 html{height:100%;overflow:hidden;font-size:14px}
 body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:var(--fn);-webkit-font-smoothing:antialiased}
@@ -1959,7 +1960,7 @@ function goRecentWork(projId,volId,epId,dollCatId){
 function clickProj(id){
   if(S.activeProj!==id){S.activeProj=id;S.subTab="ALL";S.activeVol=null;S.activeEp=null;S.activeDollCat=null;}
   S.view="intro";
-  const dw={"blood-highschool":290,"x-project":290,"biz-oc-doll":290}[id]||290;
+  const dw={"blood-highschool":240,"x-project":240,"biz-oc-doll":240}[id]||240;
   document.documentElement.style.setProperty("--sm-w",dw+"px");
   closeMobMenu();render();
 }
