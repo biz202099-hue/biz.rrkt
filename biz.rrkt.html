@@ -231,6 +231,17 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .hw-stat-l{font-size:11px;color:var(--tx2)}.hw-stat-n{font-size:13px;font-weight:700;color:var(--tx)}
 .home-twitter-btn{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#000;color:#fff;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;width:100%;justify-content:center}
 .home-twitter-btn:hover{background:#1a1a1a}
+/* ── FOCUS WIDGET ── */
+.focus-widget-inner{padding:10px 12px 12px;border-top:1px solid var(--bd)}
+.focus-widget-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.focus-widget-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
+.focus-badge{font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;background:#fff4e0;color:#c47a0a;border:1px solid #ffe0a0;white-space:nowrap;flex-shrink:0}
+.focus-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.focus-row:last-child{margin-bottom:0}
+.focus-lbl{font-size:10px;color:var(--tx2);width:74px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.focus-bar-wrap{flex:1;background:var(--bd);border-radius:3px;height:5px;overflow:hidden}
+.focus-bar{height:5px;border-radius:3px;transition:width .3s ease}
+.focus-cnt{min-width:14px;text-align:right}
 /* ── AUTHOR STATUS WIDGET ── */
 .author-status{border-top:1px solid var(--bd);background:var(--sb)}
 .author-status-bar{display:flex;align-items:center;gap:8px;padding:9px 12px}
@@ -1015,6 +1026,52 @@ function buildAuthorStatus(){
 }
 
 
+function buildFocusWidget(){
+  const now = new Date();
+  const thisMonStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+  const allEntries = Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
+  const thisMonEntries = allEntries.filter(e=>e.date.startsWith(thisMonStr));
+
+  // 프로젝트별 집계 (기록 없으면 0)
+  const countMap = {};
+  thisMonEntries.forEach(e=>{ countMap[e.projId] = (countMap[e.projId]||0) + 1; });
+  const sorted = PROJECTS
+    .map(p=>({...p, count: countMap[p.id]||0}))
+    .sort((a,b)=>b.count-a.count);
+  const maxCount = sorted[0].count || 1;
+  const hasData = thisMonEntries.length > 0;
+
+  // 상단 문구: 데이터 있을 때만 "현재 XXX 중점으로 집필 중"
+  let topLine = "";
+  if(hasData){
+    const top = sorted.find(p=>p.count>0);
+    const lastChar = top.label.charCodeAt(top.label.length-1);
+    const particle = (lastChar-0xAC00)%28 !== 0 ? "을" : "를";
+    topLine = `<div style="font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:8px">현재 <strong style="color:var(--tx)">${top.label}</strong>${particle} 중점으로 집필하고 있어요.</div>`;
+  }
+
+  const bars = sorted.map(p=>{
+    const pct = hasData ? Math.round((p.count/maxCount)*100) : 0;
+    const cntHtml = p.count > 0
+      ? `<span style="font-size:11px;font-weight:700;color:var(--tx)">${p.count}</span>`
+      : `<span style="font-size:11px;color:var(--tx3)">—</span>`;
+    return `<div class="focus-row">
+      <div class="focus-lbl">${p.label}</div>
+      <div class="focus-bar-wrap"><div class="focus-bar" style="width:${pct}%;background:${p.acc}"></div></div>
+      <div class="focus-cnt">${cntHtml}</div>
+    </div>`;
+  }).join("");
+
+  return `<div class="focus-widget-inner">
+    <div class="focus-widget-hd">
+      <span class="focus-widget-lbl">주요 집필 프로젝트</span>
+      <span class="focus-badge">이번 달 기준</span>
+    </div>
+    ${topLine}${bars}
+  </div>`;
+}
+
+
 function buildEvalWidget(mode, y, m){
   // mode: "month" | "year" | "timeline"
   const now = new Date();
@@ -1621,6 +1678,7 @@ function renderHome(){
             </div>
           </div>
           ${buildAuthorStatus()}
+          ${buildFocusWidget()}
         </div>
         <!-- ② Recent work panel (center / blue box) -->
         <div class="home-recent-panel">
