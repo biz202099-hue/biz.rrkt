@@ -1464,10 +1464,43 @@ function renderYtSub(proj){
 
 function renderDollSub(proj){
   const dv=VOLUMES["biz-oc-doll"];
+  const allEps=Object.values(dv.episodes).flat();
+  const cnt=s=>allEps.filter(e=>e.status===s).length;
+  const total=allEps.length;
+  const r=22, circ=2*Math.PI*r;
+  function arc(val,offset){
+    if(!total||!val) return '';
+    const len=(val/total)*circ;
+    return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
+  }
+  const doneLen=(cnt("완료")/Math.max(total,1))*circ;
+  const pct=total?Math.round(cnt("완료")/total*100):0;
   document.getElementById("sm-inner").innerHTML=`
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
     <button class="sm-char-link" onclick="goDollChar()">캐릭터 일람 &#9654;</button>
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
+      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
+        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
+        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+        <circle cx="27" cy="27" r="22" fill="none" stroke="${proj.acc}" stroke-width="5" ${arc(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">완료</span>
+          <span style="font-size:14px;font-weight:700;color:${proj.acc}">${cnt("완료")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">작업중</span>
+          <span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">예정</span>
+          <span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span>
+        </div>
+      </div>
+    </div>
     <div class="doll-banners" style="margin-top:10px">
       ${dv.categories.map(cat=>`
         <div class="doll-banner" onclick="clickDollCat('${cat.id}')"
@@ -2199,8 +2232,9 @@ function goIntro(pid){
 
 /* ── VOL NAV helpers ── */
 function buildVolNav(proj, vol){
-  // 같은 type 끼리만 (웹소설↔웹소설, 웹툰↔웹툰 등)
+  // doll은 볼륨 구조가 없으므로 스킵
   const allVols = VOLUMES[proj.id] || [];
+  if(!Array.isArray(allVols)) return '';
   const sameType = allVols.filter(v => v.type === vol.type);
   const idx = sameType.findIndex(v => v.id === vol.id);
   const prev = sameType[idx - 1] || null;
