@@ -699,6 +699,42 @@ body.nav-pinned #nav-backdrop{display:none!important}
   .tb-cur{max-width:calc(100vw - 120px)}
 }
 
+/* ── 플로팅 에피소드 네비 (모바일 읽기 뷰) ── */
+#float-ep-nav{
+  position:fixed;
+  bottom:20px;right:16px;
+  z-index:200;
+  display:flex;align-items:center;gap:6px;
+  background:var(--sb);
+  border:1px solid var(--bd);
+  border-radius:30px;
+  box-shadow:0 4px 16px #00000018;
+  padding:6px 8px;
+  opacity:0;
+  transform:translateY(12px);
+  pointer-events:none;
+  transition:opacity .22s ease, transform .22s ease;
+}
+#float-ep-nav.visible{
+  opacity:1;transform:translateY(0);pointer-events:all;
+}
+.fep-btn{
+  background:transparent;border:none;
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:var(--tx2);cursor:pointer;
+  transition:background .12s,color .12s;flex-shrink:0;
+}
+.fep-btn:hover{background:var(--bg);color:var(--tx)}
+.fep-btn.disabled{opacity:.3;pointer-events:none}
+.fep-mid{
+  font-size:11px;font-weight:600;color:var(--tx2);
+  padding:0 6px;cursor:pointer;white-space:nowrap;
+  transition:color .12s;
+}
+.fep-mid:hover{color:var(--tx)}
+.fep-div{width:1px;height:18px;background:var(--bd);flex-shrink:0}
+
 /* Google Translate */
 .goog-te-banner-frame,.goog-te-menu-frame{display:none!important}
 body{top:0!important}
@@ -760,6 +796,15 @@ body{top:0!important}
   </div>
 </div>
 <div class="mob-backdrop" id="mob-backdrop" onclick="closeMobMenu()"></div>
+
+<!-- 플로팅 에피소드 네비 -->
+<div id="float-ep-nav">
+  <button class="fep-btn" id="fep-prev" onclick="floatEpNav('prev')">&#8249;</button>
+  <div class="fep-div"></div>
+  <span class="fep-mid" onclick="floatEpNav('list')">목록</span>
+  <div class="fep-div"></div>
+  <button class="fep-btn" id="fep-next" onclick="floatEpNav('next')">&#8250;</button>
+</div>
 
 <!-- MAIN CONTENT -->
 <main id="content"></main>
@@ -1793,6 +1838,9 @@ function render(){
         ct._mobScrollHandler = null;
       }
     }
+    // 플로팅 네비 숨기기
+    const fep = document.getElementById("float-ep-nav");
+    if(fep) fep.classList.remove("visible");
   }
   if(S.view==="home")          renderHome();
   else if(S.view==="calendar") renderCalendar();
@@ -2296,6 +2344,21 @@ function renderContentView(){
   const _textPath = epObj.textId || `./texts/${S.activeProj}-${S.activeVol}-${S.activeEp}.txt`;
   _loadPostypeContent(_textPath, proj.acc);
 
+  // ── 플로팅 네비 버튼 상태 세팅 ──
+  (function(){
+    const fep = document.getElementById("float-ep-nav");
+    if(!fep) return;
+    const prevBtn = document.getElementById("fep-prev");
+    const nextBtn = document.getElementById("fep-next");
+    if(prevBtn) prevBtn.classList.toggle("disabled", !prevEp);
+    if(nextBtn) nextBtn.classList.toggle("disabled", !nextEp);
+    // 읽기뷰 진입 시 일단 숨김 — 스크롤 내리다 올리면 표시됨
+    fep.classList.remove("visible");
+    // prevEp/nextEp 를 플로팅 버튼이 접근할 수 있도록 저장
+    fep._prevEpId = prevEp ? prevEp.id : null;
+    fep._nextEpId = nextEp ? nextEp.id : null;
+  })();
+
   // ── 모바일 전용: 스크롤 시 상단 자동 숨김/표시 ──
   (function(){
     const contentEl = document.getElementById("content");
@@ -2313,18 +2376,21 @@ function renderContentView(){
       hidden = doHide;
       const bar = document.getElementById("content-topbar");
       const sp  = document.getElementById("content-topbar-spacer");
+      const fep = document.getElementById("float-ep-nav");
       if(doHide){
         topbarEl.style.transform = "translateY(-48px)";
         if(bar) bar.style.transform = `translateY(-${ctbH+48}px)`;
         contentEl.style.marginTop = "0";
         contentEl.style.height = "100dvh";
         if(sp) sp.style.height = "0";
+        if(fep) fep.classList.remove("visible");
       } else {
         topbarEl.style.transform = "";
         if(bar) bar.style.transform = "";
         contentEl.style.marginTop = "48px";
         contentEl.style.height = "calc(100dvh - 48px)";
         if(sp) sp.style.height = ctbH+"px";
+        if(fep) fep.classList.add("visible");
       }
     }
 
@@ -2482,6 +2548,14 @@ function clickDollCat(catId){S.activeProj="biz-oc-doll";S.activeDollCat=catId;S.
 function goDollChar(){S.view="charlist";pushHash();render();}
 function backToEps(){S.activeEp=null;S.view="episodes";pushHash();render();}
 function backToIntro(){S.view="intro";pushHash();render();}
+
+function floatEpNav(dir){
+  const fep = document.getElementById("float-ep-nav");
+  if(dir==="list"){ backToEps(); return; }
+  if(!fep) return;
+  const id = dir==="prev" ? fep._prevEpId : fep._nextEpId;
+  if(id != null) clickEp(id);
+}
 function selectDay(d){S.selDay=S.selDay===d?null:d;renderCalendar();}
 function prevMonth(){if(S.calM===0){S.calM=11;S.calY--;}else S.calM--;S.selDay=null;renderCalendar();}
 function nextMonth(){if(S.calM===11){S.calM=0;S.calY++;}else S.calM++;S.selDay=null;renderCalendar();}
