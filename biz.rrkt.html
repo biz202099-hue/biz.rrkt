@@ -1626,7 +1626,7 @@ function renderHome(){
         const stCls=stClass(w.status);
         const navCall = w.projId==="biz-oc-doll"
           ? `goRecentWork('${w.projId}',null,${w.epId},'${w.dollCatId||""}')`
-          : `goRecentWork('${w.projId}',${w.volId},${w.epId},null)`;
+          : `goRecentWork('${w.projId}','${w.volId}',${w.epId},null)`;
         function relTime(dateStr){
           if(!dateStr) return "";
           const now=new Date(), d=new Date(dateStr);
@@ -1766,7 +1766,7 @@ function renderCalendar(){
         const isCurMo=yr===String(_tn.getFullYear())&&mo===_tn.getMonth();
         const navCall=w=>w.projId==="biz-oc-doll"
           ?`goRecentWork('${w.projId}',null,${w.epId},'${w.dollCatId||""}')`
-          :`goRecentWork('${w.projId}',${w.volId},${w.epId},null)`;
+          :`goRecentWork('${w.projId}','${w.volId}',${w.epId},null)`;
         const chips = moEntries.length
           ? moEntries.map(w=>`
               <span class="cal-tl-entry" style="background:color-mix(in srgb,${w.acc} 10%,#f8f8f8);border-color:color-mix(in srgb,${w.acc} 20%,#e0e0e0)" onclick="${navCall(w)}" title="${w.date} · ${w.proj}">
