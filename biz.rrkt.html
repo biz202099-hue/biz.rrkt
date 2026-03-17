@@ -881,7 +881,7 @@ function buildWorkLog(){
     (VOLUMES[pid]||[]).forEach(v=>v.episodes.forEach(e=>{
       if(!e.date)return;
       if(!WORK_LOG[e.date])WORK_LOG[e.date]=[];
-      WORK_LOG[e.date].push({proj:proj.label,title:e.title,status:e.status,acc:proj.acc,projId:pid,volId:v.id,epId:e.id});
+      WORK_LOG[e.date].push({proj:proj.label,volSub:v.sub||v.label,title:e.title,status:e.status,acc:proj.acc,projId:pid,volId:v.id,epId:e.id});
     }));
   });
   const dollProj = PROJECTS.find(p=>p.id==="biz-oc-doll");
@@ -1492,7 +1492,7 @@ function renderHome(){
         const isDone=stCls==='done', isWip=stCls==='wip';
         return `<div class="home-r-item${isDone?' is-done':isWip?' is-wip':''}" style="border-left-color:${isWip?'#ddd':w.acc}" ${isDone?`onclick="${navCall}"`:''}  title="${w.title} 바로가기">
           <div class="home-r-top">
-            <span class="home-r-proj" style="color:${w.acc}">${w.proj}</span>
+            <span class="home-r-proj" style="color:${w.acc}">${w.proj}${w.volSub?` <span style="font-weight:400;opacity:.7">· ${w.volSub}</span>`:''}</span>
             <span class="home-r-date">${w.date}${rel?` <span class="home-r-reltime">· ${rel}</span>`:''}</span>
           </div>
           <div class="home-r-title-row">
