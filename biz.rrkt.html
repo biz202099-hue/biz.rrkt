@@ -557,7 +557,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 
 /* ── MOBILE ── */
 .mob-menu{
-  display:none;
+  display:flex;
   position:fixed;top:48px;left:0;bottom:0;
   width:130px;
   background:var(--sb);
@@ -567,8 +567,10 @@ body.nav-pinned #nav-backdrop{display:none!important}
   overflow:hidden;
   transform:translateX(-105%);
   transition:transform .24s cubic-bezier(.4,0,.2,1), width .22s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+  will-change:transform;
 }
-.mob-menu.open{display:flex;transform:translateX(0)}
+.mob-menu.open{transform:translateX(0);pointer-events:all;}
 /* 두 패널을 가로로 배치 */
 .mob-panel-wrap{
   display:flex;
@@ -2796,6 +2798,127 @@ function rebuildWorkLog(){
   Object.keys(WORK_LOG).forEach(k=>delete WORK_LOG[k]);
   buildWorkLog();
 }
+
+/* ── 모바일 스와이프 드로어 제스처 ── */
+(function(){
+  const EDGE_ZONE  = 32;   // 화면 왼쪽 가장자리에서 스와이프 시작 인식 범위(px)
+  const OPEN_DIST  = 55;   // 열기 확정 최소 이동거리(px)
+  const CLOSE_DIST = 55;   // 닫기 확정 최소 이동거리(px)
+  const VEL_THRESH = 0.35; // 빠른 플릭 속도 임계값(px/ms)
+
+  let startX=0, startY=0, lastX=0, lastT=0;
+  let dragging=false, openDrag=false;
+
+  function getMob(){ return document.getElementById('mob-menu'); }
+  function getBd(){  return document.getElementById('mob-backdrop'); }
+  function isMenuOpen(){ return getMob().classList.contains('open'); }
+
+  function setRawTransform(px){
+    const mob = getMob();
+    const w   = mob.scrollWidth || 130;
+    const clamped = Math.min(0, Math.max(-w, px));
+    mob.style.transition = 'none';
+    mob.style.transform  = 'translateX('+clamped+'px)';
+  }
+
+  function snapOpen(){
+    const mob=getMob(), bd=getBd();
+    mob.style.transition=''; mob.style.transform='';
+    renderMobMenu();
+    mob.classList.remove('show-sub');
+    mob.classList.add('open');
+    if(bd) bd.classList.add('show');
+  }
+
+  function snapClose(){
+    const mob=getMob();
+    mob.style.transition=''; mob.style.transform='';
+    closeMobMenu();
+  }
+
+  function snapRestore(){
+    const mob=getMob();
+    mob.style.transition=''; mob.style.transform='';
+  }
+
+  document.addEventListener('touchstart', function(e){
+    if(window.innerWidth > 768) return;
+    var t = e.touches[0];
+    startX = lastX = t.clientX;
+    startY = t.clientY;
+    lastT  = Date.now();
+    dragging  = false;
+    openDrag  = false;
+
+    if(!isMenuOpen() && t.clientX <= EDGE_ZONE){
+      openDrag = true;
+      var mob=getMob();
+      mob.style.transition='none';
+      mob.style.transform='translateX(-105%)';
+      mob.style.pointerEvents='none';
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchmove', function(e){
+    if(window.innerWidth > 768) return;
+    var t   = e.touches[0];
+    var dx  = t.clientX - startX;
+    var dy  = t.clientY - startY;
+
+    if(!dragging){
+      if(Math.abs(dy) > Math.abs(dx) + 6) return;
+      if(openDrag  && dx >  6){ dragging=true; }
+      else if(isMenuOpen() && dx < -6){ dragging=true; }
+      else return;
+    }
+
+    lastX = t.clientX;
+    lastT = Date.now();
+
+    var mob = getMob();
+    var w   = mob.scrollWidth || 130;
+    if(!isMenuOpen()){
+      setRawTransform(-w + dx);
+      mob.style.pointerEvents='none';
+    } else {
+      setRawTransform(Math.min(0, dx));
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchend', function(e){
+    if(window.innerWidth > 768) return;
+    if(!dragging){ dragging=false; openDrag=false; return; }
+
+    var dx  = lastX - startX;
+    var dt  = Date.now() - lastT + 1;
+    var vel = Math.abs(dx) / dt;
+    var mob = getMob();
+    mob.style.pointerEvents='';
+
+    if(!isMenuOpen()){
+      if(dx >= OPEN_DIST || (dx > 10 && vel >= VEL_THRESH)){
+        snapOpen();
+      } else {
+        snapClose();
+      }
+    } else {
+      if(-dx >= CLOSE_DIST || (-dx > 10 && vel >= VEL_THRESH)){
+        snapClose();
+      } else {
+        snapRestore();
+      }
+    }
+    dragging=false; openDrag=false;
+  }, {passive:true});
+
+  document.addEventListener('touchcancel', function(){
+    if(!dragging) return;
+    var mob=getMob();
+    mob.style.pointerEvents='';
+    snapRestore();
+    dragging=false; openDrag=false;
+  }, {passive:true});
+})();
 
 </script>
 
