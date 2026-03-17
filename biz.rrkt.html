@@ -1776,7 +1776,6 @@ function closeMobMenu(){
 
 /* ── MAIN RENDER ── */
 function render(){
-  pushHash();
   renderNavItems();
   // 모바일 topbar 리셋 (content view 이탈 시)
   if(S.view !== "content"){
@@ -2385,8 +2384,8 @@ function closeEpPicker(e){if(e.target===document.getElementById("ep-picker-modal
 function closeEpPickerBtn(){document.getElementById("ep-picker-modal").classList.add("hidden");}
 
 /* ── HANDLERS ── */
-function goHome(){S.view="home";S.activeProj=null;S.activeVol=null;S.activeEp=null;S.activeDollCat=null;render();}
-function goCal(){S.view="calendar";S.activeProj=null;closeMobMenu();render();}
+function goHome(){S.view="home";S.activeProj=null;S.activeVol=null;S.activeEp=null;S.activeDollCat=null;pushHash();render();}
+function goCal(){S.view="calendar";S.activeProj=null;closeMobMenu();pushHash();render();}
 
 function goRecentWork(projId,volId,epId,dollCatId){
   S.activeProj=projId;S.activeEp=epId;
@@ -2396,7 +2395,7 @@ function goRecentWork(projId,volId,epId,dollCatId){
   } else {
     S.activeVol=volId;S.activeDollCat=null;
   }
-  S.view="content";render();
+  S.view="content";pushHash();render();
 }
 
 function clickProj(id){
@@ -2404,12 +2403,12 @@ function clickProj(id){
   S.view="intro";
   const dw={"blood-highschool":240,"x-project":240,"biz-oc-doll":240}[id]||240;
   document.documentElement.style.setProperty("--sm-w",dw+"px");
-  closeMobMenu();render();
+  closeMobMenu();pushHash();render();
 }
 
 function goIntro(pid){
   if(pid)S.activeProj=pid;
-  S.view="intro";render();
+  S.view="intro";pushHash();render();
 }
 
 /* ── VOL NAV helpers ── */
@@ -2466,10 +2465,10 @@ function buildVolNav(proj, vol){
 }
 window.openVolPicker = function(){ const m=document.getElementById('vol-picker-modal'); if(m) m.classList.remove('hidden'); };
 window.closeVolPicker = function(){ const m=document.getElementById('vol-picker-modal'); if(m) m.classList.add('hidden'); };
-window.goVol = function(projId, volId){ S.activeProj=projId; S.activeVol=volId; S.activeEp=null; S.view='episodes'; render(); const c=document.getElementById('content'); if(c) c.scrollTop=0; };
+window.goVol = function(projId, volId){ S.activeProj=projId; S.activeVol=volId; S.activeEp=null; S.view='episodes'; pushHash(); render(); const c=document.getElementById('content'); if(c) c.scrollTop=0; };
 
 function clickVol(pid,volId){
-  S.activeProj=pid;S.activeVol=volId;S.activeEp=null;S.view="episodes";render();
+  S.activeProj=pid;S.activeVol=volId;S.activeEp=null;S.view="episodes";pushHash();render();
   const c=document.getElementById("content");if(c)c.scrollTop=0;
 }
 function clickEp(epId){
@@ -2477,12 +2476,12 @@ function clickEp(epId){
   const vol=Array.isArray(vols)?vols.find(v=>v.id===S.activeVol):null;
   const ep=vol?.episodes?.find(e=>e.id===epId);
   if(ep&&ep.status!=="완료") return;
-  S.activeEp=epId;S.view="content";render();
+  S.activeEp=epId;S.view="content";pushHash();render();
 }
-function clickDollCat(catId){S.activeProj="biz-oc-doll";S.activeDollCat=catId;S.activeEp=null;S.view="episodes";render();}
-function goDollChar(){S.view="charlist";render();}
-function backToEps(){S.activeEp=null;S.view="episodes";render();}
-function backToIntro(){S.view="intro";render();}
+function clickDollCat(catId){S.activeProj="biz-oc-doll";S.activeDollCat=catId;S.activeEp=null;S.view="episodes";pushHash();render();}
+function goDollChar(){S.view="charlist";pushHash();render();}
+function backToEps(){S.activeEp=null;S.view="episodes";pushHash();render();}
+function backToIntro(){S.view="intro";pushHash();render();}
 function selectDay(d){S.selDay=S.selDay===d?null:d;renderCalendar();}
 function prevMonth(){if(S.calM===0){S.calM=11;S.calY--;}else S.calM--;S.selDay=null;renderCalendar();}
 function nextMonth(){if(S.calM===11){S.calM=0;S.calY++;}else S.calM++;S.selDay=null;renderCalendar();}
@@ -2725,7 +2724,7 @@ window.renderCharDetail = function(){
 /* ─── CHAR HANDLERS ─── */
 window.setCharFilter = function(f){ S.charFilter=f; S.view="charlist"; renderCharList(); };
 window.setCharSearch = function(v){ S.charSearch=v; renderCharList(); };
-window.openChar = function(id){ S.activeChar=id; S.view="chardetail"; render(); };
+window.openChar = function(id){ S.activeChar=id; S.view="chardetail"; pushHash(); render(); };
 window.closeChar = function(){ S.activeChar=null; S.view="charlist"; renderCharList(); };
 
 
@@ -2849,15 +2848,13 @@ function pushHash(){
       _skipHashChange = true;
       location.hash = h;
     }
-  } catch(e){ /* iframe 등 제한 환경에서는 무시 */ }
+  } catch(e){}
 }
 
 window.addEventListener('hashchange', function(){
   if(_skipHashChange){ _skipHashChange=false; return; }
   applyHash(location.hash);
   closeMobMenu();
-  // render 내부에서 pushHash가 또 호출되지 않도록
-  _skipHashChange = true;
   render();
 });
 
