@@ -229,6 +229,16 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .hw-stat-l{font-size:11px;color:var(--tx2)}.hw-stat-n{font-size:13px;font-weight:700;color:var(--tx)}
 .home-twitter-btn{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#000;color:#fff;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;width:100%;justify-content:center}
 .home-twitter-btn:hover{background:#1a1a1a}
+/* ── AUTHOR STATUS WIDGET ── */
+.author-status{border-top:1px solid var(--bd);background:var(--sb)}
+.author-status-bar{display:flex;align-items:center;gap:8px;padding:9px 12px}
+.author-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:statusPulse 2.4s ease-in-out infinite}
+@keyframes statusPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.author-status-dot.active{background:#22c55e;box-shadow:0 0 0 2px #22c55e33}
+.author-status-dot.slow{background:#f59e0b;animation:none}
+.author-status-dot.away{background:#94a3b8;animation:none}
+.author-status-label{font-size:12px;font-weight:700;color:var(--tx)}
+.author-status-body{padding:0 12px 10px;font-size:11px;color:var(--tx2);line-height:1.55}
 /* ── EVAL WIDGET ── */
 .eval-widget{border-radius:8px;border:1px solid var(--bd);overflow:hidden;display:flex;align-items:center;gap:0}
 .eval-banner{padding:8px 12px;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
@@ -865,7 +875,62 @@ function buildWorkLog(){
 }
 buildWorkLog();
 
-/* ── WORK EVALUATION ── */
+/* ── AUTHOR STATUS WIDGET ── */
+function buildAuthorStatus(){
+  const now = new Date();
+  const allEntries = Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
+  const sortedDates = Object.keys(WORK_LOG).sort();
+  const lastWorkStr = sortedDates[sortedDates.length-1]||null;
+  const daysSince = lastWorkStr ? Math.floor((now-new Date(lastWorkStr))/86400000) : null;
+
+  // 이번 달 작업 수
+  const thisMonStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+  const thisMonCnt=allEntries.filter(e=>e.date.startsWith(thisMonStr)).length;
+
+  // 최근 7일 작업 수
+  const recentCnt=allEntries.filter(e=>{
+    if(!e.date)return false;
+    return Math.floor((now-new Date(e.date))/86400000)<=7;
+  }).length;
+
+  let dotCls, label, body;
+
+  if(allEntries.length===0||daysSince===null){
+    dotCls="away"; label="상태 미정";
+    body="아직 작업 기록이 없어요.";
+  } else if(daysSince===0){
+    dotCls="active"; label="마감 완료 ✍️";
+    body="오늘도 작업 중이에요. 새 업데이트를 기대해 주세요!";
+  } else if(daysSince<=7&&recentCnt>=2){
+    dotCls="active"; label="작업 중 🖊️";
+    body="활발하게 작업하고 있어요. 곧 새 내용을 올릴게요.";
+  } else if(daysSince<=7){
+    dotCls="active"; label="작업 중 🖊️";
+    body="조금 뜸하지만 꾸준히 쓰고 있어요.";
+  } else if(daysSince<=14){
+    dotCls="slow"; label="잠시 쉬는 중 🌿";
+    body="잠깐 숨 고르는 중이에요. 곧 돌아올게요.";
+  } else if(daysSince<=30){
+    dotCls="slow"; label="휴재 중 💤";
+    body="현재 업로드가 잠시 멈춰 있어요. 기다려 주셔서 감사해요.";
+  } else if(daysSince<=60){
+    dotCls="away"; label="바쁜 현생 중 🌀";
+    body="현생으로 인해 연재 중지 상태예요. 조금만 기다려 주세요!";
+  } else {
+    dotCls="away"; label="장기 휴재 중 🕰️";
+    body="오랫동안 자리를 비웠어요. 언젠가 꼭 돌아올게요.";
+  }
+
+  return`<div class="author-status">
+    <div class="author-status-bar">
+      <span class="author-status-dot ${dotCls}"></span>
+      <span class="author-status-label">${label}</span>
+    </div>
+    <div class="author-status-body">${body}</div>
+  </div>`;
+}
+
+
 function buildEvalWidget(mode, y, m){
   // mode: "month" | "year" | "timeline"
   const now = new Date();
@@ -1442,6 +1507,7 @@ function renderHome(){
               <span class="home-about-tag">웹소설</span>
             </div>
           </div>
+          ${buildAuthorStatus()}
         </div>
         <!-- ② Recent work panel (center / blue box) -->
         <div class="home-recent-panel">
