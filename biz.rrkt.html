@@ -776,7 +776,7 @@ const PROJECT_DEFAULT_WIDTHS = {
 
 const VOLUMES = {
   "blood-highschool": [
-    {id:1, label:"[웹소설]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#3a0000,#8b0000,#c0392b", type:"웹소설", tags:["판타지","학원"],
+    {id:"novel-1", num:1, label:"[웹소설]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#3a0000,#8b0000,#c0392b", type:"웹소설", tags:["판타지","학원"],
      coverId:null, // ← Drive 커버 이미지 파일 ID
      synopsis:"평범한 고등학생 쿠로. 류오 가문의 용의 피를 이어받은 쿠로는 전설의 용 라크니스로 각성한다. 세계 최강자라는 이유로 적들이 몰려들기 시작하는데… 전설과 얽힌 스쿨라이프 블러드하이스쿨.",
      episodes:[
@@ -796,7 +796,7 @@ const VOLUMES = {
       {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
       {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
-    {id:2, label:"[웹소설]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹소설", tags:["판타지","미스터리"],
+    {id:"novel-2", num:2, label:"[웹소설]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹소설", tags:["판타지","미스터리"],
      coverId:null,
      synopsis:"류오가의 당주가 된 쿠로. 가문이 감춰온 죄와 마주하고 천 년 전 라크니스의 절망이 되풀이되려 한다. 업보의 끝에서 쿠로는 멸망의 왕을 받아들이고 소중한 것을 지키기 위해 눈을 뜬다.",
      episodes:[
@@ -816,7 +816,7 @@ const VOLUMES = {
       {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
       {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
-    {id:3, label:"[웹소설]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹소설", tags:["판타지","액션"],
+    {id:"novel-3", num:3, label:"[웹소설]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹소설", tags:["판타지","액션"],
      coverId:null,
      synopsis:"이제 순진하지만은 않은 쿠로. -새로운 종족이 나타난다.",
      episodes:[
@@ -836,7 +836,7 @@ const VOLUMES = {
       {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
       {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
-    {id:4, label:"[웹툰]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#1a0000,#900000,#cc3020", type:"웹툰", tags:["웹툰","판타지"],
+    {id:"webtoon-1", num:1, label:"[웹툰]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#1a0000,#900000,#cc3020", type:"웹툰", tags:["웹툰","판타지"],
      coverId:null,
      synopsis:"웹소설 1부를 웹툰으로 각색한 버전.",
      episodes:[
@@ -853,7 +853,7 @@ const VOLUMES = {
       {id:11, title:"11화", date:null, status:"예정", textId:null},
       {id:12, title:"12화", date:null, status:"예정", textId:null},
     ]},
-    {id:5, label:"[웹툰]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹툰", tags:["웹툰","판타지"],
+    {id:"webtoon-2", num:2, label:"[웹툰]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹툰", tags:["웹툰","판타지"],
      coverId:null,
      synopsis:"웹소설 2부를 웹툰으로 각색한 버전.",
      episodes:[
@@ -870,7 +870,7 @@ const VOLUMES = {
       {id:11, title:"11화", date:null, status:"예정", textId:null},
       {id:12, title:"12화", date:null, status:"예정", textId:null},
     ]},
-    {id:6, label:"[웹툰]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹툰", tags:["웹툰","판타지"],
+    {id:"webtoon-3", num:3, label:"[웹툰]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹툰", tags:["웹툰","판타지"],
      coverId:null,
      synopsis:"웹소설 3부를 웹툰으로 각색한 버전.",
      episodes:[
@@ -1362,7 +1362,7 @@ function renderDefaultSub(proj){
         const plan=v.episodes.every(e=>e.status==="예정");
         const sel=S.activeVol===v.id&&S.activeProj===proj.id;
         const badge=wip?`<div class="vol-badge" style="background:${proj.acc};color:#fff">UP</div>`:plan?`<div class="vol-badge" style="background:#e0e0e0;color:#999">TBD</div>`:"";
-        return `<div class="vol-card" onclick="clickVol('${proj.id}',${v.id})" style="${sel?`outline:2px solid ${proj.acc};border-radius:8px`:""}">
+        return `<div class="vol-card" onclick="clickVol('${proj.id}','${v.id}')" style="${sel?`outline:2px solid ${proj.acc};border-radius:8px`:""}">
           <div class="vol-thumb" style="background:linear-gradient(${v.grad})">${badge}<div class="vol-type-chip">${v.type}</div>${driveImg(v.coverId)?`<img src="${driveImg(v.coverId)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" loading="lazy">`:""}${!v.coverId?`<div class="vol-num">${v.label}</div>`:""}</div>
           <div class="vol-title">${v.label}</div>
         </div>`;
@@ -1441,7 +1441,7 @@ function renderMobMenu(){
       vols.forEach(v=>{
         const isYt=p.subType==="youtube";
         const thumbStyle=isYt?"width:78px;height:44px;":"width:44px;height:58px;";
-        sub+=`<div class="mob-sub-card" onclick="clickVol('${p.id}',${v.id});closeMobMenu()">
+        sub+=`<div class="mob-sub-card" onclick="clickVol('${p.id}','${v.id}');closeMobMenu()">
           <div style="display:flex;align-items:center;gap:12px;padding:9px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px">
             <div style="${thumbStyle}border-radius:5px;flex-shrink:0;background:linear-gradient(${v.grad})"></div>
             <div style="font-size:12px;font-weight:600;color:var(--tx);line-height:1.4">${v.label}</div>
@@ -2410,32 +2410,27 @@ async function loadEpDataFromSheets(){
     }
 
     // 데이터 파싱 (1행 헤더 건너뜀)
-    const data = {};
+    // row[0]=프로젝트, row[1]=종류(웹소설/웹툰), row[2]=권수(num), row[3]=N화, row[4]=상태, row[5]=날짜
     rows.slice(1).forEach(row => {
       const projName = (row[0]||"").trim();
-      const volId    = (row[2]||"").toString().trim();
-      const epId     = (row[3]||"").toString().trim();
+      const typeName = (row[1]||"").trim();   // v.type 과 일치
+      const volNum   = parseInt((row[2]||"").trim()); // v.num 과 일치
+      const epId     = parseInt((row[3]||"").trim());
       const status   = (row[4]||"").trim();
       const date     = (row[5]||"").trim();
-      if(!projName || !volId || !epId) return;
+      if(!projName || isNaN(volNum) || isNaN(epId)) return;
       const pid = projMap[projName];
       if(!pid) return;
-      const vid = parseInt(volId);
-      const eid = parseInt(epId);
-      if(isNaN(vid) || isNaN(eid)) return;
-      const k = `${pid}_${vid}_${eid}`;
-      data[k] = { status: status || "예정", date: normalizeDate(date) };
-    });
-
-    // VOLUMES에 반영
-    Object.entries(VOLUMES).forEach(([pid, vols]) => {
+      const vols = VOLUMES[pid];
       if(!Array.isArray(vols)) return;
-      vols.forEach(v => {
-        v.episodes.forEach(e => {
-          const k = `${pid}_${v.id}_${e.id}`;
-          if(data[k]){ e.status = data[k].status; e.date = data[k].date; }
-        });
-      });
+      // type + num 으로 정확히 매칭 (id 숫자에 의존하지 않음)
+      const vol = vols.find(v => v.type === typeName && v.num === volNum);
+      if(!vol) return;
+      const ep = vol.episodes.find(e => e.id === epId);
+      if(!ep) return;
+      if(status) ep.status = status;
+      const d = normalizeDate(date);
+      if(d) ep.date = d;
     });
 
     return true;
