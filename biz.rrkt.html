@@ -612,7 +612,7 @@ body{top:0!important}
   <nav id="nav-panel" onmouseleave="onNavPanelLeave()">
     <div style="padding:14px 16px 10px;border-bottom:1px solid var(--bd)">
       <div style="font-size:9px;font-weight:500;letter-spacing:2px;color:var(--tx3);text-transform:uppercase;margin-bottom:5px">Archive</div>
-      <div style="font-size:16px;font-weight:700;color:#111;letter-spacing:-.04em;cursor:pointer" onclick="goHome();closeNav()">biz.rrkt</div>
+      <div style="font-size:16px;font-weight:700;color:#111;letter-spacing:-.04em;cursor:pointer" onclick="goHome()">biz.rrkt</div>
     </div>
     <div id="nav-items-wrap" style="padding:8px 0"></div>
   </nav>
@@ -1184,7 +1184,7 @@ function setPinned(v){
 
 function renderNavItems(){
   document.getElementById("nav-items-wrap").innerHTML=`
-    <button class="nav-cal-item ${S.view==="calendar"&&!S.activeProj?"active":""}" onclick="goCal();closeNav()">
+    <button class="nav-cal-item ${S.view==="calendar"&&!S.activeProj?"active":""}" onclick="goCal()">
       <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/><path d="M4 1v2M10 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
       작업 캘린더
     </button>
@@ -1192,8 +1192,7 @@ function renderNavItems(){
     ${PROJECTS.map(p=>`
       <button class="nav-proj-item ${S.activeProj===p.id?"active":""}"
         style="--acc:${p.acc}"
-        onmouseenter="${p.id!=='x-project'?`showSubPanel('${p.id}')`:''}" 
-        onclick="clickProj('${p.id}')">
+        onclick="clickProj('${p.id}');${p.id!=='x-project'?`showSubPanel('${p.id}')`:'hideSubPanel()'}">
         <div class="nav-proj-dot" style="background:${p.acc}"></div>
         ${p.label}
       </button>
