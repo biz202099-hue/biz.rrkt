@@ -704,7 +704,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
   position:fixed;
   bottom:20px;right:16px;
   z-index:200;
-  display:flex;align-items:center;gap:6px;
+  display:none;
+  align-items:center;gap:6px;
   background:var(--sb);
   border:1px solid var(--bd);
   border-radius:30px;
@@ -714,6 +715,9 @@ body.nav-pinned #nav-backdrop{display:none!important}
   transform:translateY(12px);
   pointer-events:none;
   transition:opacity .22s ease, transform .22s ease;
+}
+#float-ep-nav.active{
+  display:flex;
 }
 #float-ep-nav.visible{
   opacity:1;transform:translateY(0);pointer-events:all;
@@ -1838,9 +1842,9 @@ function render(){
         ct._mobScrollHandler = null;
       }
     }
-    // 플로팅 네비 숨기기
+    // 플로팅 네비 완전히 숨기기 (display:none)
     const fep = document.getElementById("float-ep-nav");
-    if(fep) fep.classList.remove("visible");
+    if(fep){ fep.classList.remove("visible"); fep.classList.remove("active"); }
   }
   if(S.view==="home")          renderHome();
   else if(S.view==="calendar") renderCalendar();
@@ -2352,9 +2356,9 @@ function renderContentView(){
     const nextBtn = document.getElementById("fep-next");
     if(prevBtn) prevBtn.classList.toggle("disabled", !prevEp);
     if(nextBtn) nextBtn.classList.toggle("disabled", !nextEp);
-    // 읽기뷰 진입 시 일단 숨김 — 스크롤 내리다 올리면 표시됨
+    // 읽기뷰 진입 시 display:flex 활성화, visible은 아직 안 붙임
+    fep.classList.add("active");
     fep.classList.remove("visible");
-    // prevEp/nextEp 를 플로팅 버튼이 접근할 수 있도록 저장
     fep._prevEpId = prevEp ? prevEp.id : null;
     fep._nextEpId = nextEp ? nextEp.id : null;
   })();
