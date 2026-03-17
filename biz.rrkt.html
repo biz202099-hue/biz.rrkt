@@ -1247,7 +1247,18 @@ function renderDefaultSub(proj){
   const vols=VOLUMES[proj.id]||[];
   const allEps=vols.flatMap(v=>v.episodes);
   const cnt=s=>allEps.filter(e=>e.status===s).length;
-  const stClr={"완료":"#c0392b","작업중":"#F9CB4C","예정":"#999"};
+  const total=cnt("완료")+cnt("작업중")+cnt("예정");
+  const r=22, circ=2*Math.PI*r;
+  function arc(val,offset){
+    if(!total||!val) return '';
+    const len=(val/total)*circ;
+    return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
+  }
+  const doneLen=(cnt("완료")/Math.max(total,1))*circ;
+  const wipLen=(cnt("작업중")/Math.max(total,1))*circ;
+  const doneOffset=0;
+  const wipOffset=doneLen;
+  const pct=total?Math.round(cnt("완료")/total*100):0;
   const hasNovel=vols.some(v=>v.type==="웹소설");
   const hasWebtoon=vols.some(v=>v.type==="웹툰");
   const tabs=["ALL",...(hasNovel?["웹소설"]:[]),(hasWebtoon?["웹툰"]:[])].flat();
@@ -1255,8 +1266,27 @@ function renderDefaultSub(proj){
   document.getElementById("sm-inner").innerHTML=`
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
-    <div class="sm-stats">
-      ${["완료","작업중","예정"].map(s=>`<div class="sm-stat"><div class="sm-stat-n" style="color:${stClr[s]}">${cnt(s)}</div><div class="sm-stat-l">${s}</div></div>`).join("")}
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
+      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
+        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
+        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+        <circle cx="27" cy="27" r="22" fill="none" stroke="#c0392b" stroke-width="5" ${arc(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">완료</span>
+          <span style="font-size:14px;font-weight:700;color:#c0392b">${cnt("완료")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">작업중</span>
+          <span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">예정</span>
+          <span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span>
+        </div>
+      </div>
     </div>
     <div class="sm-tabs">
       ${tabs.map(t=>`<button class="sm-tab ${S.subTab===t?"active":""}" style="--tacc:${proj.acc}" onclick="setSubTabFn('${t}')">${t}</button>`).join("")}
