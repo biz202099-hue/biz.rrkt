@@ -515,8 +515,22 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .char-stat-v{font-size:15px;font-weight:700;color:var(--tx)}
 
 /* ── MOBILE ── */
-.mob-menu{display:none;position:fixed;top:48px;left:0;right:0;background:var(--sb);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px #0000001a;z-index:300;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);height:calc(100dvh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch}
-.mob-menu.open{display:block}
+.mob-menu{
+  display:none;
+  position:fixed;top:48px;left:0;bottom:0;
+  width:280px;
+  background:var(--sb);
+  border-right:1px solid var(--bd);
+  box-shadow:4px 0 24px #0000001a;
+  z-index:300;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateX(-290px);
+  transition:transform .24s cubic-bezier(.4,0,.2,1);
+}
+.mob-menu.open{display:block;transform:translateX(0)}
+.mob-backdrop{display:none;position:fixed;inset:0;top:48px;z-index:299;background:#0000003a}
+.mob-backdrop.show{display:block}
 .mob-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 20px;background:transparent;border:none;border-bottom:1px solid var(--bd);color:var(--tx2);font-size:14px;font-weight:500;text-align:left;cursor:pointer}
 .mob-nav-item:hover,.mob-nav-item.active{color:var(--tx);background:var(--bg)}
 .mob-nav-item .mob-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:10px}
@@ -627,6 +641,7 @@ body{top:0!important}
 
 <!-- MOBILE MENU -->
 <div class="mob-menu" id="mob-menu"></div>
+<div class="mob-backdrop" id="mob-backdrop" onclick="closeMobMenu()"></div>
 
 <!-- MAIN CONTENT -->
 <main id="content"></main>
@@ -1350,10 +1365,16 @@ function renderMobMenu(){
 function mobToggleSub(id){document.getElementById(id)?.classList.toggle("open");}
 function toggleMobile(){
   const mob=document.getElementById("mob-menu");
+  const bd=document.getElementById("mob-backdrop");
   if(!mob.classList.contains("open")){renderMobMenu();}
   mob.classList.toggle("open");
+  bd&&bd.classList.toggle("show",mob.classList.contains("open"));
 }
-function closeMobMenu(){document.getElementById("mob-menu").classList.remove("open");}
+function closeMobMenu(){
+  document.getElementById("mob-menu").classList.remove("open");
+  const bd=document.getElementById("mob-backdrop");
+  if(bd)bd.classList.remove("show");
+}
 
 /* ── MAIN RENDER ── */
 function render(){
