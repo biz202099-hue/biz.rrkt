@@ -2795,9 +2795,10 @@ async function loadEpDataFromSheets(){
 }
 
 // ══════════════════════════════════════════════
-//  # HASH NAVIGATION (location.hash 방식 — iframe 호환)
+//  # HASH NAVIGATION — history.pushState 방식
+//  pushState는 이벤트를 발생시키지 않으므로
+//  메뉴 동작과 100% 충돌 없음
 // ══════════════════════════════════════════════
-let _skipHashChange = false;
 
 function stateToHash(){
   const v = S.view;
@@ -2841,19 +2842,16 @@ function applyHash(hash){
   S.view='home';S.activeProj=null;S.activeVol=null;S.activeEp=null;S.activeDollCat=null;S.activeChar=null;
 }
 
+// pushState는 이벤트를 발생시키지 않으므로 메뉴에 영향 없음
+// iframe(Claude 미리보기) 등 제한 환경에서는 try-catch로 무시
 function pushHash(){
   try {
-    const h = stateToHash();
-    if(location.hash !== h){
-      _skipHashChange = true;
-      location.hash = h;
-    }
+    history.pushState(null, '', stateToHash());
   } catch(e){}
 }
 
-window.addEventListener('hashchange', function(){
-  if(_skipHashChange){ _skipHashChange=false; return; }
-  // 사용자가 직접 뒤로가기/앞으로가기 누를 때만 여기 도달
+// 뒤로가기/앞으로가기 버튼 — popstate만 감지 (hashchange 아님)
+window.addEventListener('popstate', function(){
   applyHash(location.hash);
   closeMobMenu();
   render();
@@ -2864,7 +2862,6 @@ if(location.hash && location.hash.length > 1){
   try { applyHash(location.hash); } catch(e){}
 }
 render();
-// Sheets 데이터 로드: render()만 호출하고 pushHash는 하지 않음 (메뉴 닫힘 방지)
 loadEpDataFromSheets().then(ok=>{
   if(ok){ rebuildWorkLog(); render(); }
 });
