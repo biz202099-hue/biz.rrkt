@@ -447,6 +447,32 @@ body.nav-pinned #nav-backdrop{display:none!important}
 /* ── EP NAV (prev/next + picker) ── */
 .ep-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px clamp(12px,3vw,24px);max-width:700px;margin:0 auto;width:100%;min-width:0}
 .ep-nav-outer{border-top:1px solid var(--bd);background:var(--sb);padding-bottom:32px}
+/* ── VOL NAV BAR ── */
+.vol-nav-outer{border-top:1px solid var(--bd);background:var(--sb);padding:14px 0 28px}
+.vol-nav-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;max-width:700px;width:calc(100% - 40px);margin:0 auto}
+.vol-nav-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:transparent;border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-size:12px;font-weight:500;transition:all .12s;cursor:pointer;font-family:var(--fn);white-space:nowrap;overflow:hidden;max-width:220px}
+.vol-nav-btn:hover:not(.disabled){background:var(--bg);border-color:var(--bd2);color:var(--tx)}
+.vol-nav-btn.disabled{opacity:.3;cursor:default;pointer-events:none}
+.vol-nav-btn.prev{justify-self:start}
+.vol-nav-btn.next{justify-self:end}
+.vol-nav-btn-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vol-list-btn{justify-self:center;display:flex;align-items:center;gap:5px;padding:9px 18px;background:var(--sb);border:1px solid var(--bd2);border-radius:8px;font-size:11px;font-weight:600;color:var(--tx2);transition:all .12s;cursor:pointer;font-family:var(--fn)}
+.vol-list-btn:hover{background:var(--bg);color:var(--tx)}
+/* Vol picker modal */
+.vol-picker-modal{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;background:#00000050}
+.vol-picker-modal.hidden{display:none}
+.vol-picker-inner{background:var(--sb);border-radius:14px;box-shadow:0 8px 40px #0000002a;width:min(400px,90vw);max-height:60vh;display:flex;flex-direction:column;overflow:hidden}
+.vol-picker-hd{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.vol-picker-title{font-size:13px;font-weight:700}
+.vol-picker-close{background:transparent;border:none;color:var(--tx3);font-size:18px;padding:0 4px;line-height:1;cursor:pointer;transition:color .12s}
+.vol-picker-close:hover{color:var(--tx)}
+.vol-picker-list{overflow-y:auto;flex:1}
+.vol-picker-item{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.vol-picker-item:last-child{border-bottom:none}
+.vol-picker-item:hover{background:var(--bg)}
+.vol-picker-item.current{font-weight:700;background:color-mix(in srgb,var(--vpick-acc,#888) 8%,transparent)}
+.vol-picker-type{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;background:var(--bg);border:1px solid var(--bd);color:var(--tx3);flex-shrink:0}
+.vol-picker-label{font-size:13px;color:var(--tx);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ep-nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:transparent;border:1px solid var(--bd);border-radius:7px;color:var(--tx2);font-size:12px;font-weight:500;transition:all .12s;min-width:0;max-width:260px}
 .ep-nav-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
 .ep-nav-btn.disabled{opacity:.3;cursor:default;pointer-events:none}
@@ -1913,7 +1939,8 @@ function renderEpList(){
           </div>
         </div>`;
       }).join("")}
-    </div>`;
+    </div>
+    ${buildVolNav(proj, vol)}`;
     return;
   }
 
@@ -1945,7 +1972,8 @@ function renderEpList(){
           <span class="ep-date-col">${e.date||"&mdash;"}</span>
         </div>`;
       }).join("")}
-    </div>`;
+    </div>
+    ${buildVolNav(proj, vol)}`;
 }
 
 /* ── YOUTUBE EP LIST ── */
@@ -2165,6 +2193,61 @@ function goIntro(pid){
   if(pid)S.activeProj=pid;
   S.view="intro";render();
 }
+
+/* ── VOL NAV helpers ── */
+function buildVolNav(proj, vol){
+  // 같은 type 끼리만 (웹소설↔웹소설, 웹툰↔웹툰 등)
+  const allVols = VOLUMES[proj.id] || [];
+  const sameType = allVols.filter(v => v.type === vol.type);
+  const idx = sameType.findIndex(v => v.id === vol.id);
+  const prev = sameType[idx - 1] || null;
+  const next = sameType[idx + 1] || null;
+  const hasPrev = !!prev, hasNext = !!next;
+
+  // 목록 아이템
+  const items = sameType.map(v => {
+    const isCur = v.id === vol.id;
+    return `<div class="vol-picker-item${isCur?' current':''}" style="--vpick-acc:${proj.acc}"
+      onclick="goVol('${proj.id}','${v.id}');closeVolPicker()">
+      <span class="vol-picker-label">${v.label||v.sub}</span>
+      <span class="vol-picker-type">${v.type}</span>
+    </div>`;
+  }).join('');
+
+  const modal = `<div id="vol-picker-modal" class="vol-picker-modal hidden" onclick="if(event.target===this)closeVolPicker()">
+    <div class="vol-picker-inner">
+      <div class="vol-picker-hd">
+        <span class="vol-picker-title">${vol.type} 목록</span>
+        <button class="vol-picker-close" onclick="closeVolPicker()">&#10005;</button>
+      </div>
+      <div class="vol-picker-list">${items}</div>
+    </div>
+  </div>`;
+
+  const bar = `<div class="vol-nav-outer">
+    ${modal}
+    <div class="vol-nav-bar">
+      <button class="vol-nav-btn prev${hasPrev?'':' disabled'}"
+        onclick="${hasPrev?`goVol('${proj.id}','${prev.id}')`:''}" >
+        <span>&#8592;</span>
+        <span class="vol-nav-btn-title">${hasPrev ? (prev.sub||prev.label) : '이전권 없음'}</span>
+      </button>
+      <button class="vol-list-btn" onclick="openVolPicker()">
+        목록 <span style="font-size:10px;opacity:.7">${idx+1} / ${sameType.length}</span> &#9660;
+      </button>
+      <button class="vol-nav-btn next${hasNext?'':' disabled'}" style="justify-self:end"
+        onclick="${hasNext?`goVol('${proj.id}','${next.id}')`:''}" >
+        <span class="vol-nav-btn-title">${hasNext ? (next.sub||next.label) : '다음권 없음'}</span>
+        <span>&#8594;</span>
+      </button>
+    </div>
+  </div>`;
+
+  return bar;
+}
+window.openVolPicker = function(){ const m=document.getElementById('vol-picker-modal'); if(m) m.classList.remove('hidden'); };
+window.closeVolPicker = function(){ const m=document.getElementById('vol-picker-modal'); if(m) m.classList.add('hidden'); };
+window.goVol = function(projId, volId){ S.activeProj=projId; S.activeVol=volId; S.activeEp=null; S.view='episodes'; render(); const c=document.getElementById('content'); if(c) c.scrollTop=0; };
 
 function clickVol(pid,volId){
   S.activeProj=pid;S.activeVol=volId;S.activeEp=null;S.view="episodes";render();
