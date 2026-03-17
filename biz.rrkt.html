@@ -2853,6 +2853,7 @@ function pushHash(){
 
 window.addEventListener('hashchange', function(){
   if(_skipHashChange){ _skipHashChange=false; return; }
+  // 사용자가 직접 뒤로가기/앞으로가기 누를 때만 여기 도달
   applyHash(location.hash);
   closeMobMenu();
   render();
@@ -2863,6 +2864,7 @@ if(location.hash && location.hash.length > 1){
   try { applyHash(location.hash); } catch(e){}
 }
 render();
+// Sheets 데이터 로드: render()만 호출하고 pushHash는 하지 않음 (메뉴 닫힘 방지)
 loadEpDataFromSheets().then(ok=>{
   if(ok){ rebuildWorkLog(); render(); }
 });
