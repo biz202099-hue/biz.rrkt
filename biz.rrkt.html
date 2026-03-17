@@ -49,23 +49,24 @@ button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
   position:fixed;top:48px;left:0;
   display:flex;z-index:200;
   pointer-events:none;
+  height:calc(100vh - 48px);
+  height:calc(100dvh - 48px);
 }
 #nav-panel{
   width:200px;
   background:var(--sb);
   border-right:1px solid var(--bd);
-  border-bottom:1px solid var(--bd);
   box-shadow:4px 4px 20px #0000001a;
-  border-radius:0 0 10px 0;
+  border-radius:0;
   display:flex;flex-direction:column;
   overflow-y:auto;
-  max-height:calc(100vh - 48px);
+  height:100%;
   pointer-events:all;
   transform:translateX(-210px);
   transition:transform .22s cubic-bezier(.4,0,.2,1);
 }
 #nav-layer.open #nav-panel{transform:translateX(0)}
-#sub-panel-wrap{display:flex;align-items:stretch;visibility:hidden;opacity:0;transition:opacity .16s ease}
+#sub-panel-wrap{display:flex;align-items:stretch;visibility:hidden;opacity:0;transition:opacity .16s ease;height:100%}
 #nav-layer.open #sub-panel-wrap{visibility:visible;opacity:1}
 
 /* Sub panel */
@@ -73,11 +74,10 @@ button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
   width:var(--sm-w);
   background:var(--sm);
   border-right:1px solid var(--bd);
-  border-bottom:1px solid var(--bd);
   box-shadow:4px 4px 20px #0000001a;
-  border-radius:0 0 10px 0;
+  border-radius:0;
   display:flex;flex-direction:column;
-  max-height:calc(100vh - 48px);
+  height:100%;
   pointer-events:all;
   opacity:0;transform:translateX(-8px);
   transition:opacity .16s ease, transform .16s ease;
@@ -237,8 +237,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .author-status-dot.active{background:#22c55e;box-shadow:0 0 0 2px #22c55e33}
 .author-status-dot.slow{background:#f59e0b;animation:none}
 .author-status-dot.away{background:#94a3b8;animation:none}
-.author-status-label{font-size:12px;font-weight:700;color:var(--tx)}
-.author-status-body{padding:0 12px 10px;font-size:11px;color:var(--tx2);line-height:1.55}
+.author-status-label{font-size:14px;font-weight:500;color:var(--tx)}
+.author-status-body{padding:0 12px 12px;font-size:13px;color:var(--tx2);line-height:1.55}
 /* ── EVAL WIDGET ── */
 .eval-widget{border-radius:8px;border:1px solid var(--bd);overflow:hidden;display:flex;align-items:center;gap:0}
 .eval-banner{padding:8px 12px;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
@@ -1501,10 +1501,10 @@ function renderHome(){
             <div class="home-about-name">biz.rrkt</div>
             <div class="home-about-bio">창작 / 글 / 그림<br>웹소설 · 웹툰 · OC</div>
             <div class="home-about-tags">
-              <span class="home-about-tag">다크판타지</span>
-              <span class="home-about-tag">학원물</span>
-              <span class="home-about-tag">OC</span>
               <span class="home-about-tag">웹소설</span>
+              <span class="home-about-tag">웹툰</span>
+              <span class="home-about-tag">애니</span>
+              <span class="home-about-tag">게임</span>
             </div>
           </div>
           ${buildAuthorStatus()}
