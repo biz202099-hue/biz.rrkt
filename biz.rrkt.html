@@ -2495,7 +2495,7 @@ function renderContentView(){
     </div>`;
 
   // 본문 로드 — textId 있으면 그대로, 없으면 상대경로 자동 생성
-  const _textPath = epObj.textId || `./texts/${S.activeProj}-${S.activeVol}-${S.activeEp}.txt`;
+  const _textPath = epObj.textId || `./texts/${S.activeProj}-${S.activeVol}-${String(S.activeEp).padStart(2,'0')}.txt`;
   _loadPostypeContent(_textPath, proj.acc);
 
   // ── 플로팅 네비 버튼 상태 세팅 ──
