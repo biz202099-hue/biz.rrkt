@@ -2011,7 +2011,7 @@ function renderHome(){
         const rel=relTime(w.date);
         return `<div class="home-r-item is-done" style="border-left-color:${w.acc}" onclick="${navCall}" title="${w.title} 바로가기">
           <div class="home-r-top">
-            <span class="home-r-proj" style="color:${w.acc}">${w.proj}${w.volSub?` <span style="font-weight:400;opacity:.7">· ${w.volSub}</span>`:''}</span>
+            <span class="home-r-proj" style="color:${w.acc}">${w.volType?`[${w.volType}]`:''}${w.proj}${w.volSub?` <span style="font-weight:400;opacity:.7">${w.volSub}</span>`:''}</span>
             <span class="home-r-date">${w.date}${rel?` <span class="home-r-reltime">· ${rel}</span>`:''}</span>
           </div>
           <div class="home-r-title-row">
@@ -2031,7 +2031,7 @@ function renderHome(){
       <div class="home-hl-card" onclick="${navCall}">
         <div class="home-hl-thumb" style="background:linear-gradient(${grad})">
           <span class="home-hl-badge">완료</span>
-          <span class="home-hl-vol">${latestDone.proj}${latestDone.volSub?` · ${latestDone.volSub}`:''}</span>
+          <span class="home-hl-vol">${latestDone.volType?`[${latestDone.volType}]`:''}${latestDone.proj}${latestDone.volSub?` · ${latestDone.volSub}`:''}</span>
         </div>
         <div class="home-hl-body">
           <span class="home-hl-title">${latestDone.title}</span>
@@ -2051,7 +2051,7 @@ function renderHome(){
       ${wipItems.map(w=>{
         const rel=relTime(w.date);
         return `<div class="home-wip-item">
-          <span class="home-wip-proj">${w.proj}${w.volSub?` ${w.volSub}`:''}</span>
+          <span class="home-wip-proj">${w.volType?`[${w.volType}]`:''}${w.proj}${w.volSub?` ${w.volSub}`:''}</span>
           <span class="home-wip-title">${w.title}</span>
           <span class="home-r-status wip">작업중</span>
         </div>`;
