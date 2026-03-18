@@ -302,12 +302,13 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .cal-tl-year-label{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.03em}
 .cal-tl-year-count{font-size:11px;font-weight:600;color:var(--tx3);background:var(--bg);border:1px solid var(--bd);padding:2px 10px;border-radius:12px}
 .cal-tl-year-line{flex:1;height:1px;background:var(--bd)}
-.cal-tl-months{display:flex;flex-direction:column;gap:6px}
-.cal-tl-month-row{display:flex;align-items:flex-start;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--bd);background:var(--sb)}
-.cal-tl-month-row.empty{opacity:.45}
-.cal-tl-month-label{width:56px;flex-shrink:0;padding:10px 0 10px 14px;font-size:12px;font-weight:700;color:var(--tx3);border-right:1px solid var(--bd);display:flex;align-items:center}
-.cal-tl-month-row.cur-mo .cal-tl-month-label{color:#3558c0;background:#eef2ff}
-.cal-tl-entries{flex:1;display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;min-height:38px;align-items:center}
+.cal-tl-months{display:flex;flex-direction:column;gap:0}
+.cal-tl-month-row{display:flex;align-items:flex-start;gap:0;border-bottom:1px solid var(--bd);background:transparent}
+.cal-tl-month-row:first-child{border-top:1px solid var(--bd)}
+.cal-tl-month-row.empty{opacity:.38}
+.cal-tl-month-label{width:46px;flex-shrink:0;padding:8px 0 8px 0;font-size:11px;font-weight:600;color:var(--tx3);display:flex;align-items:center}
+.cal-tl-month-row.cur-mo .cal-tl-month-label{color:#3558c0;font-weight:700}
+.cal-tl-entries{flex:1;display:flex;flex-wrap:wrap;gap:4px;padding:7px 10px;min-height:32px;align-items:center}
 .cal-tl-entry{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;transition:opacity .12s;border:1px solid transparent}
 .cal-tl-entry:hover{opacity:.75}
 .cal-tl-entry-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -1412,7 +1413,7 @@ const S={
   activeProj:null,activeVol:null,activeEp:null,
   activeDollCat:null,
   subOpen:false,subTab:"ALL",
-  calY:new Date().getFullYear(),calM:new Date().getMonth(),selDay:null,calOverview:false,calTimeline:false,
+  calY:new Date().getFullYear(),calM:new Date().getMonth(),selDay:null,calOverview:false,calTimeline:false,calSpan:1,
   homeMiniM:new Date().getMonth(),homeMiniY:new Date().getFullYear(),
   charFilter:"ALL",charSearch:"",activeChar:null,
   navPinned:false,
@@ -2018,7 +2019,7 @@ function renderHome(){
 
 /* ── CALENDAR ── */
 function renderCalendar(){
-  const{calY:y,calM:m,calOverview:ov,calTimeline:tl}=S;
+  const{calY:y,calM:m,calOverview:ov,calTimeline:tl,calSpan:span}=S;
   const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate();
   const monthStr=new Date(y,m,1).toLocaleDateString("ko-KR",{year:"numeric",month:"long"});
   const DNAMES=["일","월","화","수","목","금","토"],DCLS=["sun","","","","","","sat"];
@@ -2029,6 +2030,9 @@ function renderCalendar(){
   if(!allYears.includes(curY)) allYears.push(curY);
   allYears.sort((a,b)=>b-a);
   const yearTabs = allYears.map(yr=>`<button class="cal-year-tab${yr===y&&!ov&&!tl?" active":""}" onclick="goYear(${yr})">${yr}년</button>`).join("");
+
+  // N년씩 보기 버튼
+  const spanBtns = [1,2,3].map(n=>`<button class="cal-year-overview-btn${(ov&&!tl&&span===n)?" active":""}" onclick="setCalSpan(${n})">${n}년씩 보기</button>`).join("");
 
   // 연간 요약 미니캘
   function buildMiniMonth(yr,mo){
@@ -2049,23 +2053,70 @@ function renderCalendar(){
       <div class="cal-mm-grid">${DNAMES.map((n,i)=>`<div class="cal-mm-dn${i===0?" s":i===6?" sa":""}">${n}</div>`).join("")}${cells}</div>
     </div>`;
   }
-  const overviewHtml=`<div class="cal-year-grid">${Array.from({length:12},(_,mo)=>buildMiniMonth(y,mo)).join("")}</div>`;
+
+  // 멀티 연도 그리드 (span 적용)
+  function buildMultiYearGrid(){
+    let html="";
+    for(let offset=0;offset<span;offset++){
+      const yr=y+offset;
+      html+=`<div style="margin-bottom:${span>1?28:0}px">
+        ${span>1?`<div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bd)">${yr}년</div>`:""}
+        <div class="cal-year-grid">${Array.from({length:12},(_,mo)=>buildMiniMonth(yr,mo)).join("")}</div>
+      </div>`;
+    }
+    return html;
+  }
+  const overviewHtml = buildMultiYearGrid();
 
   // ── 타임라인 뷰 ──
   function buildTimeline(){
     const _tn=new Date();
-    // 전체 entries → 연-월 버킷
     const allEntries=Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
-    // 연도 목록
-    const years=[...new Set(allEntries.map(e=>e.date.slice(0,4)))];
+    // 전체 연도 목록 구성
+    const allYrs=[...new Set(allEntries.map(e=>e.date.slice(0,4)))];
     const curYstr=String(_tn.getFullYear());
-    if(!years.includes(curYstr)) years.push(curYstr);
+    if(!allYrs.includes(curYstr)) allYrs.push(curYstr);
+    allYrs.sort((a,b)=>b.localeCompare(a));
+
+    // span 적용: calY 기준으로 span개 연도만 표시
+    const startY=S.calY, endY=S.calY+span-1;
+    const years=allYrs.filter(yr=>parseInt(yr)>=startY&&parseInt(yr)<=endY);
+    // 해당 범위 연도가 없어도 최소 startY는 표시
+    for(let i=startY;i<=endY;i++){
+      const s=String(i);
+      if(!years.includes(s)) years.push(s);
+    }
     years.sort((a,b)=>b.localeCompare(a));
 
     const stBg={완료:"#ffe4e4",작업중:"#fff9e0",예정:"#f0f0f0"};
     const stClr={완료:"#c0392b",작업중:"#d4a017",예정:"#aaa"};
 
-    return `<div class="cal-timeline">`+years.map(yr=>{
+    // 타임라인 헤더 (N년씩 보기 드롭다운 + 연도 네비)
+    const tlHeader=`
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:20px;gap:12px">
+        <div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="cal-nav-btn" onclick="prevTlYear()">&#8249;</button>
+          <span style="font-size:16px;font-weight:700;color:var(--tx);min-width:${span>1?'150px':'72px'};text-align:center">
+            ${span===1?`${startY}년`:`${startY}년 ~ ${endY}년`}
+          </span>
+          <button class="cal-nav-btn" onclick="nextTlYear()">&#8250;</button>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <div style="position:relative;display:inline-block" id="tl-span-dropdown-wrap">
+            <button onclick="toggleTlSpanDropdown()" style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--bd);border-radius:6px;background:var(--sb);color:var(--tx2);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--bd2)'" onmouseout="this.style.borderColor='var(--bd)'">
+              ${span}년씩 보기 <span style="font-size:9px;opacity:.6">▼</span>
+            </button>
+            <div id="tl-span-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--sb);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px #0000001a;z-index:300;overflow:hidden;min-width:110px">
+              ${[1,2,3].map(n=>`<button onclick="setTlSpan(${n})" style="display:block;width:100%;padding:9px 16px;border:none;background:${n===span?'var(--bg)':'transparent'};color:${n===span?'var(--tx)':'var(--tx2)'};font-size:12px;font-weight:${n===span?700:400};text-align:left;cursor:pointer" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='${n===span?'var(--bg)':'transparent'}'">
+                ${n}년씩 보기${n===span?' ✓':''}
+              </button>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    const body = years.map(yr=>{
       const yearEntries=allEntries.filter(e=>e.date.startsWith(yr));
       const yearCount=yearEntries.length;
       const months=Array.from({length:12},(_,mo)=>{
@@ -2097,7 +2148,9 @@ function renderCalendar(){
         </div>
         <div class="cal-tl-months">${months.join("")}</div>
       </div>`;
-    }).join("")+`</div>`;
+    }).join("");
+
+    return `<div class="cal-timeline">${tlHeader}${body}</div>`;
   }
 
   // 월간 뷰
@@ -2134,6 +2187,29 @@ function renderCalendar(){
           ${buildEvalWidget(tl?"timeline":ov?"year":"month", y, m)}
         </div>
       </div>
+      ${(ov&&!tl) ? `
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:16px;gap:12px">
+        <div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="cal-nav-btn" onclick="prevOverviewYear()">&#8249;</button>
+          <span style="font-size:16px;font-weight:700;color:var(--tx);min-width:${span>1?'150px':'72px'};text-align:center">
+            ${span===1?`${y}년`:`${y}년 ~ ${y+span-1}년`}
+          </span>
+          <button class="cal-nav-btn" onclick="nextOverviewYear()">&#8250;</button>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <div style="position:relative;display:inline-block" id="span-dropdown-wrap">
+            <button onclick="toggleSpanDropdown()" style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--bd);border-radius:6px;background:var(--sb);color:var(--tx2);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--bd2)'" onmouseout="this.style.borderColor='var(--bd)'">
+              ${span}년씩 보기 <span style="font-size:9px;opacity:.6">▼</span>
+            </button>
+            <div id="span-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--sb);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 16px #0000001a;z-index:300;overflow:hidden;min-width:110px">
+              ${[1,2,3].map(n=>`<button onclick="setCalSpan(${n})" style="display:block;width:100%;padding:9px 16px;border:none;background:${n===span?'var(--bg)':'transparent'};color:${n===span?'var(--tx)':'var(--tx2)'};font-size:12px;font-weight:${n===span?700:400};text-align:left;cursor:pointer;transition:background .1s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='${n===span?'var(--bg)':'transparent'}'">
+                ${n}년씩 보기${n===span?' ✓':''}
+              </button>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>` : ""}
       ${tl ? buildTimeline() : ov ? overviewHtml : `
       <div class="cal-layout">
         <div>
@@ -2469,7 +2545,25 @@ function closeEpPicker(e){if(e.target===document.getElementById("ep-picker-modal
 function closeEpPickerBtn(){document.getElementById("ep-picker-modal").classList.add("hidden");}
 
 /* ── HANDLERS ── */
-function goHome(){S.view="home";S.activeProj=null;S.activeVol=null;S.activeEp=null;S.activeDollCat=null;pushHash();render();}
+function goHome(){
+  S.view="home";S.activeProj=null;S.activeVol=null;S.activeEp=null;S.activeDollCat=null;
+  // 데스크탑 nav 닫기
+  const layer=document.getElementById("nav-layer");
+  if(layer){layer.classList.remove("open");}
+  const bd=document.getElementById("nav-backdrop");
+  if(bd){bd.classList.remove("show");}
+  const sp=document.getElementById("sub-panel");
+  if(sp){sp.classList.remove("visible");}
+  S.navPinned=false;
+  document.body.classList.remove("nav-pinned");
+  S.hoveredProj=null;
+  // 모바일 메뉴 닫기
+  closeMobMenu();
+  // 콘텐츠 스크롤 최상단으로
+  const ct=document.getElementById("content");
+  if(ct){ct.scrollTop=0;}
+  pushHash();render();
+}
 function goCal(){S.view="calendar";S.activeProj=null;closeMobMenu();pushHash();render();}
 
 function goRecentWork(projId,volId,epId,dollCatId){
@@ -2590,6 +2684,50 @@ function goYear(y){S.calY=y;S.calM=new Date().getMonth();S.selDay=null;S.calOver
 function goMonth(y,m){S.calY=y;S.calM=m;S.selDay=null;S.calOverview=false;S.calTimeline=false;renderCalendar();}
 function toggleCalOverview(){S.calOverview=true;S.calTimeline=false;S.selDay=null;renderCalendar();}
 function toggleTimeline(){S.calTimeline=true;S.calOverview=false;S.selDay=null;renderCalendar();}
+function prevOverviewYear(){S.calY-=S.calSpan;S.calOverview=true;S.calTimeline=false;S.selDay=null;renderCalendar();}
+function nextOverviewYear(){S.calY+=S.calSpan;S.calOverview=true;S.calTimeline=false;S.selDay=null;renderCalendar();}
+function setCalSpan(n){S.calSpan=n;S.calOverview=true;S.calTimeline=false;S.selDay=null;renderCalendar();}
+function prevTlYear(){S.calY-=S.calSpan;S.calTimeline=true;S.calOverview=false;S.selDay=null;renderCalendar();}
+function nextTlYear(){S.calY+=S.calSpan;S.calTimeline=true;S.calOverview=false;S.selDay=null;renderCalendar();}
+function setTlSpan(n){S.calSpan=n;S.calTimeline=true;S.calOverview=false;S.selDay=null;renderCalendar();}
+function toggleTlSpanDropdown(){
+  const d=document.getElementById("tl-span-dropdown");
+  if(!d)return;
+  const isOpen=d.style.display!=="none";
+  d.style.display=isOpen?"none":"block";
+  if(!isOpen){
+    setTimeout(()=>{
+      function outsideClick(e){
+        const wrap=document.getElementById("tl-span-dropdown-wrap");
+        if(wrap&&!wrap.contains(e.target)){
+          const dd=document.getElementById("tl-span-dropdown");
+          if(dd)dd.style.display="none";
+          document.removeEventListener("click",outsideClick);
+        }
+      }
+      document.addEventListener("click",outsideClick);
+    },0);
+  }
+}
+function toggleSpanDropdown(){
+  const d=document.getElementById("span-dropdown");
+  if(!d)return;
+  const isOpen=d.style.display!=="none";
+  d.style.display=isOpen?"none":"block";
+  if(!isOpen){
+    setTimeout(()=>{
+      function outsideClick(e){
+        const wrap=document.getElementById("span-dropdown-wrap");
+        if(wrap&&!wrap.contains(e.target)){
+          const dd=document.getElementById("span-dropdown");
+          if(dd)dd.style.display="none";
+          document.removeEventListener("click",outsideClick);
+        }
+      }
+      document.addEventListener("click",outsideClick);
+    },0);
+  }
+}
 function miniPrev(){if(S.homeMiniM===0){S.homeMiniM=11;S.homeMiniY--;}else S.homeMiniM--;renderHome();}
 function miniNext(){if(S.homeMiniM===11){S.homeMiniM=0;S.homeMiniY++;}else S.homeMiniM++;renderHome();}
 
