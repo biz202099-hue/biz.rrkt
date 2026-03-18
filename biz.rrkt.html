@@ -315,7 +315,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .cal-tl-month-row.empty{opacity:.38}
 .cal-tl-month-label{width:46px;flex-shrink:0;padding:8px 0 8px 0;font-size:11px;font-weight:600;color:var(--tx3);display:flex;align-items:center}
 .cal-tl-month-row.cur-mo .cal-tl-month-label{color:#3558c0;font-weight:700}
-.cal-tl-entries{flex:1;display:flex;flex-wrap:wrap;gap:4px;padding:7px 10px;min-height:32px;align-items:center}
+.cal-tl-entries{flex:1;display:flex;flex-wrap:nowrap;gap:4px;padding:7px 10px;min-height:32px;align-items:center;overflow:hidden}
 .cal-tl-entry{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;transition:opacity .12s;border:1px solid transparent}
 .cal-tl-entry:hover{opacity:.75}
 .cal-tl-entry-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -1127,7 +1127,7 @@ function buildWorkLog(){
     (VOLUMES[pid]||[]).forEach(v=>v.episodes.forEach(e=>{
       if(!e.date)return;
       if(!WORK_LOG[e.date])WORK_LOG[e.date]=[];
-      WORK_LOG[e.date].push({proj:proj.label,volSub:v.sub||v.label,title:e.title,status:e.status,acc:proj.acc,projId:pid,volId:v.id,epId:e.id});
+      WORK_LOG[e.date].push({proj:proj.label,volSub:v.sub||v.label,title:e.title,status:e.status,acc:proj.acc,projId:pid,volId:v.id,epId:e.id,volType:v.type||''});
     }));
   });
   const dollProj = PROJECTS.find(p=>p.id==="biz-oc-doll");
@@ -2146,13 +2146,32 @@ function renderCalendar(){
         const moEntries=yearEntries.filter(e=>e.date.startsWith(moStr))
           .sort((a,b)=>a.date.localeCompare(b.date));
         const isCurMo=yr===String(_tn.getFullYear())&&mo===_tn.getMonth();
-        const chips = moEntries.length
-          ? moEntries.map(w=>`
-              <span class="cal-tl-entry" style="background:transparent;border-color:transparent" onclick="${navCall(w)}" title="${w.date} · ${w.proj}">
-                <span class="cal-tl-entry-dot" style="background:${w.acc}"></span>
-                <span class="cal-tl-entry-title">${w.title}</span>
-                <span class="cal-tl-entry-st" style="background:${stBg[w.status]||'#f0f0f0'};color:${stClr[w.status]||'#aaa'}">${w.status}</span>
-              </span>`).join("")
+        // 볼륨별 그룹핑
+        const groups=[];
+        moEntries.forEach(w=>{
+          const key=w.projId+'||'+(w.volId||w.dollCatId||'');
+          const g=groups.find(g=>g.key===key);
+          if(g){g.entries.push(w);}
+          else{groups.push({key,proj:w.proj,volSub:w.volSub||'',volType:w.volType||'',acc:w.acc,status:w.status,projId:w.projId,volId:w.volId,epId:w.epId,dollCatId:w.dollCatId||'',entries:[w]});}
+        });
+        const chips = groups.length
+          ? groups.map(g=>{
+              const count=g.entries.length;
+              const nav=navCall(g.entries[0]);
+              const typeBadge=g.volType==='웹소설'
+                ?`<span style="font-size:9px;font-weight:600;padding:1px 4px;border-radius:3px;background:#e8eaf6;color:#283593;flex-shrink:0">웹소설</span>`
+                :g.volType==='웹툰'
+                ?`<span style="font-size:9px;font-weight:600;padding:1px 4px;border-radius:3px;background:#e3f2fd;color:#1565c0;flex-shrink:0">웹툰</span>`
+                :'';
+              const volLabel=g.volSub?` ${g.volSub}`:'';
+              return`<span class="cal-tl-entry" onclick="${nav}" title="${g.proj}${volLabel} · ${count}화">
+                <span class="cal-tl-entry-dot" style="background:${g.acc}"></span>
+                ${typeBadge}
+                <span class="cal-tl-entry-title">${g.proj}${volLabel}</span>
+                <span style="font-size:10px;color:var(--tx3);flex-shrink:0">×${count}화</span>
+                <span class="cal-tl-entry-st" style="background:${stBg[g.status]||'#f0f0f0'};color:${stClr[g.status]||'#aaa'}">${g.status}</span>
+              </span>`;
+            }).join("")
           : `<span class="cal-tl-empty-lbl">—</span>`;
         return`<div class="cal-tl-month-row${moEntries.length===0?" empty":""}${isCurMo?" cur-mo":""}">
           <div class="cal-tl-month-label">${mo+1}월</div>
