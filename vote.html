@@ -17,8 +17,11 @@
   --tx:#1a1a1a;--tx2:#5f5f5f;--tx3:#a0a0a0;
   --fn:'Inter','Noto Sans KR',sans-serif;
 }
-html{height:100%}
-body{height:100%;display:flex;flex-direction:column;background:var(--sm);color:var(--tx);font-family:var(--fn);font-size:14px;-webkit-font-smoothing:antialiased;overflow:hidden}
+html,body{
+  height:100%;overflow:hidden;
+  display:flex;flex-direction:column;
+  background:var(--sm);color:var(--tx);font-family:var(--fn);font-size:14px;-webkit-font-smoothing:antialiased;
+}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
 button{font-family:var(--fn);cursor:pointer}
 input{font-family:var(--fn)}
@@ -27,7 +30,7 @@ input{font-family:var(--fn)}
 #topbar{
   height:48px;background:var(--sb);border-bottom:1px solid var(--bd);
   display:flex;align-items:center;padding:0 16px;gap:12px;
-  flex-shrink:0;z-index:100;
+  flex-shrink:0;
 }
 .tb-back{
   background:transparent;border:1px solid var(--bd);border-radius:6px;
@@ -54,8 +57,8 @@ input{font-family:var(--fn)}
 
 /* ── TABS ── */
 #tabs{
+  flex-shrink:0;
   display:flex;border-bottom:1px solid var(--bd);background:var(--sb);padding:0 16px;
-  flex-shrink:0;z-index:90;
 }
 .tab{
   padding:10px 14px 9px;background:transparent;border:none;
@@ -67,8 +70,8 @@ input{font-family:var(--fn)}
 
 /* ── CONTENT ── */
 #content{
-  flex:1;overflow-y:auto;overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
+  flex:1;min-height:0;
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 
@@ -186,7 +189,7 @@ input{font-family:var(--fn)}
 /* ── LOADING ── */
 #loading-overlay{
   display:none;position:fixed;inset:0;z-index:200;
-  background:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.8);backdrop-filter:blur(2px);
   align-items:center;justify-content:center;flex-direction:column;gap:12px;
 }
 #loading-overlay.show{display:flex}
@@ -281,8 +284,7 @@ input{font-family:var(--fn)}
 // =====================================================
 //  설정: 아래 URL만 교체하면 됩니다
 // =====================================================
-var VOTE_URL = 'https://script.google.com/macros/s/AKfycbyQ9DiU6MuIZQGue3o12fEKd38HBTFVvSn1KVDpz7Nsqzu7KJDzQCBeRJGZ3vHRwZMg0Q/exec
-';
+var VOTE_URL = 'https://script.google.com/macros/s/AKfycbyQ9DiU6MuIZQGue3o12fEKd38HBTFVvSn1KVDpz7Nsqzu7KJDzQCBeRJGZ3vHRwZMg0Q/exec';
 // =====================================================
 
 // 캐릭터 데이터
