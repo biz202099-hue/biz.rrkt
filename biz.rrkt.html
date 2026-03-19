@@ -718,7 +718,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .mob2-cat-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:background .12s}
 .mob2-cat-item:hover{background:var(--bg)}
 @media(min-width:769px){.mob-menu,.mob-lang-row{display:none!important}}
-.postype-text{white-space:pre-wrap;word-break:keep-all;line-height:1.9;font-size:17px}
+.postype-text{white-space:normal;word-break:keep-all;line-height:1.9;font-size:17px}
 @media(max-width:768px){.topbar-right{display:none!important}}
 @media(max-width:768px){
   #nav-layer{display:none!important}
@@ -3054,7 +3054,7 @@ async function _loadPostypeContent(textId, acc){
   }
   try{
     const text = await fetchEpText(textId);
-    el.innerHTML = `<div class="postype-text">${text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>`;
+    el.innerHTML = `<div class="postype-text">${text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}</div>`;
   } catch(err){
     el.innerHTML = `<div class="postype-error"><strong>본문 파일을 찾을 수 없습니다</strong><br><small style="color:#a03030">${textId}</small><br><pre>${err.message}</pre></div>`;
   }
