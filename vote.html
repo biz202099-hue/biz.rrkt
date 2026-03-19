@@ -280,7 +280,8 @@ input{font-family:var(--fn)}
 // =====================================================
 //  설정: 아래 URL만 교체하면 됩니다
 // =====================================================
-var VOTE_URL = 'https://script.google.com/macros/s/AKfycbyQ9DiU6MuIZQGue3o12fEKd38HBTFVvSn1KVDpz7Nsqzu7KJDzQCBeRJGZ3vHRwZMg0Q/exec';
+var VOTE_URL = 'https://script.google.com/macros/s/AKfycbyQ9DiU6MuIZQGue3o12fEKd38HBTFVvSn1KVDpz7Nsqzu7KJDzQCBeRJGZ3vHRwZMg0Q/exec
+';
 // =====================================================
 
 // 캐릭터 데이터
@@ -350,15 +351,13 @@ function loadVoteData(cb) {
     .catch(function(){});
 }
 
-// ---- 투표 제출 ----
+// ---- 투표 제출 (GET 방식 - CORS 문제 우회) ----
 function submitVote() {
   if (hasDone || selected.length === 0) return;
   document.getElementById('loading-overlay').classList.add('show');
 
-  fetch(VOTE_URL, {
-    method: 'POST',
-    body: JSON.stringify({ votes: selected }),
-  })
+  var url = VOTE_URL + '?action=vote&ids=' + encodeURIComponent(JSON.stringify(selected));
+  fetch(url)
     .then(function(r){ return r.json(); })
     .then(function(json){
       document.getElementById('loading-overlay').classList.remove('show');
@@ -366,7 +365,6 @@ function submitVote() {
         hasDone = true;
         localStorage.setItem('ocidol_done', '1');
         localStorage.setItem('ocidol_sel',  JSON.stringify(selected));
-        // 로컬 즉시 반영
         selected.forEach(function(id){
           voteData[id] = (voteData[id] || 0) + 1;
         });
