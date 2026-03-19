@@ -836,12 +836,11 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .nav-cat-label{
   font-size:11px;font-weight:500;
   letter-spacing:.2px;color:var(--tx2);
-  flex:1;
 }
 .nav-cat-count{
   font-size:10px;color:var(--tx3);
-  flex-shrink:0;
   font-weight:400;letter-spacing:0;
+  flex:1;
 }
 .nav-cat-body{overflow:hidden;transition:max-height .22s cubic-bezier(.4,0,.2,1)}
 .nav-cat-body.collapsed{display:none}
@@ -865,8 +864,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
 }
 .mob-cat-header:hover{background:var(--bg)}
 .mob-cat-arrow{font-size:7px;color:var(--tx3);transition:transform .18s;flex-shrink:0}
-.mob-cat-label{font-size:11px;font-weight:500;letter-spacing:.2px;color:var(--tx2);flex:1}
-.mob-cat-count{font-size:10px;color:var(--tx3);font-weight:400}
+.mob-cat-label{font-size:11px;font-weight:500;letter-spacing:.2px;color:var(--tx2)}
+.mob-cat-count{font-size:10px;color:var(--tx3);font-weight:400;flex:1}
 .mob-cat-body{overflow:hidden}
 .mob-cat-body.collapsed{display:none}
 .mob-proj-btn-inner{padding-left:20px!important}
@@ -1599,7 +1598,13 @@ if(!isKo){const fv=parseInt(localStorage.getItem("biz_foreign")||"0")+1;localSto
 const foreignVisits=parseInt(localStorage.getItem("biz_foreign")||"0");
 
 setInterval(()=>{const el=document.getElementById("home-clock");if(el)el.textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});},1000);
-function setLang(lang){document.cookie=`googtrans=/ko/${lang};path=/`;location.reload();}
+function setLang(lang){
+  // googtrans 쿠키 — path=/ 로 전체 경로 적용
+  var domain = location.hostname === 'localhost' ? '' : ';domain=' + location.hostname;
+  document.cookie = 'googtrans=/ko/' + lang + ';path=/' + domain;
+  document.cookie = 'googtrans=/ko/' + lang + ';path=/;domain=.' + location.hostname;
+  location.reload();
+}
 
 /* ── NAV CATEGORY FOLD STATE ── */
 const NAV_CAT_STATE = { active: true, done: false, archive: false };
@@ -1681,7 +1686,7 @@ function renderNavItems(){
         <button class="nav-cat-header" onclick="toggleNavCat('${cat.key}')">
           <span class="nav-cat-arrow" style="transform:rotate(${isOpen?"0":"-90deg"})">▼</span>
           <span class="nav-cat-label">${cat.label}</span>
-          <span class="nav-cat-count">${projs.length}</span>
+          <span class="nav-cat-count">(${projs.length})</span>
         </button>
         <div class="nav-cat-body ${isOpen?"":"collapsed"}">
           ${projs.map(p=>{
@@ -1892,7 +1897,7 @@ function renderMobPanel1(){
     ">
       <span class="mob-cat-arrow" style="transform:rotate(${isOpen?"0":"-90deg"})">▼</span>
       <span class="mob-cat-label">${cat.label}</span>
-      <span class="mob-cat-count">${projs.length}</span>
+      <span class="mob-cat-count">(${projs.length})</span>
     </button>
     <div class="mob-cat-body ${isOpen?"":"collapsed"}">`;
     projs.forEach(p=>{
@@ -3782,5 +3787,16 @@ function rebuildWorkLog(){
 
 </script>
 
+<script>
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage:'ko',
+    includedLanguages:'en,ja,zh-CN,ko',
+    autoDisplay:false,
+    layout:google.translate.TranslateElement.InlineLayout.SIMPLE
+  },'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
