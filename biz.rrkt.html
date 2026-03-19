@@ -1848,6 +1848,7 @@ function renderDollSub(proj){
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
     <button class="sm-char-link" onclick="goDollChar()">캐릭터 일람 &#9654;</button>
+    <button class="sm-char-link" onclick="window.open('vote.html','_blank')" style="color:#0ea5e9;border-color:color-mix(in srgb,#0ea5e9 30%,var(--bd))">&#9733; 인기 투표</button>
     <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
       <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
         <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
@@ -1972,6 +1973,9 @@ function mobShowSub(projId){
   if(p.subType==="doll"){
     html+=`<button class="mob2-intro-link" style="margin-top:6px" onclick="goDollChar();closeMobMenu()">
       캐릭터 일람 <span>&#9654;</span>
+    </button>`;
+    html+=`<button class="mob2-intro-link" style="margin-top:6px;color:#0ea5e9;border-color:color-mix(in srgb,#0ea5e9 30%,#e2e2e2)" onclick="window.open('vote.html','_blank');closeMobMenu()">
+      &#9733; 인기 투표 <span>&#9654;</span>
     </button>`;
   }
   if(p.subType==="youtube"){
