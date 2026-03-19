@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>biz.rrkt</title>
+<title>biz.rrkt — v37</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='white' stroke='%23111' stroke-width='1.5'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='22' font-weight='700' fill='%23111'>B</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -99,7 +99,7 @@ button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
 }
 .nav-proj-item:hover{color:var(--tx);background:var(--bg)}
 .nav-proj-item.active{color:var(--acc,#111);border-left-color:var(--acc,#111);background:color-mix(in srgb,var(--acc,#888) 7%,transparent);font-weight:600}
-.nav-proj-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.nav-proj-dot{display:none}
 .nav-cal-item{display:flex;align-items:center;gap:7px;width:100%;padding:10px 16px;background:transparent;border:none;color:var(--tx2);font-size:12px;text-align:left;transition:all .12s}
 .nav-cal-item:hover{background:var(--bg);color:var(--tx)}
 .nav-cal-item.active{color:var(--tx);font-weight:500;background:var(--bg)}
@@ -817,6 +817,60 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .progress-char-label{font-size:12px;font-weight:700;color:var(--tx)}
 .progress-char-stat{font-size:10px;color:var(--tx3)}
 
+/* ── NAV FOLDER STRUCTURE ── */
+.nav-cat-header{
+  display:flex;align-items:center;gap:5px;
+  padding:8px 12px 5px 10px;
+  width:100%;text-align:left;
+  background:transparent;border:none;outline:none;
+  cursor:pointer;user-select:none;-webkit-user-select:none;
+  transition:background .1s;
+}
+.nav-cat-header:hover{background:var(--bg)}
+.nav-cat-arrow{
+  font-size:7px;color:var(--tx3);
+  transition:transform .18s cubic-bezier(.4,0,.2,1);
+  flex-shrink:0;line-height:1;
+  display:inline-block;
+}
+.nav-cat-label{
+  font-size:11px;font-weight:500;
+  letter-spacing:.2px;color:var(--tx2);
+  flex:1;
+}
+.nav-cat-count{
+  font-size:10px;color:var(--tx3);
+  flex-shrink:0;
+  font-weight:400;letter-spacing:0;
+}
+.nav-cat-body{overflow:hidden;transition:max-height .22s cubic-bezier(.4,0,.2,1)}
+.nav-cat-body.collapsed{display:none}
+/* 상태별 점 색상 */
+.nav-proj-dot.active-dot{background:#22c55e}
+.nav-proj-dot.done-dot{background:#94a3b8}
+.nav-proj-dot.archive-dot{background:#94a3b8}
+/* 프로젝트 아이템 들여쓰기 */
+.nav-proj-item-inner{padding-left:22px!important}
+/* 검색 없을 때 빈 카테고리 메시지 */
+.nav-cat-empty{padding:6px 22px 10px;font-size:11px;color:var(--tx3);font-style:italic}
+
+/* ── MOBILE NAV FOLDER ── */
+.mob-cat-header{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 14px;background:transparent;
+  border:none;border-bottom:1px solid var(--bd);
+  width:100%;text-align:left;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+  transition:background .1s;
+}
+.mob-cat-header:hover{background:var(--bg)}
+.mob-cat-arrow{font-size:7px;color:var(--tx3);transition:transform .18s;flex-shrink:0}
+.mob-cat-label{font-size:11px;font-weight:500;letter-spacing:.2px;color:var(--tx2);flex:1}
+.mob-cat-count{font-size:10px;color:var(--tx3);font-weight:400}
+.mob-cat-body{overflow:hidden}
+.mob-cat-body.collapsed{display:none}
+.mob-proj-btn-inner{padding-left:20px!important}
+
 /* Google Translate */
 .goog-te-banner-frame,.goog-te-menu-frame{display:none!important}
 body{top:0!important}
@@ -986,6 +1040,7 @@ const PROJECTS = [
     id:"blood-highschool",
     label:"블러드하이스쿨",
     acc:"#c0392b", acc2:"#c0392b",
+    status:"active",
     keepSub:true, landOnIntro:true,
     subType:"default",
     twitterUrl:"https://twitter.com/your_handle",
@@ -996,6 +1051,7 @@ const PROJECTS = [
     id:"biz-oc-doll",
     label:"biz-OC-doll",
     acc:"#0ea5e9", acc2:"#0284c7",
+    status:"active",
     keepSub:true, landOnIntro:true,
     subType:"doll",
     intro:"자캐 200개를 목표로 하는 창작 캐릭터(OC) 기반 프로젝트. .",
@@ -1005,11 +1061,44 @@ const PROJECTS = [
     id:"x-project",
     label:"X project",
     acc:"#111827", acc2:"#1e3a8a",
+    status:"active",
     keepSub:true, landOnIntro:true,
     subType:"youtube",
     youtubeUrl:"https://youtube.com/@your_channel",
     intro:"유투브 캐릭터.",
     tags:["음악","유튜브"]
+  },
+  /* ── 완료 프로젝트 샘플 (필요 시 수정) ── */
+  {
+    id:"sample-done-1",
+    label:"완료 프로젝트 A",
+    acc:"#64748b", acc2:"#475569",
+    status:"done",
+    keepSub:false, landOnIntro:true,
+    subType:"default",
+    intro:"완료된 프로젝트 예시입니다. 이 항목을 실제 완료된 프로젝트로 교체하세요.",
+    tags:["완료"]
+  },
+  {
+    id:"sample-done-2",
+    label:"완료 프로젝트 B",
+    acc:"#78716c", acc2:"#57534e",
+    status:"done",
+    keepSub:false, landOnIntro:true,
+    subType:"default",
+    intro:"완료된 프로젝트 예시입니다.",
+    tags:["완료"]
+  },
+  /* ── 보류 프로젝트 샘플 (필요 시 수정) ── */
+  {
+    id:"sample-archive-1",
+    label:"보류 프로젝트",
+    acc:"#94a3b8", acc2:"#64748b",
+    status:"archive",
+    keepSub:false, landOnIntro:true,
+    subType:"default",
+    intro:"보류된 프로젝트 예시입니다.",
+    tags:["보류"]
   },
 ];
 
@@ -1161,10 +1250,10 @@ const VOLUMES = {
   ],
   "biz-oc-doll": {
     categories: [
-      {id:"char",   label:"캐릭터스토리", color:"#0ea5e9", count:48},
-      {id:"main",   label:"메인스토리",   color:"#0284c7", count:12},
-      {id:"sub",    label:"서브스토리",   color:"#38bdf8", count:23},
-      {id:"collab", label:"콜라보스토리", color:"#7dd3fc", count:7},
+      {id:"char",   label:"캐릭터스토리", color:"#0ea5e9", count:24},
+      {id:"main",   label:"메인스토리",   color:"#0284c7", count:24},
+      {id:"sub",    label:"서브스토리",   color:"#38bdf8", count:24},
+      {id:"collab", label:"콜라보스토리", color:"#7dd3fc", count:24},
     ],
     episodes:{
       "char":[
@@ -1271,10 +1360,11 @@ function buildFocusWidget(){
   const allEntries = Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
   const thisMonEntries = allEntries.filter(e=>e.date.startsWith(thisMonStr));
 
-  // 프로젝트별 집계 (기록 없으면 0)
+  // 프로젝트별 집계 (기록 없으면 0) — active 프로젝트만
   const countMap = {};
   thisMonEntries.forEach(e=>{ countMap[e.projId] = (countMap[e.projId]||0) + 1; });
   const sorted = PROJECTS
+    .filter(p=>(p.status||"active")==="active")
     .map(p=>({...p, count: countMap[p.id]||0}))
     .sort((a,b)=>b.count-a.count);
   const maxCount = sorted[0].count || 1;
@@ -1511,6 +1601,14 @@ const foreignVisits=parseInt(localStorage.getItem("biz_foreign")||"0");
 setInterval(()=>{const el=document.getElementById("home-clock");if(el)el.textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});},1000);
 function setLang(lang){document.cookie=`googtrans=/ko/${lang};path=/`;location.reload();}
 
+/* ── NAV CATEGORY FOLD STATE ── */
+const NAV_CAT_STATE = { active: true, done: false, archive: false };
+
+function toggleNavCat(cat) {
+  NAV_CAT_STATE[cat] = !NAV_CAT_STATE[cat];
+  renderNavItems();
+}
+
 /* ── NAV STATE ── */
 let _navHideTimer=null;
 function toggleNav(){
@@ -1536,7 +1634,8 @@ function closeNav(){
 }
 function showSubPanel(projId){
   clearTimeout(_navHideTimer);
-  if(projId==='x-project') return;
+  const proj = getProj(projId);
+  if(!proj || proj.subType==='youtube' || !proj.keepSub) return;
   S.hoveredProj=projId;
   const sp=document.getElementById("sub-panel");
   renderSubPanelContent(projId);
@@ -1564,20 +1663,49 @@ function setPinned(v){
 }
 
 function renderNavItems(){
+  // 검색어 유지
+  const CAT_DEFS = [
+    { key:"active",  label:"진행중",  dotCls:"active-dot" },
+    { key:"archive", label:"보류",    dotCls:"archive-dot"},
+    { key:"done",    label:"완료",    dotCls:"done-dot"   },
+  ];
+
+  let catHtml = "";
+
+  CAT_DEFS.forEach(cat => {
+    const projs = PROJECTS.filter(p => (p.status || "active") === cat.key);
+    if(!projs.length) return;
+    const isOpen = NAV_CAT_STATE[cat.key];
+    catHtml += `
+      <div>
+        <button class="nav-cat-header" onclick="toggleNavCat('${cat.key}')">
+          <span class="nav-cat-arrow" style="transform:rotate(${isOpen?"0":"-90deg"})">▼</span>
+          <span class="nav-cat-label">${cat.label}</span>
+          <span class="nav-cat-count">${projs.length}</span>
+        </button>
+        <div class="nav-cat-body ${isOpen?"":"collapsed"}">
+          ${projs.map(p=>{
+            const active = S.activeProj===p.id;
+            const folderSvg = `<svg width="14" height="13" viewBox="0 0 26 22" fill="none" style="flex-shrink:0"><path d="M1 4.5C1 3.4 1.9 2.5 3 2.5H9.5L11 4.5H23C24.1 4.5 25 5.4 25 6.5V18.5C25 19.6 24.1 20.5 23 20.5H3C1.9 20.5 1 19.6 1 18.5V4.5Z" stroke="#888" stroke-width="1.4" fill="none"/></svg>`;
+            return `
+            <button class="nav-proj-item nav-proj-item-inner ${active?"active":""}"
+              style="--acc:${p.acc}"
+              onclick="clickProj('${p.id}');${p.subType!=='youtube'&&p.subType!==undefined&&p.keepSub?`showSubPanel('${p.id}')`:`hideSubPanel()`}">
+              ${folderSvg}
+              ${p.label}
+            </button>`;
+          }).join("")}
+        </div>
+      </div>`;
+  });
+
   document.getElementById("nav-items-wrap").innerHTML=`
-    <button class="nav-cal-item ${S.view==="calendar"&&!S.activeProj?"active":""}" onclick="goCal()">
-      <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/><path d="M4 1v2M10 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      작업 캘린더
+    <button class="nav-cal-item ${S.view==="about"&&!S.activeProj?"active":""}" onclick="goAbout()">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><circle cx="7" cy="4.2" r="2.6" fill="#555"/><path d="M1.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5z" fill="#555"/></svg>
+      About
     </button>
     <div class="nav-sep"></div>
-    ${PROJECTS.map(p=>`
-      <button class="nav-proj-item ${S.activeProj===p.id?"active":""}"
-        style="--acc:${p.acc}"
-        onclick="clickProj('${p.id}');${p.id!=='x-project'?`showSubPanel('${p.id}')`:'hideSubPanel()'}">
-        <div class="nav-proj-dot" style="background:${p.acc}"></div>
-        ${p.label}
-      </button>
-    `).join("")}
+    ${catHtml}
   `;
 }
 
@@ -1738,26 +1866,57 @@ function renderMobPanel1(){
     <button class="mob-lang-btn" onclick="setLang('zh-CN')">ZH</button>
     <button class="mob-lang-btn" onclick="setLang('ko')">KO</button>
   </div>`;
-  // calendar
-  html+=`<button class="mob-nav-item" onclick="goCal();closeMobMenu()">
+  // about
+  html+=`<button class="mob-nav-item" onclick="goAbout();closeMobMenu()">
     <span style="display:flex;align-items:center;gap:8px">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="flex-shrink:0"><rect x="1" y="2.5" width="13" height="11.5" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h13" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 1v3M10.5 1v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="4" y="8.5" width="2" height="2" rx=".4" fill="currentColor"/><rect x="6.5" y="8.5" width="2" height="2" rx=".4" fill="currentColor"/><rect x="9" y="8.5" width="2" height="2" rx=".4" fill="currentColor"/></svg>
-      작업 캘린더
+      <svg width="15" height="15" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><circle cx="7" cy="4.2" r="2.6" fill="#555"/><path d="M1.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5z" fill="#555"/></svg>
+      About
     </span>
   </button>`;
-  // projects — x-project는 바로 소개글, 나머지는 2차 패널
-  PROJECTS.forEach(p=>{
-    if(p.id==='x-project'){
-      html+=`<button class="mob-proj-btn" style="color:${p.acc}" onclick="goIntro('${p.id}');closeMobMenu()">
-        <span style="display:flex;align-items:center;gap:10px">${p.label}</span>
-      </button>`;
-    } else {
-      html+=`<button class="mob-proj-btn" style="color:${p.acc}" onclick="mobShowSub('${p.id}')">
-        <span style="display:flex;align-items:center;gap:10px">${p.label}</span>
-        <span class="mob-arr">&#8250;</span>
-      </button>`;
-    }
+
+  // ── 폴더 카테고리 구조 ──
+  const MOB_CAT_DEFS = [
+    { key:"active",  label:"진행중", dotColor:"#22c55e" },
+    { key:"archive", label:"보류",   dotColor:"#94a3b8" },
+    { key:"done",    label:"완료",   dotColor:"#94a3b8" },
+  ];
+  MOB_CAT_DEFS.forEach(cat=>{
+    const projs = PROJECTS.filter(p=>(p.status||"active")===cat.key);
+    if(!projs.length) return;
+    const isOpen = NAV_CAT_STATE[cat.key];
+    html+=`<button class="mob-cat-header" onclick="
+      NAV_CAT_STATE['${cat.key}']=!NAV_CAT_STATE['${cat.key}'];
+      var bd=this.nextElementSibling;
+      bd.classList.toggle('collapsed',!NAV_CAT_STATE['${cat.key}']);
+      this.querySelector('.mob-cat-arrow').style.transform=NAV_CAT_STATE['${cat.key}']?'rotate(0)':'rotate(-90deg)';
+    ">
+      <span class="mob-cat-arrow" style="transform:rotate(${isOpen?"0":"-90deg"})">▼</span>
+      <span class="mob-cat-label">${cat.label}</span>
+      <span class="mob-cat-count">${projs.length}</span>
+    </button>
+    <div class="mob-cat-body ${isOpen?"":"collapsed"}">`;
+    projs.forEach(p=>{
+      const folderIcon = `<svg width="14" height="13" viewBox="0 0 26 22" fill="none" style="flex-shrink:0"><path d="M1 4.5C1 3.4 1.9 2.5 3 2.5H9.5L11 4.5H23C24.1 4.5 25 5.4 25 6.5V18.5C25 19.6 24.1 20.5 23 20.5H3C1.9 20.5 1 19.6 1 18.5V4.5Z" stroke="#888" stroke-width="1.4" fill="none"/></svg>`;
+      if(p.subType==='youtube'){
+        html+=`<button class="mob-proj-btn mob-proj-btn-inner" style="color:${p.acc}" onclick="goIntro('${p.id}');closeMobMenu()">
+          <span style="display:flex;align-items:center;gap:8px">
+            ${folderIcon}
+            ${p.label}
+          </span>
+        </button>`;
+      } else {
+        html+=`<button class="mob-proj-btn mob-proj-btn-inner" style="color:${p.acc}" onclick="mobShowSub('${p.id}')">
+          <span style="display:flex;align-items:center;gap:8px">
+            ${folderIcon}
+            ${p.label}
+          </span>
+          <span class="mob-arr">&#8250;</span>
+        </button>`;
+      }
+    });
+    html+=`</div>`;
   });
+
   // 맨 아래 처음으로 버튼
   html+=`<button class="mob-home-btn" onclick="hardReset()">
     <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 1L1 6.5V13h4V9h4v4h4V6.5L7 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
@@ -1946,6 +2105,68 @@ function render(){
   else if(S.view==="content")  renderContentView();
   else if(S.view==="charlist") window.renderCharList();
   else if(S.view==="chardetail") window.renderCharDetail();
+  else if(S.view==="about")    renderAbout();
+}
+
+function goAbout(){S.view="about";S.activeProj=null;if(window.innerWidth<=768)closeMobMenu();pushHash();render();}
+
+/* ── ABOUT PAGE ── */
+function renderAbout(){
+  document.getElementById("content").innerHTML=`
+    <div style="padding:36px 40px;max-width:680px;margin:0 auto">
+      <div style="margin-bottom:32px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:2px;color:var(--tx3);text-transform:uppercase;margin-bottom:8px">About</div>
+        <div style="font-size:26px;font-weight:700;color:#111;letter-spacing:-.04em">biz.rrkt</div>
+      </div>
+
+      <!-- 프로필 카드 -->
+      <div style="background:var(--sb);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:20px;padding:24px 28px;border-bottom:1px solid var(--bd)">
+          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#e8e8e8,#c8c8c8);border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px">🎨</div>
+          <div>
+            <div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:4px">rrkt</div>
+            <div style="font-size:13px;color:var(--tx2);line-height:1.6">창작자 · 작가</div>
+          </div>
+        </div>
+        <div style="padding:20px 28px;font-size:14px;color:var(--tx2);line-height:1.8">
+          이곳은 작업물과 프로젝트들을 정리하는 아카이브입니다.<br>
+          여기에 소개글을 자유롭게 작성하세요.
+        </div>
+      </div>
+
+      <!-- 프로젝트 통계 -->
+      <div style="background:var(--sb);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:20px">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--bd);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase">Projects</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr)">
+          ${[
+            {label:"진행중", count: PROJECTS.filter(p=>(p.status||"active")==="active").length, color:"#22c55e"},
+            {label:"보류",   count: PROJECTS.filter(p=>p.status==="archive").length,             color:"#94a3b8"},
+            {label:"완료",   count: PROJECTS.filter(p=>p.status==="done").length,                color:"#64748b"},
+          ].map((s,i,arr)=>`
+            <div style="padding:18px 0;text-align:center;${i<arr.length-1?'border-right:1px solid var(--bd)':''}">
+              <div style="font-size:24px;font-weight:700;color:${s.color};line-height:1">${s.count}</div>
+              <div style="font-size:10px;color:var(--tx3);margin-top:4px;font-weight:500">${s.label}</div>
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <!-- 연락·링크 -->
+      <div style="background:var(--sb);border:1px solid var(--bd);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--bd);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase">Links</div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:4px">
+          <a href="https://twitter.com/your_handle" target="_blank"
+             style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--tx);text-decoration:none;transition:background .12s"
+             onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12.6 1H15l-4.9 5.6L16 15h-4.5l-3.1-4.1L4.2 15H1.8l5.2-5.9L1 1h4.6l2.8 3.7L12.6 1z" fill="currentColor"/></svg>
+            <span style="font-size:13px">Twitter / X</span>
+          </a>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--tx3);font-size:13px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="11.5" cy="4.5" r=".8" fill="currentColor"/></svg>
+            링크를 여기에 추가하세요
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 
 function goProgress(){S.view="progress";pushHash();render();}
@@ -1960,23 +2181,41 @@ function renderProgress(){
     }).join("");
   }
 
-  // 블러드하이스쿨 — 2열 카드 그리드
+  // 블러드하이스쿨 — 3열, 웹소설/웹툰 구분
   const bhProj = PROJECTS.find(p=>p.id==="blood-highschool");
   const bhVols = VOLUMES["blood-highschool"]||[];
   const bhTotalAll = bhVols.reduce((s,v)=>s+v.episodes.length,0);
   const bhDoneAll  = bhVols.reduce((s,v)=>s+v.episodes.filter(e=>e.status==="완료").length,0);
-  const bhCards = bhVols.map(v=>{
+
+  function bhCard(v){
     const total=v.episodes.length;
     const done=v.episodes.filter(e=>e.status==="완료").length;
     const wip=v.episodes.filter(e=>e.status==="작업중").length;
     return `<div class="progress-vol-card">
       <div class="progress-vol-card-top">
-        <span class="progress-vol-card-label">[${v.type}] ${v.sub||v.label}</span>
+        <span class="progress-vol-card-label">${v.sub||v.label}</span>
         <span class="progress-vol-card-stat">${done}/${total}</span>
       </div>
       <div class="progress-ep-grid">${cells(total,done,wip,bhProj.acc)}</div>
     </div>`;
-  }).join("");
+  }
+
+  const novels  = bhVols.filter(v=>v.type==="웹소설");
+  const webtoons= bhVols.filter(v=>v.type==="웹툰");
+
+  function bhSection(label, vols){
+    if(!vols.length) return "";
+    return `
+      <div style="padding:10px 11px 4px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--tx3);text-transform:uppercase">${label}</span>
+        <div style="flex:1;height:1px;background:var(--bd)"></div>
+      </div>
+      <div style="padding:4px 9px 10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        ${vols.map(v=>bhCard(v)).join("")}
+      </div>`;
+  }
+
+  const bhInner = bhSection("웹소설", novels) + bhSection("웹툰", webtoons);
 
   // biz-OC-doll — 4열 카드 + 캐릭터 200 행
   const ocProj = PROJECTS.find(p=>p.id==="biz-oc-doll");
@@ -2014,7 +2253,7 @@ function renderProgress(){
             <span class="progress-proj-name">${bhProj.label}</span>
             <span class="progress-proj-cnt">${bhDoneAll} / ${bhTotalAll}화</span>
           </div>
-          <div class="progress-vol-inner">${bhCards}</div>
+          ${bhInner}
         </div>
 
         <div class="progress-proj-block">
@@ -3322,6 +3561,7 @@ async function loadEpDataFromSheets(){
 function stateToHash(){
   const v = S.view;
   if(v === 'home')       return '#home';
+  if(v === 'about')      return '#about';
   if(v === 'progress')   return '#progress';
   if(v === 'calendar'){
     if(S.calTimeline) return `#calendar/${S.calY}/timeline`;
@@ -3351,6 +3591,7 @@ function applyHash(hash){
   }
   const parts = hash.replace(/^#/,'').split('/');
   const p0 = parts[0];
+  if(p0 === 'about'){ S.view='about'; return; }
   if(p0 === 'calendar'){
     S.view='calendar';
     if(parts[1]) S.calY = parseInt(parts[1]);
