@@ -2099,18 +2099,28 @@ function render(){
   else if(S.view==="episodes") renderEpList();
   else if(S.view==="content")  renderContentView();
   else if(S.view==="charlist"||S.view==="chardetail"){
-    if(document.getElementById("doll-charlist-loaded")){
-      // 이미 로드됨 - 재실행 없이 renderList만 호출
-      if(typeof renderList==="function") renderList();
+    if(window._dollCharHtml){
+      // 캐시된 HTML 재사용 - script 재실행 없이 HTML만 다시 주입
+      document.getElementById("content").innerHTML=window._dollCharHtml;
+      document.getElementById("content").scrollTop=0;
     } else {
       fetch("doll_charlist.html").then(r=>r.text()).then(html=>{
         const doc=new DOMParser().parseFromString(html,"text/html");
-        document.getElementById("content").innerHTML=doc.body.innerHTML;
-        // 로드 완료 표시
-        const marker=document.createElement("span");
-        marker.id="doll-charlist-loaded";
-        marker.style.display="none";
-        document.getElementById("content").appendChild(marker);
+        // CSS를 head에 한 번만 주입
+        if(!document.getElementById("doll-charlist-style")){
+          doc.querySelectorAll("style").forEach(s=>{
+            const ns=document.createElement("style");
+            ns.id="doll-charlist-style";
+            ns.textContent=s.textContent;
+            document.head.appendChild(ns);
+          });
+        }
+        // body HTML에서 style 태그 제거 후 캐시
+        const bodyEl=doc.body.cloneNode(true);
+        bodyEl.querySelectorAll("style").forEach(s=>s.remove());
+        window._dollCharHtml=bodyEl.innerHTML;
+        document.getElementById("content").innerHTML=window._dollCharHtml;
+        // script 실행 (최초 1회만)
         document.getElementById("content").querySelectorAll("script").forEach(s=>{
           const ns=document.createElement("script");ns.textContent=s.textContent;s.replaceWith(ns);
         });
