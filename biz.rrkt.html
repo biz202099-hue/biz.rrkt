@@ -2101,6 +2101,15 @@ function render(){
   else if(S.view==="charlist"||S.view==="chardetail"){
     fetch("doll_charlist.html").then(r=>r.text()).then(html=>{
       const doc=new DOMParser().parseFromString(html,"text/html");
+      // head의 <style> 주입 (중복 방지)
+      if(!document.getElementById("doll-charlist-style")){
+        doc.querySelectorAll("head style").forEach(s=>{
+          const ns=document.createElement("style");
+          ns.id="doll-charlist-style";
+          ns.textContent=s.textContent;
+          document.head.appendChild(ns);
+        });
+      }
       document.getElementById("content").innerHTML=doc.body.innerHTML;
       document.getElementById("content").querySelectorAll("script").forEach(s=>{
         const ns=document.createElement("script");ns.textContent=s.textContent;s.replaceWith(ns);
