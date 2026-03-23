@@ -549,55 +549,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-picker-st{margin-left:auto;font-size:9px;font-weight:700}
 .ep-picker-st.done{color:#c0392b}.ep-picker-st.plan{color:var(--tx3)}
 
-/* ── CHAR LIST ── */
-.char-page{padding:22px 24px}
-.char-filter-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.char-filter-tabs{display:flex;gap:0;background:var(--sb);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
-.char-tab{padding:8px 16px;background:transparent;border:none;font-size:13px;font-weight:500;color:var(--tx3);cursor:pointer;border-right:1px solid var(--bd);transition:all .12s}
-.char-tab:last-child{border-right:none}
-.char-tab:hover{background:var(--bg);color:var(--tx)}
-.char-tab.active{background:var(--tx);color:#fff;font-weight:700}
-.char-search{flex:1;min-width:180px;max-width:280px;padding:8px 12px;border:1px solid var(--bd);border-radius:8px;font-size:13px;font-family:var(--fn);background:var(--sb);color:var(--tx);outline:none;transition:border-color .12s}
-.char-search:focus{border-color:var(--bd2)}
-.char-count{font-size:11px;color:var(--tx3);white-space:nowrap}
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
-.char-card{cursor:pointer;text-align:center}
-.char-card:hover .char-thumb{box-shadow:0 2px 10px #0002;transform:translateY(-2px)}
-.char-thumb{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--bd);overflow:hidden;transition:transform .14s,box-shadow .14s;display:flex;align-items:center;justify-content:center;font-size:22px;position:relative;background:#d8d8d8;filter:grayscale(1)}
-.char-thumb-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.char-thumb-placeholder{display:none}
-.char-thumb.rA{background:#d8d8d8}
-.char-thumb.rB{background:#d8d8d8}
-.char-thumb.rC{background:#d8d8d8}
-.char-name-row{display:flex;align-items:center;justify-content:center;gap:3px;margin-top:5px}
-.char-circle{font-size:8px;line-height:1}
-.char-circle.rA{color:#38bdf8}
-.char-circle.rB{color:#111}
-.char-circle.rC{color:#e03030}
-.char-firstname{font-size:13px;font-weight:600;color:var(--tx)}
-.char-lastname{font-size:11px;color:var(--tx3);margin-top:1px}
-.char-empty{grid-column:1/-1;padding:48px 0;text-align:center;font-size:12px;color:var(--tx3)}
-.char-slot .char-thumb{background:#ebebeb;border:1px solid var(--bd2)}
-.char-slot .char-firstname{color:var(--tx3)}
-.char-detail-page{}
-.char-detail-hero{display:flex;gap:24px;padding:24px 28px;background:var(--sb);border-bottom:1px solid var(--bd)}
-.char-detail-thumb{width:120px;height:120px;border-radius:12px;flex-shrink:0;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;position:relative;background:#d8d8d8;filter:grayscale(1)}
-.char-detail-rank{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-bottom:8px}
-.char-detail-rank.rA{background:#e0f5ff;color:#0369a1}
-.char-detail-rank.rB{background:#f0f0f0;color:#111}
-.char-detail-rank.rC{background:#ffe4e4;color:#c01020}
-.char-detail-name{font-size:22px;font-weight:700;margin-bottom:4px}
-.char-detail-subname{font-size:14px;color:var(--tx3);margin-bottom:12px}
-.char-detail-tags{display:flex;gap:5px;flex-wrap:wrap}
-.char-detail-tag{font-size:10px;padding:3px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--bd);color:var(--tx2)}
-.char-detail-body{padding:22px 28px}
-.char-detail-sec{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--tx3);text-transform:uppercase;margin-bottom:10px;margin-top:22px}
-.char-detail-ph{height:11px;border-radius:3px;background:var(--bd);margin-bottom:8px}
-.char-detail-hint{padding:14px;border:1px dashed var(--bd2);border-radius:8px;font-size:11px;color:var(--tx3);text-align:center;margin-top:16px}
-.char-stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.char-stat{padding:10px 14px;background:var(--sb);border:1px solid var(--bd);border-radius:8px;min-width:80px}
-.char-stat-l{font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:.5px;margin-bottom:3px}
-.char-stat-v{font-size:15px;font-weight:700;color:var(--tx)}
+
 
 /* ── MOBILE ── */
 .mob-menu{
@@ -1601,7 +1553,6 @@ const S={
   subOpen:false,subTab:"ALL",
   calY:new Date().getFullYear(),calM:new Date().getMonth(),selDay:null,calOverview:false,calTimeline:false,calSpan:1,
   homeMiniM:new Date().getMonth(),homeMiniY:new Date().getFullYear(),
-  charFilter:"ALL",charSearch:"",activeChar:null,
   navPinned:false,
   hoveredProj:null,
   lastMobProj:null,
@@ -2147,8 +2098,16 @@ function render(){
   else if(S.view==="intro")    renderIntro();
   else if(S.view==="episodes") renderEpList();
   else if(S.view==="content")  renderContentView();
-  else if(S.view==="charlist") window.renderCharList();
-  else if(S.view==="chardetail") window.renderCharDetail();
+  else if(S.view==="charlist"||S.view==="chardetail"){
+    fetch("doll_charlist.html").then(r=>r.text()).then(html=>{
+      const doc=new DOMParser().parseFromString(html,"text/html");
+      document.getElementById("content").innerHTML=doc.body.innerHTML;
+      document.getElementById("content").querySelectorAll("script").forEach(s=>{
+        const ns=document.createElement("script");ns.textContent=s.textContent;s.replaceWith(ns);
+      });
+      document.getElementById("content").scrollTop=0;
+    });
+  }
   else if(S.view==="about")    renderAbout();
 }
 
@@ -2792,6 +2751,17 @@ function renderCalendar(){
 /* ── INTRO ── */
 function renderIntro(){
   const proj=getProj(S.activeProj);
+  if(proj.id==="biz-oc-doll"){
+    fetch("doll_intro.html").then(r=>r.text()).then(html=>{
+      const doc=new DOMParser().parseFromString(html,"text/html");
+      document.getElementById("content").innerHTML=doc.body.innerHTML;
+      document.getElementById("content").querySelectorAll("script").forEach(s=>{
+        const ns=document.createElement("script");ns.textContent=s.textContent;s.replaceWith(ns);
+      });
+      document.getElementById("content").scrollTop=0;
+    });
+    return;
+  }
   const ws=[100,74,88,60,95,50,82,68,76,55];
   document.getElementById("content").innerHTML=`
     <div class="intro-hero">
@@ -3331,229 +3301,6 @@ document.getElementById("content").addEventListener("click",function(){
   if(!S.navPinned) closeNav();
 });
 
-/* ─── CHARACTER DATA (200명) ─── */
-(function(){
-  const FIRSTNAMES=[
-    "아이","유이","하루","미오","사쿠라","린","아카네","유나","미나","코토",
-    "하나","시오리","아야","나오","레이","에마","노아","세나","리나","아스나",
-    "히나","카나","미유","소라","츠바키","마야","이쿠","나나","유리","세리",
-    "아키","카호","루이","미사","사야","이부키","코노미","히나타","아나","세이카",
-    "란","치나츠","후우카","유카","이치카","니나","미라이","아스카","카린","메이",
-    "리오","마호","시오","나기","히요리","유즈","모모","이로하","코코","후타바",
-    "아오이","카에데","스즈","마도카","호타루","미나미","유우키","사에","코유키","무츠미",
-    "아마네","카이","이즈미","노노","하야테","토카","우미","키라라","치히로","아키라",
-    "나루","오리히메","이치요","아리스","사야카","레미","루카","아쿠아","아리아","히메",
-    "유이나","카구야","칸나","미코토","아이리","카코","하즈키","루루","미오나","코하루",
-    "세이라","아야카","미나토","유우나","나노카","치카","사치코","미사키","이치나","쿄카",
-    "아야노","미즈키","타마키","리오나","나기사","마치코","아린","소노다","마리아","코코로",
-    "미호","유호","루나","사히로","이오리","카나타","히카리","아야히","소와카","레이나",
-    "이자나","아마리","후미카","카즈하","하요이","타마나","이쿠코","시오네","아스히","노아카",
-    "유미나","세이라","카이나","하나비","호노카","유이카","미아","소나","카이리","이호",
-    "나기코","미오리","루우","치에","세이코","히나코","유이리","사쿠야","나나미","히지리",
-    "아리나","코요이","마리코","노리코","이치루","유미코","하루나","아이나","세이나","유우카",
-    "카나에","이오나","미즈나","히나노","노보루","사유리","나나호","아야미","코우메","테루미",
-    "치호","유미","카나코","미나코","히로나","루카코","나나코","유이코","호무라","마도카",
-    "리코","아코","치카코","유우코","후미코","하나코","사치","이코","미코","유코",
-  ];
-  const LASTNAMES=[
-    "야마다","타나카","스즈키","사토","와타나베","이토","나카무라","코바야시","카토","요시다",
-    "야마모토","마츠모토","이노우에","키무라","하야시","시미즈","야마구치","사이토","마츠다","이케다",
-    "오가와","하세가와","요코야마","미야자키","오카모토","나카가와","코지마","마에다","후지와라","오노",
-    "타마키","시오미","하기와라","후쿠다","이마이","오오시마","쿠로다","노다","쿠보","후지타",
-    "히라야마","이시카와","나카지마","하마다","오쿠다","토쿠나가","시바타","나카니시","오오타","카와구치",
-    "카와무라","아오키","마루야마","스기우라","타카하시","후나하시","야마시타","타카기","타케우치","우에다",
-    "타케다","코마츠","키노시타","후지모토","마루타","미야타","오카와","야마다","하마노","시모다",
-    "타니모토","쿠라모토","나리타","마에지마","카이도","시노다","아베","아라이","타케시타","우에노",
-    "유아사","카와카미","타카노","야마자키","아사노","노자와","오오이","쿠와하라","마키","키리시마",
-    "후지사키","마시마","미조구치","코노","후쿠시마","소가","치바","이에나가","시라이","카토우",
-    "오오타니","노무라","히로세","타케시","아다치","카미조","이케지마","유키","쿠마가이","타나베",
-    "오오하라","야마기시","카와시마","노구치","타카미","이시다","코야마","와카바야시","에노모토","키타가와",
-    "후쿠이","야마우치","이마무라","아라카와","마스다","하라다","타케모토","오노데라","코이즈미","키쿠치",
-    "세키구치","모리타","하시모토","요코야마","오카노","쿠리야마","나카노","타나베","카와사키","혼다",
-    "와타나베","나카야마","우에하라","야마오카","코지마","후루카와","키도","카스가","모리모토","이마이",
-    "오카다","아마노","하기노","타치바나","이시하라","미나토","스기야마","오치아이","카나이","마루","나가타",
-    "히사모토","야나기사와","카시와기","야마베","쿠도","사카이","이나바","스에요시","카와나베","오오니시",
-    "무라타","우치다","하타노","이사카","이쿠타","타카이","쿠와바라","나가세","타마미","후지노",
-    "오오카와","나카무라","니시다","히데시마","카스야","오오나카","오오바야시","아베","키쿠치","이와사키",
-  ];
-  const TYPES=[];
-  // A:30 B:70 C:100
-  for(let i=0;i<200;i++){
-    if(i<30) TYPES.push("A");
-    else if(i<100) TYPES.push("B");
-    else TYPES.push("C");
-  }
-  // shuffle types
-  for(let i=TYPES.length-1;i>0;i--){const j=Math.floor(Math.random()*i);[TYPES[i],TYPES[j]]=[TYPES[j],TYPES[i]];}
-  
-  const GRADIENTS_A=["135deg,#fff9c4,#fde68a","135deg,#fef3c7,#f59e0b","135deg,#fffbeb,#fbbf24"];
-  const GRADIENTS_B=["135deg,#fce7f3,#f9a8d4","135deg,#fdf2f8,#e879f9","135deg,#fff0f9,#fb7185"];
-  const GRADIENTS_C=["135deg,#eff6ff,#93c5fd","135deg,#f0f9ff,#38bdf8","135deg,#f5f3ff,#a78bfa","135deg,#f0fdf4,#6ee7b7","135deg,#fff7ed,#fb923c"];
-  
-  const SAMPLE_TAGS=[
-    ["활발","음악","리더"],["조용","독서","미술"],["쾌활","댄스","요리"],
-    ["신비","마법","고양이"],["용감","스포츠","모험"],["온화","꽃","힐링"],
-    ["다크","미스터리","밤"],["밝음","아이돌","친구"],["냉정","전략","검"],
-    ["천진","자연","빛"]
-  ];
-  
-  window.CHARACTERS = Array.from({length:200},(_, i)=>{
-    const t = TYPES[i];
-    const fn = FIRSTNAMES[i % FIRSTNAMES.length];
-    const ln = LASTNAMES[i % LASTNAMES.length];
-    const grads = t==="A"?GRADIENTS_A:t==="B"?GRADIENTS_B:GRADIENTS_C;
-    const grad = grads[i % grads.length];
-    const tags = SAMPLE_TAGS[i % SAMPLE_TAGS.length];
-    return {
-      id: i+1,
-      firstname: fn,
-      lastname: ln,
-      type: t,
-      grad,
-      tags,
-      registered: i < 7, // first 7 have "names" as demo
-    };
-  });
-})();
-
-/* ─── CHARACTER STATE ─── */
-if(!S.charFilter) S.charFilter = "ALL";
-if(!S.charSearch) S.charSearch = "";
-if(!S.activeChar) S.activeChar = null;
-
-/* ─── RENDER CHAR LIST ─── */
-window.renderCharList = function(){
-  const proj = getProj("biz-oc-doll");
-  const filtered = window.CHARACTERS.filter(c=>{
-    const typeOk = S.charFilter==="ALL" || c.type===S.charFilter;
-    const q = S.charSearch.trim().toLowerCase();
-    const nameOk = !q || c.firstname.toLowerCase().includes(q) || c.lastname.toLowerCase().includes(q) || (c.firstname+c.lastname).includes(q);
-    return typeOk && nameOk;
-  });
-  const counts = {ALL:200, A:0, B:0, C:0};
-  window.CHARACTERS.forEach(c=>counts[c.type]++);
-
-  document.getElementById("content").innerHTML=`
-    <div class="char-detail-page">
-      <div class="top-bar">
-        <button class="tb-back" onclick="backToIntro()">&larr; 소개</button>
-        <div class="tb-sep"></div>
-        <span class="tb-crumb">biz-OC-doll</span>
-        <span class="tb-arr">&#8250;</span>
-        <span class="tb-cur">캐릭터 일람</span>
-        <button class="tb-sub-btn ${S.subOpen?"on":""}" onclick="toggleSub()">${S.subOpen?"메뉴 접기":"메뉴 열기"}</button>
-      </div>
-      <div class="char-page">
-        <div class="char-filter-row">
-          <div class="char-filter-tabs">
-            ${["ALL","A","B","C"].map(t=>`
-              <button class="char-tab ${S.charFilter===t?"active":""}" onclick="setCharFilter('${t}')">
-                ${t==="ALL"?"ALL":t==="A"?"A <span style='color:#38bdf8'>●</span>":t==="B"?"B <span style='color:#111'>●</span>":"C <span style='color:#e03030'>●</span>"}
-                <span style="font-size:10px;opacity:.6">${counts[t]}</span>
-              </button>
-            `).join("")}
-          </div>
-          <input class="char-search" type="text" placeholder="캐릭터 검색..." value="${S.charSearch}"
-            oninput="setCharSearch(this.value)" />
-          <span class="char-count">${filtered.length}명 표시</span>
-        </div>
-        <div class="char-grid">
-          ${filtered.length===0?`<div class="char-empty">검색 결과 없음</div>`:
-            filtered.map(c=>{
-              const dclr = c.type==="A"?"#38bdf8":c.type==="B"?"#111":"#e03030";
-              const isSlot = !c.registered;
-              return `<div class="char-card ${isSlot?"char-slot":""}" onclick="openChar(${c.id})">
-                <div class="char-thumb r${c.type}">
-                  ${isSlot?``:`<span style="font-size:20px;opacity:.2">◉</span>`}
-                </div>
-                <div class="char-name-row">
-                  <span class="char-circle r${c.type}" style="color:${dclr}">●</span>
-                  <span class="char-firstname">${isSlot?"-":c.firstname}</span>
-                </div>
-                <div class="char-lastname">${isSlot?"":c.lastname}</div>
-              </div>`;
-            }).join("")}
-        </div>
-      </div>
-    </div>
-  `;
-};
-
-/* ─── RENDER CHAR DETAIL ─── */
-window.renderCharDetail = function(){
-  const c = window.CHARACTERS.find(ch=>ch.id===S.activeChar);
-  if(!c) return;
-  const proj = getProj("biz-oc-doll");
-  const dclr = c.type==="A"?"#38bdf8":c.type==="B"?"#111":"#e03030";
-  const rankLabel = c.type==="A"?"●●● Type-A":c.type==="B"?"●● Type-B":"● Type-C";
-  const ws = [100,76,90,58,95,68,82,72];
-  const allChars = window.CHARACTERS.filter(ch=>{
-    if(S.charFilter!=="ALL") return ch.type===S.charFilter;
-    return true;
-  });
-  const idx = allChars.findIndex(ch=>ch.id===c.id);
-  const prev = allChars[idx-1]||null;
-  const next = allChars[idx+1]||null;
-
-  document.getElementById("content").innerHTML=`
-    <div class="char-detail-page">
-      <div class="top-bar">
-        <button class="tb-back" onclick="closeChar()">&larr; 목록</button>
-        <div class="tb-sep"></div>
-        <span class="tb-crumb">biz-OC-doll</span>
-        <span class="tb-arr">&#8250;</span>
-        <span class="tb-crumb">캐릭터 일람</span>
-        <span class="tb-arr">&#8250;</span>
-        <span class="tb-cur">${c.firstname} ${c.lastname}</span>
-        <button class="tb-sub-btn ${S.subOpen?"on":""}" onclick="toggleSub()">${S.subOpen?"메뉴 접기":"메뉴 열기"}</button>
-      </div>
-      <div class="char-detail-hero">
-        <div class="char-detail-thumb char-detail-r${c.type}" style="background:linear-gradient(${c.grad})">
-          <span style="font-size:48px">◉</span>
-        </div>
-        <div>
-          <div class="char-detail-rank r${c.type}">${rankLabel} Type-${c.type}</div>
-          <div class="char-detail-name">${c.firstname}</div>
-          <div class="char-detail-subname">${c.lastname}</div>
-          <div class="char-detail-tags">
-            ${c.tags.map(t=>`<span class="char-detail-tag">${t}</span>`).join("")}
-          </div>
-        </div>
-      </div>
-      <div class="char-detail-body">
-        <div class="char-detail-sec">기본 정보</div>
-        <div class="char-stat-row">
-          <div class="char-stat"><div class="char-stat-l">ID</div><div class="char-stat-v">#${String(c.id).padStart(3,"0")}</div></div>
-          <div class="char-stat"><div class="char-stat-l">타입</div><div class="char-stat-v" style="color:${dclr}">Type-${c.type}</div></div>
-          <div class="char-stat"><div class="char-stat-l">태그수</div><div class="char-stat-v">${c.tags.length}</div></div>
-        </div>
-        <div class="char-detail-sec">프로필</div>
-        ${ws.slice(0,4).map(w=>`<div class="char-detail-ph" style="width:${w}%;background:color-mix(in srgb,${dclr} 15%,#e4e4e4)"></div>`).join("")}
-        <div class="char-detail-sec">스토리</div>
-        ${ws.map(w=>`<div class="char-detail-ph" style="width:${w}%;background:color-mix(in srgb,${dclr} 10%,#e4e4e4)"></div>`).join("")}
-        <div class="char-detail-hint">캐릭터 상세 정보 / 일러스트를 이곳에 등록하세요</div>
-      </div>
-      <div class="ep-nav">
-        <button class="ep-nav-btn ${prev?"":"disabled"}" onclick="${prev?`openChar(${prev.id})`:""}">
-          <span>&#8592;</span>
-          <span class="ep-nav-title">${prev?prev.firstname+" "+prev.lastname:"없음"}</span>
-        </button>
-        <button class="ep-nav-btn ${next?"":"disabled"}" onclick="${next?`openChar(${next.id})`:""}">
-          <span class="ep-nav-title">${next?next.firstname+" "+next.lastname:"없음"}</span>
-          <span>&#8594;</span>
-        </button>
-      </div>
-    </div>
-  `;
-};
-
-/* ─── CHAR HANDLERS ─── */
-window.setCharFilter = function(f){ S.charFilter=f; S.view="charlist"; renderCharList(); };
-window.setCharSearch = function(v){ S.charSearch=v; renderCharList(); };
-window.openChar = function(id){ S.activeChar=id; S.view="chardetail"; pushHash(); render(); };
-window.closeChar = function(){ S.activeChar=null; S.view="charlist"; renderCharList(); };
-
-
 /* ── Sheets 불러오기 (공개 CSV — API 키 불필요) ── */
 async function loadEpDataFromSheets(){
   try{
@@ -3637,7 +3384,6 @@ function stateToHash(){
     return `#calendar/${S.calY}/${S.calM+1}`;
   }
   if(v === 'charlist')   return '#chars';
-  if(v === 'chardetail') return `#char/${S.activeChar}`;
   if(v === 'intro')      return `#proj/${S.activeProj}/intro`;
   if(v === 'episodes'){
     if(S.activeProj === 'biz-oc-doll' && S.activeDollCat)
@@ -3669,8 +3415,6 @@ function applyHash(hash){
     return;
   }
   if(p0 === 'progress') { S.view='progress'; return; }
-  if(p0 === 'chars')   { S.view='charlist'; return; }
-  if(p0 === 'char')    { S.activeChar=parseInt(parts[1]); S.view='chardetail'; return; }
   if(p0 === 'proj'){
     const pid = parts[1]; S.activeProj = pid;
     const sub = parts[2];
@@ -3880,5 +3624,6 @@ function googleTranslateElementInit(){
 }
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
