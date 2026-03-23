@@ -150,6 +150,7 @@ button{font-family:var(--fn);cursor:pointer}
 <script>
 /* ── DATA ── */
 (function(){
+if(window.CHARACTERS) return; // 이미 생성된 경우 스킵
   const FIRSTNAMES=[
     "아이","유이","하루","미오","사쿠라","린","아카네","유나","미나","코토",
     "하나","시오리","아야","나오","레이","에마","노아","세나","리나","아스나",
@@ -223,7 +224,9 @@ button{font-family:var(--fn);cursor:pointer}
 })();
 
 /* ── STATE ── */
-let state = { filter:"ALL", search:"", activeId:null };
+window.charState = window.charState || { filter:"ALL", search:"", activeId:null };
+window.charState.activeId = null;
+const state = window.charState;
 
 /* ── RENDER LIST ── */
 function renderList(){
@@ -304,35 +307,27 @@ function renderDetail(id){
 }
 
 /* ── ACTIONS ── */
-function setFilter(f){
-  state.filter = f;
-  renderList();
-}
-function setSearch(v){
-  state.search = v;
-  renderList();
-}
-function openChar(id){
-  state.activeId = id;
+window.setFilter = function(f){ state.filter=f; renderList(); };
+window.setSearch = function(v){ state.search=v; renderList(); };
+window.openChar = function(id){
+  state.activeId=id;
   renderDetail(id);
-  document.getElementById('list-view').style.display = 'none';
-  document.getElementById('detail-view').style.display = 'block';
+  document.getElementById('list-view').style.display='none';
+  document.getElementById('detail-view').style.display='block';
   window.scrollTo(0,0);
-}
-function showList(){
-  state.activeId = null;
-  document.getElementById('detail-view').style.display = 'none';
-  document.getElementById('list-view').style.display = 'block';
+};
+window.showList = function(){
+  state.activeId=null;
+  document.getElementById('detail-view').style.display='none';
+  document.getElementById('list-view').style.display='block';
   renderList();
-}
-function navChar(dir){
-  const allChars = state.filter==="ALL"
-    ? window.CHARACTERS
-    : window.CHARACTERS.filter(ch=>ch.type===state.filter);
-  const idx = allChars.findIndex(ch=>ch.id===state.activeId);
-  const target = allChars[idx+dir];
+};
+window.navChar = function(dir){
+  const allChars=state.filter==="ALL"?window.CHARACTERS:window.CHARACTERS.filter(ch=>ch.type===state.filter);
+  const idx=allChars.findIndex(ch=>ch.id===state.activeId);
+  const target=allChars[idx+dir];
   if(target) openChar(target.id);
-}
+};
 
 /* ── INIT ── */
 renderList();
