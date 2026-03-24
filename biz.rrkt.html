@@ -1036,7 +1036,7 @@ const PROJECTS = [
   {
     id:"biz-oc-doll",
     label:"biz-OC-doll",
-    acc:"#0ea5e9", acc2:"#0284c7",
+    acc:"#5a90b0", acc2:"#4a7a98",
     status:"active",
     keepSub:true, landOnIntro:true,
     subType:"doll",
@@ -1236,8 +1236,8 @@ const VOLUMES = {
   ],
   "biz-oc-doll": {
     categories: [
-      {id:"char",   label:"캐릭터스토리", color:"#0ea5e9", count:24},
-      {id:"main",   label:"메인스토리",   color:"#0284c7", count:24},
+      {id:"char",   label:"캐릭터스토리", color:"#5a90b0", count:24},
+      {id:"main",   label:"메인스토리",   color:"#4a7a98", count:24},
       {id:"sub",    label:"서브스토리",   color:"#38bdf8", count:24},
       {id:"collab", label:"콜라보스토리", color:"#7dd3fc", count:24},
     ],
@@ -1824,7 +1824,7 @@ function renderDollSub(proj){
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
     <button class="sm-char-link" onclick="goDollChar()">캐릭터 일람 &#9654;</button>
-    <button class="sm-char-link" onclick="openVoteOverlay()" style="color:#0ea5e9;border-color:color-mix(in srgb,#0ea5e9 30%,var(--bd))">&#9733; 인기 투표</button>
+    <button class="sm-char-link" onclick="openVoteOverlay()" style="color:#5a90b0;border-color:color-mix(in srgb,#5a90b0 30%,var(--bd))">&#9733; 인기 투표</button>
     <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
       <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
         <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
@@ -1950,7 +1950,7 @@ function mobShowSub(projId){
     html+=`<button class="mob2-intro-link" style="margin-top:6px" onclick="goDollChar();closeMobMenu()">
       캐릭터 일람 <span>&#9654;</span>
     </button>`;
-    html+=`<button class="mob2-intro-link" style="margin-top:6px;color:#0ea5e9;border-color:color-mix(in srgb,#0ea5e9 30%,#e2e2e2)" onclick="openVoteOverlay();closeMobMenu()">
+    html+=`<button class="mob2-intro-link" style="margin-top:6px;color:#5a90b0;border-color:color-mix(in srgb,#5a90b0 30%,#e2e2e2)" onclick="openVoteOverlay();closeMobMenu()">
       &#9733; 인기 투표 <span>&#9654;</span>
     </button>`;
   }
@@ -2808,7 +2808,7 @@ function renderEpList(){
   if(proj.subType==="doll"){
     const dv=VOLUMES["biz-oc-doll"],cat=dv.categories.find(c=>c.id===S.activeDollCat);
     eps=dv.episodes[S.activeDollCat]||[];
-    vol={label:cat.label,grad:`180deg,#0a2a3a,#0ea5e9`,type:"웹툰",tags:[],synopsis:""};
+    vol={label:cat.label,grad:`180deg,#1a2e3a,#5a90b0`,type:"웹툰",tags:[],synopsis:""};
   } else {
     const vols=VOLUMES[proj.id]||[];
     vol=vols.find(v=>v.id===S.activeVol);if(!vol)return;
@@ -2930,7 +2930,7 @@ function renderContentView(){
   if(proj.subType==="doll"){
     const dv=VOLUMES["biz-oc-doll"],cat=dv.categories.find(c=>c.id===S.activeDollCat);
     eps=dv.episodes[S.activeDollCat]||[];
-    vol={label:cat.label,grad:"180deg,#0a2a3a,#0ea5e9",type:"웹툰",tags:[]};
+    vol={label:cat.label,grad:"180deg,#1a2e3a,#5a90b0",type:"웹툰",tags:[]};
     epObj=eps.find(e=>e.id===S.activeEp);
   } else {
     const vols=VOLUMES[proj.id]||[];
