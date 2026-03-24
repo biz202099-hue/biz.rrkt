@@ -163,7 +163,7 @@ button{font-family:var(--fn);cursor:pointer}a{text-decoration:none}
 /* ── CONTENT ── */
 #content{display:block;margin-top:48px;height:calc(100vh - 48px);height:calc(100dvh - 48px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg);transition:margin-top .28s ease,height .28s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
 #nav-backdrop{display:none;position:fixed;inset:0;top:48px;z-index:150;pointer-events:none}
-#nav-backdrop.show{display:block}
+#nav-backdrop.show{display:block;pointer-events:all;cursor:default}
 body.nav-pinned #nav-backdrop{display:none!important}
 
 /* ── HOME ── */
@@ -3163,7 +3163,9 @@ function clickProj(id){
 
 function goIntro(pid){
   if(pid)S.activeProj=pid;
-  S.view="intro";pushHash();render();
+  S.view="intro";
+  if(!S.navPinned) closeNav();
+  pushHash();render();
 }
 
 /* ── VOL NAV helpers ── */
@@ -3234,7 +3236,7 @@ function clickEp(epId){
   S.activeEp=epId;S.view="content";pushHash();render();
 }
 function clickDollCat(catId){S.activeProj="biz-oc-doll";S.activeDollCat=catId;S.activeEp=null;S.view="episodes";pushHash();render();}
-function goDollChar(){S.view="charlist";pushHash();render();}
+function goDollChar(){S.view="charlist";if(!S.navPinned)closeNav();pushHash();render();}
 function backToEps(){S.activeEp=null;S.view="episodes";pushHash();render();}
 function backToIntro(){S.view="intro";pushHash();render();}
 
@@ -3313,6 +3315,11 @@ function miniNext(){if(S.homeMiniM===11){S.homeMiniM=0;S.homeMiniY++;}else S.hom
 document.getElementById("menu-toggle").addEventListener("click",function(e){
   if(window.innerWidth<=768){e.stopPropagation();toggleMobile();return;}
   toggleNav();
+});
+
+/* backdrop 클릭 시 메뉴 닫기 */
+document.getElementById("nav-backdrop").addEventListener("click",function(){
+  if(!S.navPinned) closeNav();
 });
 
 /* 콘텐츠 클릭 시 메뉴 닫기 (backdrop 대체) */
