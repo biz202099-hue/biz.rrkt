@@ -3163,9 +3163,7 @@ function clickProj(id){
 
 function goIntro(pid){
   if(pid)S.activeProj=pid;
-  S.view="intro";
-  if(!S.navPinned) closeNav();
-  pushHash();render();
+  S.view="intro";pushHash();render();
 }
 
 /* ── VOL NAV helpers ── */
@@ -3236,7 +3234,7 @@ function clickEp(epId){
   S.activeEp=epId;S.view="content";pushHash();render();
 }
 function clickDollCat(catId){S.activeProj="biz-oc-doll";S.activeDollCat=catId;S.activeEp=null;S.view="episodes";pushHash();render();}
-function goDollChar(){S.view="charlist";if(!S.navPinned)closeNav();pushHash();render();}
+function goDollChar(){S.view="charlist";pushHash();render();}
 function backToEps(){S.activeEp=null;S.view="episodes";pushHash();render();}
 function backToIntro(){S.view="intro";pushHash();render();}
 
