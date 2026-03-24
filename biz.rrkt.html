@@ -917,6 +917,13 @@ body{top:0!important}
   style="display:none;position:fixed;top:48px;left:0;right:0;bottom:0;width:100%;height:calc(100dvh - 48px);border:none;z-index:60;background:#f5f5f5;"
 ></iframe>
 
+<!-- 인트로 전용 iframe (doll_intro.html 완전 독립 운영) -->
+<iframe
+  id="doll-intro-frame"
+  src="doll_intro.html"
+  style="display:none;position:fixed;top:48px;left:0;right:0;bottom:0;width:100%;height:calc(100dvh - 48px);border:none;z-index:60;background:#fff;"
+></iframe>
+
 <!-- VOTE OVERLAY (iframe 방식) -->
 <div id="vote-overlay" onclick="if(event.target===this)closeVoteOverlay()" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);align-items:center;justify-content:center;">
   <div style="width:min(860px,96vw);height:min(90vh,900px);background:var(--sb);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px #00000030">
@@ -2081,10 +2088,15 @@ function render(){
   renderNavItems();
   // charlist iframe 토글: charlist/chardetail이 아니면 iframe 숨기고 #content 복원
   var charFr = document.getElementById("char-frame");
+  var introFr = document.getElementById("doll-intro-frame");
   var ct = document.getElementById("content");
   if(S.view !== "charlist" && S.view !== "chardetail"){
     if(charFr) charFr.style.display = "none";
     if(ct) ct.style.display = "";
+  }
+  if(S.view !== "intro"){
+    if(introFr) introFr.style.display = "none";
+    if(ct && S.view !== "charlist" && S.view !== "chardetail") ct.style.display = "";
   }
   // 모바일 topbar 리셋 (content view 이탈 시)
   if(S.view !== "content"){
@@ -2762,14 +2774,11 @@ function renderCalendar(){
 function renderIntro(){
   const proj=getProj(S.activeProj);
   if(proj.id==="biz-oc-doll"){
-    fetch("doll_intro.html").then(r=>r.text()).then(html=>{
-      const doc=new DOMParser().parseFromString(html,"text/html");
-      document.getElementById("content").innerHTML=doc.body.innerHTML;
-      document.getElementById("content").querySelectorAll("script").forEach(s=>{
-        const ns=document.createElement("script");ns.textContent=s.textContent;s.replaceWith(ns);
-      });
-      document.getElementById("content").scrollTop=0;
-    });
+    // doll_intro.html은 완전 독립 iframe으로 운영
+    // 수정할 때 biz_main_v4.html 건드릴 필요 없음
+    document.getElementById("content").style.display="none";
+    var fr=document.getElementById("doll-intro-frame");
+    if(fr) fr.style.display="block";
     return;
   }
   const ws=[100,74,88,60,95,50,82,68,76,55];
