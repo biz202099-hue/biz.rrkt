@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>biz-OC-doll · 캐릭터 일람</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 
 </head>
 <body>
@@ -48,25 +48,28 @@ button{font-family:var(--fn);cursor:pointer}
 .char-code{font-size:12px;font-weight:600;color:var(--tx);font-family:'Inter',monospace;letter-spacing:.5px}
 .char-sub{font-size:11px;color:var(--tx3);margin-top:1px}
 .char-empty{grid-column:1/-1;padding:48px 0;text-align:center;font-size:12px;color:var(--tx3)}
+.char-sort-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 12px;background:var(--sb);border:1px solid var(--bd);border-radius:8px;font-size:12px;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--fn)}
+.char-sort-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
+.char-sort-btn.asc .sort-arrow{display:inline-block;transform:scaleY(-1)}
+.sort-arrow{display:inline-block;font-size:10px;transition:transform .15s}
 
 /* ── CHAR DETAIL ── */
 .sheet-wrap{max-width:1080px;margin:0 auto;padding:32px 32px 48px}
-.sheet-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;border-bottom:1px solid var(--bd);padding-bottom:16px}
-.sheet-id-code{font-family:'Inter',monospace;font-size:13px;font-weight:700;letter-spacing:2.5px;color:var(--tx);text-transform:uppercase}
-.sheet-meta{font-size:10px;color:var(--tx3);letter-spacing:.5px}
+.sheet-meta-right{font-size:10px;color:var(--tx3);letter-spacing:.5px;margin-left:auto;align-self:flex-end}
 
-/* 메인 레이아웃 */
-.sheet-body{display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start}
-.sheet-left{}
-.sheet-illust{width:200px;height:200px;border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-bottom:16px}
-.sheet-illust-inner{width:100%;height:100%;filter:grayscale(1);opacity:.7}
-.sheet-holder-block{padding:12px 14px;border:1px solid var(--bd);border-radius:8px}
-.sheet-holder-label{font-size:9px;font-weight:600;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase;margin-bottom:4px}
-.sheet-holder-value{font-size:13px;font-weight:600;color:var(--tx)}
+/* 헤더 행: 썸네일 + 텍스트 */
+.sheet-header-row{display:flex;align-items:center;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--bd);margin-bottom:24px}
+.sheet-thumb{width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--bd);flex-shrink:0}
+.sheet-thumb-inner{width:100%;height:100%;filter:grayscale(1);opacity:.7}
+.sheet-header-text{display:flex;flex-direction:column;gap:6px}
+.sheet-info-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
+.sheet-info-code{font-size:28px;font-weight:400;color:var(--tx);font-family:'Share Tech Mono',monospace;letter-spacing:1px;line-height:1}
+.sheet-holder-block{padding:12px 20px;display:flex;flex-direction:column;gap:6px;align-self:center}
+.sheet-holder-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
+.sheet-holder-value{font-size:20px;font-weight:400;color:var(--tx);font-family:'Share Tech Mono',monospace}
 
-/* 우측 캐릭터 시트 영역 */
-.sheet-right{}
-.sheet-right-hint{height:100%;min-height:280px;border:1px dashed var(--bd2);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+/* 시트 슬롯 */
+.sheet-slot{min-height:320px;border:1px dashed var(--bd2);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .sheet-hint-icon{font-size:22px;opacity:.15}
 .sheet-hint-text{font-size:10px;color:var(--tx3);line-height:1.8;text-align:center}
 
@@ -82,6 +85,12 @@ button{font-family:var(--fn);cursor:pointer}
 /* ── PAGE SECTIONS ── */
 #list-view{display:block}
 #detail-view{display:none}
+
+/* ── WIDTH CONTROL ── */
+.char-page-inner{max-width:720px;margin:0 auto;transition:max-width .2s}
+.char-page-inner.wide{max-width:none}
+.width-toggle-btn{margin-left:auto;display:inline-flex;align-items:center;gap:5px;padding:6px 11px;background:var(--sb);border:1px solid var(--bd);border-radius:7px;font-size:11px;font-weight:500;color:var(--tx3);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--fn)}
+.width-toggle-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
 </style>
 
 <!-- ── LIST VIEW ── -->
@@ -90,14 +99,21 @@ button{font-family:var(--fn);cursor:pointer}
     <span class="tb-crumb">biz-OC-doll</span>
     <span class="tb-arr">›</span>
     <span class="tb-cur">캐릭터 일람</span>
+    <button class="width-toggle-btn" id="width-toggle-btn" onclick="toggleWidth()" title="너비 전환">⇔ <span id="width-toggle-label">전체 너비</span></button>
   </div>
   <div class="char-page">
+    <div class="char-page-inner" id="char-page-inner">
     <div class="char-filter-row">
       <div class="char-filter-tabs" id="filter-tabs"></div>
       <input class="char-search" type="text" placeholder="코드 검색..." id="char-search-input" oninput="setSearch(this.value)" />
+      <button class="char-sort-btn" id="sort-btn" onclick="toggleSort()" title="정렬 순서 변경">
+        <span class="sort-arrow">↓</span>
+        <span id="sort-label">최신순</span>
+      </button>
       <span class="char-count" id="char-count-lbl"></span>
     </div>
     <div class="char-grid" id="char-grid"></div>
+    </div><!-- /char-page-inner -->
   </div>
 </div>
 
@@ -114,30 +130,25 @@ button{font-family:var(--fn);cursor:pointer}
   </div>
 
   <div class="sheet-wrap">
-    <div class="sheet-header">
-      <span class="sheet-id-code" id="detail-id-code"></span>
-      <span class="sheet-meta">biz-OC-doll · 2026</span>
+    <!-- 헤더 행 -->
+    <div class="sheet-header-row">
+      <div class="sheet-thumb">
+        <div class="sheet-thumb-inner" id="detail-illust-inner"></div>
+      </div>
+      <div class="sheet-header-text">
+        <div class="sheet-info-label">Code</div>
+        <div class="sheet-info-code" id="detail-id-code"></div>
+      </div>
+      <div class="sheet-holder-block">
+        <div class="sheet-holder-label">Holder</div>
+        <div class="sheet-holder-value" id="detail-holder">—</div>
+      </div>
+      <span class="sheet-meta-right">biz-OC-doll · 2026</span>
     </div>
 
-    <div class="sheet-body">
-      <!-- 좌측: 섬네일 + Holder -->
-      <div class="sheet-left">
-        <div class="sheet-illust">
-          <div class="sheet-illust-inner" id="detail-illust-inner"></div>
-        </div>
-        <div class="sheet-holder-block">
-          <div class="sheet-holder-label">Holder</div>
-          <div class="sheet-holder-value" id="detail-holder">—</div>
-        </div>
-      </div>
-
-      <!-- 우측: 캐릭터 시트 등록 영역 -->
-      <div class="sheet-right">
-        <div class="sheet-right-hint">
-          <div class="sheet-hint-icon">◻</div>
-          <div class="sheet-hint-text">캐릭터 시트 / 일러스트<br><span style="opacity:.5">character sheet · illustration · profile</span></div>
-        </div>
-      </div>
+    <div class="sheet-slot">
+      <div class="sheet-hint-icon">◻</div>
+      <div class="sheet-hint-text">캐릭터 시트 / 일러스트<br><span style="opacity:.5">visual sheet · reference · SNS</span></div>
     </div>
   </div>
 
@@ -176,17 +187,28 @@ if(window.CHARACTERS) return;
 })();
 
 /* ── STATE ── */
-window.charState = window.charState || { filter:"ALL", search:"", activeId:null };
+window.charState = window.charState || { filter:"ALL", search:"", activeId:null, sortDesc:true };
 window.charState.activeId = null;
 const state = window.charState;
 
 /* ── RENDER LIST ── */
 function renderList(){
   const q = state.search.trim().toLowerCase();
-  const filtered = window.CHARACTERS.filter(c=>
+  let filtered = window.CHARACTERS.filter(c=>
     (state.filter==="ALL" || c.type===state.filter) &&
     (!q || c.idCode.toLowerCase().includes(q))
   );
+
+  // 정렬: 최신순(내림차순) / 오래된순(오름차순)
+  filtered = [...filtered].sort((a,b) => state.sortDesc ? b.id - a.id : a.id - b.id);
+
+  // 정렬 버튼 UI 동기화
+  const sortBtn = document.getElementById('sort-btn');
+  const sortLabel = document.getElementById('sort-label');
+  if(sortBtn && sortLabel){
+    sortLabel.textContent = state.sortDesc ? "최신순" : "오래된순";
+    sortBtn.className = "char-sort-btn" + (state.sortDesc ? "" : " asc");
+  }
 
   const counts={ALL:0,M:0,N:0,F:0,O:0};
   window.CHARACTERS.forEach(c=>{counts[c.type]++;counts.ALL++;});
@@ -234,7 +256,15 @@ function renderDetail(id){
   document.getElementById('nav-next').className = "ep-nav-btn"+(next?"":" disabled");
 }
 
+
 /* ── ACTIONS ── */
+window.toggleSort = function(){ state.sortDesc = !state.sortDesc; renderList(); };
+window.toggleWidth = function(){
+  const inner = document.getElementById('char-page-inner');
+  const label = document.getElementById('width-toggle-label');
+  const isWide = inner.classList.toggle('wide');
+  label.textContent = isWide ? '좁게 보기' : '전체 너비';
+};
 window.setFilter = function(f){ state.filter=f; renderList(); };
 window.setSearch = function(v){ state.search=v; renderList(); };
 window.openChar = function(id){
