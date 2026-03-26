@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이벤트 — biz.rrkt</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--sb:#fff;--sm:#fafafa;--bd:#e2e2e2;--bd2:#c6c6c6;
+  --tx:#1a1a1a;--tx2:#5f5f5f;--tx3:#a0a0a0;
+  --acc:#5a90b0;
+  --fn:'Inter','Noto Sans KR',sans-serif;
+}
+html,body{height:100%;overflow-y:auto;background:var(--bg);color:var(--tx);font-family:var(--fn);-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:4px}
+
+/* ── 헤더 ── */
+.page-hero{
+  padding:36px 40px 28px;
+  border-bottom:1px solid var(--bd);
+  background:var(--sb);
+}
+.page-hero-inner{max-width:700px;margin:0 auto}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--tx3);text-transform:uppercase;margin-bottom:8px}
+.page-title{font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.page-title-icon{font-size:22px}
+.page-desc{font-size:13px;color:var(--tx2);line-height:1.7}
+
+/* ── 바디 ── */
+.page-body{padding:28px 40px 60px;max-width:700px;margin:0 auto}
+
+/* ── 섹션 제목 ── */
+.sec-label{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);
+  text-transform:uppercase;margin-bottom:14px;margin-top:28px;
+}
+.sec-label:first-child{margin-top:0}
+
+/* ── 이벤트 카드 ── */
+.event-card{
+  border:1px solid var(--bd);border-radius:12px;overflow:hidden;
+  background:var(--sb);margin-bottom:14px;
+}
+.event-card-banner{
+  height:80px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;position:relative;
+}
+.event-card-inner{padding:16px 20px 18px}
+.event-status{
+  display:inline-block;font-size:8px;font-weight:700;
+  padding:2px 8px;border-radius:10px;margin-bottom:8px;
+}
+.event-status.ongoing{background:#e8f5e9;color:#2e7d32}
+.event-status.upcoming{background:#fff8e1;color:#c77700}
+.event-status.ended{background:#f0f0f0;color:#888}
+.event-title{font-size:16px;font-weight:700;color:var(--tx);margin-bottom:5px;line-height:1.4}
+.event-period{font-size:11px;color:var(--tx3);margin-bottom:10px}
+.event-desc{font-size:13px;color:var(--tx2);line-height:1.75}
+.event-tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.event-tag{
+  font-size:10px;padding:3px 9px;border-radius:20px;
+  background:var(--bg);border:1px solid var(--bd);color:var(--tx3);
+}
+
+/* ── 참여 버튼 ── */
+.event-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:14px;padding:9px 18px;
+  background:var(--acc);color:#fff;border:none;
+  border-radius:8px;font-size:12px;font-weight:600;
+  font-family:var(--fn);cursor:pointer;transition:opacity .12s;
+}
+.event-btn:hover{opacity:.85}
+.event-btn.disabled{background:var(--bd);color:var(--tx3);cursor:default;pointer-events:none}
+
+/* ── 타임라인 ── */
+.timeline{display:flex;flex-direction:column;gap:0;position:relative;padding-left:22px}
+.timeline::before{
+  content:'';position:absolute;left:6px;top:6px;bottom:6px;
+  width:1px;background:var(--bd);
+}
+.tl-item{position:relative;padding:0 0 22px 18px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{
+  position:absolute;left:-18px;top:3px;
+  width:12px;height:12px;border-radius:50%;
+  background:#fff;border:2px solid var(--acc);flex-shrink:0;
+}
+.tl-dot.done{background:var(--acc)}
+.tl-date{font-size:9px;font-weight:600;letter-spacing:.5px;color:var(--tx3);margin-bottom:3px;text-transform:uppercase}
+.tl-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px}
+.tl-desc{font-size:11px;color:var(--tx2);line-height:1.6}
+
+/* ── 빈 상태 ── */
+.empty-state{
+  text-align:center;padding:56px 20px;
+  border:1px dashed var(--bd2);border-radius:12px;
+  color:var(--tx3);font-size:12px;line-height:1.8;
+}
+.empty-state-icon{font-size:36px;margin-bottom:12px}
+.empty-state-title{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="eyebrow">biz-OC-doll · Event</div>
+    <div class="page-title">
+      <span class="page-title-icon">🎉</span>이벤트
+    </div>
+    <div class="page-desc">오씨돌 관련 이벤트, 참여형 기획, 팬아트 행사 등을 안내합니다.</div>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <!-- ── 진행 중 이벤트 ── -->
+  <div class="sec-label">진행 중</div>
+
+  <div class="event-card">
+    <div class="event-card-banner" style="background:linear-gradient(135deg,#cfe3f0,#a4c8e0)">🌟</div>
+    <div class="event-card-inner">
+      <div class="event-status ongoing">진행 중</div>
+      <div class="event-title">이벤트 제목을 입력하세요</div>
+      <div class="event-period">📅 기간 미정</div>
+      <div class="event-desc">이벤트 내용을 여기에 입력하세요. 참여 방법, 상품 안내 등을 자유롭게 작성할 수 있습니다.</div>
+      <div class="event-tag-row">
+        <span class="event-tag">#이벤트</span>
+        <span class="event-tag">#팬아트</span>
+      </div>
+      <button class="event-btn">✨ 참여하기</button>
+    </div>
+  </div>
+
+  <!-- ── 예정 이벤트 ── -->
+  <div class="sec-label">예정</div>
+
+  <div class="event-card">
+    <div class="event-card-banner" style="background:linear-gradient(135deg,#f5f0e8,#e0d0b8)">🎁</div>
+    <div class="event-card-inner">
+      <div class="event-status upcoming">예정</div>
+      <div class="event-title">다음 이벤트 — 준비 중</div>
+      <div class="event-period">📅 일정 미정</div>
+      <div class="event-desc">준비 중인 이벤트입니다. 공지를 기다려 주세요!</div>
+      <button class="event-btn disabled">🔔 공지 예정</button>
+    </div>
+  </div>
+
+  <!-- ── 이벤트 타임라인 ── -->
+  <div class="sec-label" style="margin-top:36px">이벤트 히스토리</div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">날짜 미정</div>
+      <div class="tl-title">첫 번째 이벤트</div>
+      <div class="tl-desc">이벤트 간단 내용을 입력하세요.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">날짜 미정</div>
+      <div class="tl-title">두 번째 이벤트</div>
+      <div class="tl-desc">이벤트 간단 내용을 입력하세요.</div>
+    </div>
+  </div>
+
+  <!-- ── 안내 ── -->
+  <div style="margin-top:40px;padding:18px 20px;background:var(--sm);border:1px solid var(--bd);border-radius:10px;font-size:12px;color:var(--tx3);line-height:1.8">
+    💡 이 페이지의 내용은 <strong style="color:var(--tx2)">event.html</strong> 파일을 직접 수정하여 자유롭게 채워 주세요.<br>
+    이벤트 카드와 타임라인 블록을 복사해서 원하는 이벤트를 추가하시면 됩니다.
+  </div>
+
+</div>
+</body>
+</html>

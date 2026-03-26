@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>biz-OC-doll · 아카이브</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e8e8e8;
+  --gray-400: #a3a3a3;
+  --gray-600: #525252;
+  --gray-900: #111111;
+  --blue: #5a90b0;
+  --fn: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
+}
+html, body { background: var(--white); color: var(--gray-900); font-family: var(--fn); -webkit-font-smoothing: antialiased; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+
+/* ── HERO ── */
+.hero {
+  background: #fdf6ff;
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px dashed #e8d8f0;
+}
+/* 동인 느낌 배경 도트 패턴 */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle, #d9b8f0 1.2px, transparent 1.2px),
+    radial-gradient(circle, #f0b8d9 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+/* 모서리 별 장식 */
+.hero::after {
+  content: '✦ ✦ ✦';
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; letter-spacing: 6px; color: #c8a0e0; opacity: 0.6;
+  pointer-events: none;
+}
+.glitter-wrap { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.spark { position: absolute; pointer-events: none; opacity: 0.7; }
+.hero-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #a07ac8; text-transform: uppercase; margin-bottom: 10px; position: relative; z-index: 2; }
+.hero-title { font-size: clamp(20px, 3.5vw, 30px); font-weight: 100; color: #5a4870; letter-spacing: 0.22em; line-height: 1.1; margin-bottom: 10px; font-family: 'Josefin Sans', sans-serif; position: relative; z-index: 2; }
+.hero-desc { font-size: 12px; color: #8a7898; line-height: 1.75; max-width: 460px; margin: 0 auto 16px; position: relative; z-index: 2; }
+/* 스탯 - 작고 조용하게 인라인으로 */
+.hero-stats { display: flex; gap: 0; justify-content: center; margin-bottom: 18px; position: relative; z-index: 2; }
+.hero-stat { text-align: center; padding: 0 14px; }
+.hero-stat + .hero-stat { border-left: 1px solid #e0d0ec; }
+.hero-stat-n { font-size: 15px; font-weight: 700; color: #7a5a98; letter-spacing: -0.02em; line-height: 1; display: inline; }
+.hero-stat-l { font-size: 9px; font-weight: 600; letter-spacing: 0.8px; color: #b8a0cc; text-transform: uppercase; margin-top: 3px; }
+.hero-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 2; }
+.btn-register {
+  font-size: 12px; font-weight: 700; padding: 7px 18px; border-radius: 100px;
+  background: rgba(160,122,200,0.12); border: 1.5px solid rgba(160,122,200,0.4);
+  color: #9060c0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none; transition: background 0.15s, transform 0.15s;
+  letter-spacing: 0.3px;
+}
+.btn-register:hover { background: rgba(160,122,200,0.22); transform: scale(1.02); }
+
+/* ── PAGE ── */
+.page { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+.sec { padding-top: 52px; margin-top: 52px; border-top: 1px solid var(--gray-200); }
+.sec-first { border-top: none; padding-top: 20px; }
+.sec-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: var(--blue); text-transform: uppercase; margin-bottom: 8px; }
+.sec-title { font-size: 20px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.03em; margin-bottom: 6px; }
+.sec-sub { font-size: 13px; color: var(--gray-400); line-height: 1.6; margin-bottom: 22px; }
+
+/* ── CONTROLS ── */
+.controls-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-btn {
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px;
+  border: 1px solid var(--gray-200); background: var(--white); color: var(--gray-600);
+  cursor: pointer; transition: all 0.12s; font-family: var(--fn);
+}
+.filter-btn:hover { border-color: var(--blue); color: var(--blue); }
+.filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.view-toggle { display: flex; gap: 2px; }
+.view-btn {
+  width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--gray-200);
+  background: var(--white); color: var(--gray-400); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.1s;
+}
+.view-btn.active { background: var(--gray-900); color: #fff; border-color: var(--gray-900); }
+.view-btn:hover:not(.active) { border-color: var(--gray-400); color: var(--gray-600); }
+.count-label { font-size: 11px; font-weight: 600; color: var(--gray-400); }
+
+/* ── GRID ── */
+.works-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.work-card {
+  border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden;
+  background: var(--white); transition: transform 0.13s, box-shadow 0.13s;
+  display: flex; flex-direction: column;
+}
+.work-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.work-card-thumb {
+  height: 100px; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; position: relative; flex-shrink: 0;
+}
+.badge-type {
+  position: absolute; top: 8px; left: 8px; font-size: 9px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px; background: rgba(255,255,255,0.88);
+  color: var(--gray-600); border: 1px solid rgba(255,255,255,0.5); letter-spacing: 0.3px;
+}
+.badge-pub {
+  position: absolute; top: 8px; right: 8px; font-size: 9px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px; background: rgba(90,144,176,0.15);
+  color: var(--blue); border: 1px solid rgba(90,144,176,0.3);
+}
+.work-card-body { padding: 13px 15px 15px; flex: 1; display: flex; flex-direction: column; }
+.work-card-title { font-size: 14px; font-weight: 700; color: var(--gray-900); line-height: 1.35; margin-bottom: 3px; letter-spacing: -0.01em; }
+.work-card-creator { font-size: 11px; color: var(--gray-400); margin-bottom: 9px; }
+.chars-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 9px; }
+.char-chip {
+  font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 100px;
+  background: rgba(90,144,176,0.08); color: var(--blue);
+  border: 1px solid rgba(90,144,176,0.2); letter-spacing: 0.3px;
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+}
+.work-card-desc { font-size: 11px; color: var(--gray-600); line-height: 1.6; flex: 1; }
+.work-card-foot {
+  margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.work-card-date { font-size: 10px; color: var(--gray-400); }
+.work-link {
+  font-size: 11px; font-weight: 600; color: var(--blue); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 3px; transition: opacity 0.12s;
+}
+.work-link:hover { opacity: 0.7; }
+
+/* ── LIST ── */
+.works-list { display: flex; flex-direction: column; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; }
+.work-list-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 14px;
+  border-bottom: 1px solid var(--gray-100); transition: background 0.1s;
+}
+.work-list-item:last-child { border-bottom: none; }
+.work-list-item:hover { background: var(--gray-50); }
+.work-list-icon {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.work-list-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.work-list-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.work-list-title { font-size: 13px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.01em; white-space: nowrap; }
+.badge-list-type {
+  font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 100px;
+  background: var(--gray-100); color: var(--gray-600); letter-spacing: 0.3px; white-space: nowrap;
+}
+.work-list-creator { font-size: 11px; color: var(--gray-400); white-space: nowrap; }
+.work-list-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.work-list-date { font-size: 10px; color: var(--gray-400); white-space: nowrap; }
+
+/* ── CHARACTER SEARCH ── */
+.char-search-wrap { position: relative; margin-bottom: 16px; }
+.char-search-input {
+  width: 100%; padding: 10px 16px 10px 38px;
+  border: 1px solid var(--gray-200); border-radius: 100px;
+  font-size: 13px; font-family: var(--fn); color: var(--gray-900);
+  background: var(--white); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  letter-spacing: 0.5px;
+}
+.char-search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(90,144,176,0.12); }
+.char-search-input::placeholder { font-family: var(--fn); letter-spacing: 0; color: var(--gray-400); }
+.char-search-icon {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); pointer-events: none;
+}
+.char-search-clear {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gray-200);
+  border: none; cursor: pointer; display: none; align-items: center; justify-content: center;
+  color: var(--gray-600); font-size: 11px; transition: background 0.1s;
+}
+.char-search-clear:hover { background: var(--gray-400); color: #fff; }
+.char-search-clear.visible { display: flex; }
+.char-search-hint { font-size: 11px; color: var(--gray-400); margin-bottom: 14px; }
+.char-index-row.hidden { display: none; }
+.char-index-row .char-code-label mark {
+  background: rgba(90,144,176,0.18); color: var(--blue); border-radius: 2px; padding: 0 1px;
+}
+
+/* ── CHARACTER INDEX ── */
+.char-index { display: flex; flex-direction: column; }
+.char-index-row {
+  display: flex; align-items: center; gap: 16px; padding: 15px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.char-index-row:last-child { border-bottom: none; }
+.char-code-label {
+  font-size: 12px; font-weight: 700; color: var(--blue); letter-spacing: 1px;
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  min-width: 110px; flex-shrink: 0;
+}
+.char-works-chips { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+.char-work-tag {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 100px;
+  background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200);
+  white-space: nowrap; transition: all 0.1s; cursor: default;
+}
+.char-work-tag:hover { background: rgba(90,144,176,0.08); color: var(--blue); border-color: rgba(90,144,176,0.3); }
+.char-appear-count { font-size: 11px; color: var(--gray-400); flex-shrink: 0; white-space: nowrap; }
+
+/* ── EMPTY ── */
+.empty-state {
+  text-align: center; padding: 52px 20px;
+  border: 1px dashed var(--gray-200); border-radius: 14px;
+  color: var(--gray-400); font-size: 12px; line-height: 1.8;
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; }
+.empty-title { font-size: 14px; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
+
+/* ── POPULAR RANKING ── */
+.ranking-section { }
+
+/* TOP 3 포디움 */
+.ranking-top3 {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 10px; margin-bottom: 16px;
+}
+.podium-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  position: relative;
+}
+.podium-item.rank-1 { order: 2; width: 156px; }
+.podium-item.rank-2 { order: 1; width: 124px; }
+.podium-item.rank-3 { order: 3; width: 108px; }
+
+/* 썸네일 */
+.podium-thumb {
+  width: 100%; aspect-ratio: 1;
+  border-radius: 14px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  border: 2.5px solid transparent;
+}
+.rank-1 .podium-thumb { font-size: 48px; border-color: #f5c842; box-shadow: 0 6px 24px rgba(200,160,60,0.28); }
+.rank-2 .podium-thumb { font-size: 34px; border-color: #c0c0d0; box-shadow: 0 3px 12px rgba(0,0,0,0.1); border-radius: 12px; }
+.rank-3 .podium-thumb { font-size: 28px; border-color: #d4956a; box-shadow: 0 3px 10px rgba(0,0,0,0.08); border-radius: 10px; }
+.podium-thumb-num {
+  position: absolute; bottom: 5px; right: 6px;
+  font-size: 8px; font-weight: 800;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  color: rgba(100,60,160,0.5);
+}
+.podium-crown {
+  font-size: 20px; line-height: 1; margin-bottom: 5px;
+}
+.rank-2 .podium-crown { font-size: 16px; }
+.rank-3 .podium-crown { font-size: 14px; }
+
+/* 발판 */
+.podium-base {
+  width: 100%; border-radius: 8px 8px 5px 5px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 7px 5px 6px; gap: 1px;
+  margin-top: -1px;
+}
+.rank-1 .podium-base { background: linear-gradient(135deg,#c890f0,#a060d8); min-height: 60px; }
+.rank-2 .podium-base { background: linear-gradient(135deg,#b0b0cc,#8888a8); min-height: 42px; }
+.rank-3 .podium-base { background: linear-gradient(135deg,#e0a870,#c07840); min-height: 30px; }
+.podium-rank-label {
+  font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.8);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.podium-count-val {
+  font-size: 15px; font-weight: 800; color: #fff; line-height: 1;
+  letter-spacing: -0.03em;
+}
+.rank-2 .podium-count-val, .rank-3 .podium-count-val { font-size: 13px; }
+.podium-count-unit { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.podium-code {
+  font-size: 8px; font-weight: 700; color: #7a50a8;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  letter-spacing: 0.3px; text-align: center; margin-top: 5px;
+  word-break: break-all;
+}
+
+/* 4위~ 리스트 */
+.ranking-rest {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;
+}
+.ranking-rest-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-bottom: 1px solid var(--gray-100);
+  transition: background 0.1s;
+}
+.ranking-rest-item:nth-last-child(-n+2) { border-bottom: none; }
+.ranking-rest-item:nth-child(odd) { border-right: 1px solid var(--gray-100); }
+.ranking-rest-item:hover { background: var(--gray-50); }
+.rest-thumb {
+  width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.rest-rank {
+  font-size: 10px; font-weight: 800; color: var(--gray-400);
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  min-width: 16px; text-align: right; flex-shrink: 0;
+}
+.rest-code {
+  font-size: 10px; font-weight: 700; color: var(--blue);
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rest-count { font-size: 10px; color: var(--gray-400); flex-shrink: 0; white-space: nowrap; }
+
+/* 더보기 */
+.ranking-more-wrap { margin-top: 8px; }
+.ranking-more-btn {
+  width: 100%; padding: 8px; border-radius: 10px;
+  border: 1px dashed var(--gray-200); background: transparent;
+  font-size: 11px; font-weight: 700; color: var(--gray-400);
+  font-family: var(--fn); cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.ranking-more-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(90,144,176,0.04); }
+.ranking-more-btn .more-arrow { transition: transform 0.2s; display: inline-block; }
+.ranking-more-btn.open .more-arrow { transform: rotate(180deg); }
+.ranking-all-list {
+  display: none; margin-top: 8px;
+  border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.ranking-all-list.hidden { display: none !important; }
+.ranking-all-list:not(.hidden) { display: grid; }
+.all-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-bottom: 1px solid var(--gray-100);
+  font-size: 10px;
+}
+.all-item:nth-last-child(-n+2) { border-bottom: none; }
+.all-item:nth-child(odd) { border-right: 1px solid var(--gray-100); }
+.all-item:hover { background: var(--gray-50); }
+.all-rank { font-size: 9px; font-weight: 800; color: var(--gray-400); min-width: 16px; text-align: right; flex-shrink: 0; font-family: 'SF Mono','Fira Code','Courier New',monospace; }
+.all-thumb { width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.all-code { font-size: 10px; font-weight: 700; color: var(--blue); font-family: 'SF Mono','Fira Code','Courier New',monospace; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.all-count { font-size: 9px; color: var(--gray-400); flex-shrink: 0; }
+
+.ranking-empty {
+  text-align: center; padding: 32px 16px;
+  font-size: 12px; color: var(--gray-400); line-height: 1.9;
+}
+
+/* ── NOTE ── */
+.note-box {
+  background: rgba(90,144,176,0.05); border: 1px solid rgba(90,144,176,0.18);
+  border-radius: 12px; padding: 16px 20px;
+  font-size: 13px; color: var(--gray-600); line-height: 1.85; margin-top: 40px;
+}
+.note-box strong { color: var(--gray-900); font-weight: 600; }
+
+@media (max-width: 580px) {
+  .page { padding: 0 16px 64px; }
+  .hero { padding: 40px 20px 36px; }
+  .works-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hero-stat { padding: 0 16px; }
+  .hero-stat-n { font-size: 22px; }
+}
+@media (max-width: 380px) {
+  .works-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="glitter-wrap" id="glitter"></div>
+
+  <div class="hero-label">BIZ-OC-DOLL · ARCHIVE</div>
+  <div class="hero-title">FILMOGRAPHY</div>
+  <div class="hero-desc">
+    캐릭터들이 배우로서 등장한 창작물의 공식 기록입니다.<br>
+    웹툰·소설·게임·굿즈 등 공개 등록된 작품을 아카이빙합니다.
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n" id="stat-total">0</div>
+      <div class="hero-stat-l">Total Works</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n" id="stat-creators">0</div>
+      <div class="hero-stat-l">Creators</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n" id="stat-chars">0</div>
+      <div class="hero-stat-l">Characters Cast</div>
+    </div>
+  </div>
+
+  <div class="hero-btns">
+    <a class="btn-register" href="#" onclick="openFormModal();return false;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      작품 등록 폼
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+    </a>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- 작품 목록 -->
+  <div class="sec sec-first">
+    <div class="sec-eyebrow">Works Archive</div>
+    <div class="sec-title">등록 작품 목록</div>
+    <div class="sec-sub">공개 등록을 선택한 창작물만 표시됩니다. 등록은 자발적이며, 소규모 창작은 해당 없습니다.</div>
+
+    <div class="controls-row">
+      <div class="filter-row" id="filter-row">
+        <button class="filter-btn active" onclick="filterWorks('all',this)">전체</button>
+        <button class="filter-btn" onclick="filterWorks('웹툰/만화',this)">웹툰·만화</button>
+        <button class="filter-btn" onclick="filterWorks('웹소설/소설',this)">웹소설·소설</button>
+        <button class="filter-btn" onclick="filterWorks('게임',this)">게임</button>
+        <button class="filter-btn" onclick="filterWorks('일러스트',this)">일러스트</button>
+        <button class="filter-btn" onclick="filterWorks('굿즈',this)">굿즈</button>
+        <button class="filter-btn" onclick="filterWorks('영상',this)">영상</button>
+        <button class="filter-btn" onclick="filterWorks('기타',this)">기타</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="count-label" id="count-label">0개</span>
+      </div>
+    </div>
+
+    <div id="works-container"></div>
+  </div>
+
+  <!-- 인기 캐릭터 랭킹 -->
+  <div class="sec">
+    <div class="sec-eyebrow">Popular Characters</div>
+    <div class="sec-title">인기 캐릭터 랭킹 ✦</div>
+    <div class="sec-sub">등록 작품 출연 횟수 기준으로 집계됩니다.</div>
+    <div class="ranking-section" id="ranking-section"></div>
+  </div>
+
+  <!-- 캐릭터별 출연 기록 -->
+  <div class="sec">
+    <div class="sec-eyebrow">Character Index</div>
+    <div class="sec-title">캐릭터별 출연 기록</div>
+    <div class="sec-sub">각 캐릭터가 등장한 공개 등록 작품을 한눈에 확인할 수 있습니다.</div>
+
+    <div class="char-search-wrap">
+      <svg class="char-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        class="char-search-input"
+        id="char-search"
+        type="text"
+        placeholder="고유코드 검색 (예: BIZOCDOLL001, 001, 42...)"
+        oninput="onCharSearch(this.value)"
+      />
+      <button class="char-search-clear" id="char-search-clear" onclick="clearCharSearch()" title="초기화">✕</button>
+    </div>
+    <div class="char-search-hint" id="char-search-hint"></div>
+
+    <div class="char-index" id="char-index"></div>
+  </div>
+
+  <div class="note-box">
+    📌 이 아카이브는 <strong>공개 등록을 선택한 작품</strong>만 수록합니다.
+    소규모 개인 창작·SNS 게시물은 등록 없이 자유롭게 만드실 수 있습니다.<br>
+    등록을 원하시면 상단 <strong>작품 등록 폼</strong>을 이용해 주세요.
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ★  등록 작품 데이터  ★
+   폼에서 공개 등록된 작품을 아래 WORKS 배열에 추가하세요.
+
+   type 가능 값:
+   "웹툰/만화" | "웹소설/소설" | "게임" | "일러스트" | "굿즈" | "영상" | "기타"
+
+   chars: 사용한 캐릭터 코드 배열 (예: ["BIZOCDOLL001","BIZOCDOLL003"])
+══════════════════════════════════════════════════════════ */
+const WORKS = [
+  {
+    title:   "달빛 아래서",
+    creator: "소소한창작",
+    type:    "웹툰/만화",
+    chars:   ["BIZOCDOLL007", "BIZOCDOLL023"],
+    desc:    "두 인형이 달빛 아래 처음 만나는 이야기",
+    link:    "https://twitter.com",
+    date:    "2025-01",
+  },
+  {
+    title:   "비즈돌 연구소",
+    creator: "꽃잎",
+    type:    "웹소설/소설",
+    chars:   ["BIZOCDOLL042"],
+    desc:    "BIZOCDOLL042가 주인공인 단편 소설",
+    link:    "",
+    date:    "2025-02",
+  },
+  {
+    title:   "봄 굿즈 세트",
+    creator: "petalworks",
+    type:    "굿즈",
+    chars:   ["BIZOCDOLL001", "BIZOCDOLL007", "BIZOCDOLL099"],
+    desc:    "아크릴 키링 3종 세트",
+    link:    "https://twitter.com",
+    date:    "2025-03",
+  },
+  {
+    title:   "인형극",
+    creator: "밤양갱",
+    type:    "일러스트",
+    chars:   ["BIZOCDOLL015"],
+    desc:    "팬아트 일러스트",
+    link:    "",
+    date:    "2025-03",
+  },
+];
+
+/* ── 타입별 스타일 ── */
+const TYPE_META = {
+  "웹툰/만화":   { icon:"📖", grad:"linear-gradient(135deg,#ddeef8,#b8d8ee)" },
+  "웹소설/소설": { icon:"📝", grad:"linear-gradient(135deg,#e8e4f4,#ccc4e8)" },
+  "게임":        { icon:"🎮", grad:"linear-gradient(135deg,#ddf0e4,#b4ddc4)" },
+  "일러스트":    { icon:"🎨", grad:"linear-gradient(135deg,#fde8cc,#f4c89a)" },
+  "굿즈":        { icon:"🛍️", grad:"linear-gradient(135deg,#fde4ec,#f4b8cc)" },
+  "영상":        { icon:"🎬", grad:"linear-gradient(135deg,#f0e4dc,#e0c4b4)" },
+  "기타":        { icon:"✨", grad:"linear-gradient(135deg,#e8e8e8,#d0d0d0)" },
+};
+
+let curFilter = "all";
+
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function getFiltered(){
+  return curFilter === "all" ? WORKS : WORKS.filter(w=>w.type===curFilter);
+}
+
+function renderWorks(){
+  const list = getFiltered();
+  document.getElementById("count-label").textContent = list.length + "개";
+  const c = document.getElementById("works-container");
+  if(!list.length){
+    c.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🎬</div>
+      <div class="empty-title">등록된 작품이 없습니다</div>
+      ${curFilter!=="all"?"다른 카테고리를 선택하거나 작품 등록 폼을 이용해 주세요.":"아직 공개 등록된 작품이 없어요. 첫 번째 창작자가 되어 보세요!"}
+    </div>`;
+    return;
+  }
+  c.innerHTML = `<div class="works-list">${list.map(listHTML).join("")}</div>`;
+}
+function cardHTML(w){
+  const m = TYPE_META[w.type]||TYPE_META["기타"];
+  const linkArrow = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
+  return `<div class="work-card">
+    <div class="work-card-thumb" style="background:${m.grad}">
+      <span>${m.icon}</span>
+      <span class="badge-type">${esc(w.type)}</span>
+      <span class="badge-pub">공개</span>
+    </div>
+    <div class="work-card-body">
+      <div class="work-card-title">${esc(w.title)}</div>
+      <div class="work-card-creator">by ${esc(w.creator)}</div>
+      <div class="chars-row">${(w.chars||[]).map(c=>`<span class="char-chip">${esc(c)}</span>`).join("")}</div>
+      ${w.desc?`<div class="work-card-desc">${esc(w.desc)}</div>`:""}
+      <div class="work-card-foot">
+        <span class="work-card-date">${w.date||""}</span>
+        ${w.link?`<a class="work-link" href="${esc(w.link)}" target="_blank" rel="noopener">바로가기 ${linkArrow}</a>`:""}
+      </div>
+    </div>
+  </div>`;
+}
+
+function listHTML(w){
+  const m = TYPE_META[w.type]||TYPE_META["기타"];
+  const linkArrow = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>`;
+  return `<div class="work-list-item">
+    <div class="work-list-icon" style="background:${m.grad}">${m.icon}</div>
+    <div class="work-list-info">
+      <div class="work-list-top">
+        <span class="work-list-title">${esc(w.title)}</span>
+        <span class="badge-list-type">${esc(w.type)}</span>
+        <span class="work-list-creator">by ${esc(w.creator)}</span>
+      </div>
+      <div class="chars-row">${(w.chars||[]).map(c=>`<span class="char-chip">${esc(c)}</span>`).join("")}</div>
+    </div>
+    <div class="work-list-right">
+      <span class="work-list-date">${w.date||""}</span>
+      ${w.link?`<a class="work-link" href="${esc(w.link)}" target="_blank" rel="noopener">바로가기 ${linkArrow}</a>`:""}
+    </div>
+  </div>`;
+}
+
+function onCharSearch(val){
+  const q = val.trim().toUpperCase();
+  const clearBtn = document.getElementById("char-search-clear");
+  const hint = document.getElementById("char-search-hint");
+  clearBtn.classList.toggle("visible", val.length > 0);
+
+  const rows = document.querySelectorAll("#char-index .char-index-row");
+  if(!q){ rows.forEach(r=>r.classList.remove("hidden")); hint.textContent=""; return; }
+
+  // 숫자만 입력 시 번호로 매칭, 아니면 전체 코드로 매칭
+  const isNumOnly = /^\d+$/.test(q);
+  let shown = 0;
+  rows.forEach(r=>{
+    const code = r.dataset.code || "";
+    let match = false;
+    if(isNumOnly){
+      // 숫자 부분만 비교 (001 → 1, 42 → 42)
+      const numPart = code.replace("BIZOCDOLL","");
+      match = String(parseInt(numPart,10)) === String(parseInt(q,10));
+    } else {
+      match = code.includes(q);
+    }
+    r.classList.toggle("hidden", !match);
+    if(match) shown++;
+    // 하이라이트
+    const label = r.querySelector(".char-code-label");
+    if(label){
+      const raw = esc(code);
+      if(match && !isNumOnly){
+        const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi");
+        label.innerHTML = raw.replace(re, m=>`<mark>${m}</mark>`);
+      } else {
+        label.textContent = code;
+      }
+    }
+  });
+  hint.textContent = shown > 0 ? `${shown}개 캐릭터 매칭` : "검색 결과가 없습니다";
+}
+
+function clearCharSearch(){
+  const input = document.getElementById("char-search");
+  input.value = "";
+  onCharSearch("");
+  input.focus();
+}
+
+function renderCharIndex(){
+  const map = {};
+  WORKS.forEach(w=>(w.chars||[]).forEach(c=>{
+    if(!map[c]) map[c]=[];
+    if(!map[c].find(t=>t===w.title)) map[c].push(w.title);
+  }));
+  const keys = Object.keys(map).sort();
+  const el = document.getElementById("char-index");
+  if(!keys.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">🎭</div><div class="empty-title">출연 기록이 없습니다</div></div>`;
+    return;
+  }
+  el.innerHTML = keys.map(c=>`
+    <div class="char-index-row" data-code="${esc(c)}">
+      <span class="char-code-label">${esc(c)}</span>
+      <div class="char-works-chips">${map[c].map(t=>`<span class="char-work-tag">${esc(t)}</span>`).join("")}</div>
+      <span class="char-appear-count">${map[c].length}작품</span>
+    </div>`).join("");
+}
+
+function renderRanking(){
+  const countMap = {};
+  // 1~200 전부 0으로 초기화
+  for(let i=1; i<=200; i++){
+    const code = "BIZOCDOLL" + String(i).padStart(3,"0");
+    countMap[code] = 0;
+  }
+  WORKS.forEach(w=>(w.chars||[]).forEach(c=>{
+    if(countMap[c] !== undefined) countMap[c] += 1;
+    else countMap[c] = 1;
+  }));
+  const sorted = Object.entries(countMap).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]));
+  const el = document.getElementById("ranking-section");
+  if(!sorted.length){
+    el.innerHTML=`<div class="ranking-empty">✦ 아직 등록된 작품이 없어요 ✦<br><span style="font-size:11px;opacity:0.7">작품이 등록되면 인기 캐릭터 순위가 여기에 표시됩니다.</span></div>`;
+    return;
+  }
+  const emojis=["🌸","⭐","🎀","🌙","💫","🍀","🎵","🌈","🦋","💎","🔮","🌺","✨","🎪","🌟"];
+  const thumbGrads=[
+    "linear-gradient(135deg,#e8d0f8,#f8d0e8)",
+    "linear-gradient(135deg,#d0e8f8,#d0f0e8)",
+    "linear-gradient(135deg,#f8e8d0,#f8d8b0)",
+    "linear-gradient(135deg,#e8f0d0,#c8e8b0)",
+    "linear-gradient(135deg,#f0d0f8,#d8c0f0)",
+  ];
+  const getEmoji = code => {
+    const n = parseInt(code.replace("BIZOCDOLL",""),10);
+    return emojis[(n-1)%emojis.length];
+  };
+  const getGrad = code => {
+    const n = parseInt(code.replace("BIZOCDOLL",""),10);
+    return thumbGrads[(n-1)%thumbGrads.length];
+  };
+  const getNum = code => String(parseInt(code.replace("BIZOCDOLL",""),10)).padStart(3,"0");
+
+  const top3 = sorted.slice(0,3);
+  const rest = sorted.slice(3,10);
+  const maxCount = sorted[0][1];
+  const crowns = ["👑","🥈","🥉"];
+  const labels = ["1st","2nd","3rd"];
+
+  let html = `<div class="ranking-top3">`;
+  top3.forEach(([code,cnt],i)=>{
+    html+=`<div class="podium-item rank-${i+1}">
+      <div class="podium-crown">${crowns[i]}</div>
+      <div class="podium-thumb" style="background:${getGrad(code)}">
+        <span>${getEmoji(code)}</span>
+        <span class="podium-thumb-num">#${getNum(code)}</span>
+      </div>
+      <div class="podium-base">
+        <span class="podium-rank-label">${labels[i]}</span>
+        <span class="podium-count-val">${cnt}<span class="podium-count-unit">회</span></span>
+      </div>
+      <div class="podium-code">${code}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  if(rest.length){
+    html+=`<div class="ranking-rest">`;
+    rest.forEach(([code,cnt],i)=>{
+      html+=`<div class="ranking-rest-item">
+        <span class="rest-rank">${i+4}</span>
+        <div class="rest-thumb" style="background:${getGrad(code)}"><span>${getEmoji(code)}</span></div>
+        <span class="rest-code">${code}</span>
+        <span class="rest-count">${cnt}회</span>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  const allRest = sorted.slice(10);
+  if(allRest.length){
+    html+=`<div class="ranking-more-wrap">
+      <button class="ranking-more-btn" id="ranking-more-btn" onclick="toggleRankingAll()">
+        <span class="more-arrow">▾</span>&nbsp; 전체 순위 더보기 (총 ${sorted.length}개 캐릭터)
+      </button>
+      <div class="ranking-all-list hidden" id="ranking-all-list">`;
+    allRest.forEach(([code,cnt],i)=>{
+      html+=`<div class="all-item">
+        <span class="all-rank">${i+11}</span>
+        <div class="all-thumb" style="background:${getGrad(code)}"><span>${getEmoji(code)}</span></div>
+        <span class="all-code">${code}</span>
+        <span class="all-count">${cnt}회</span>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+function toggleRankingAll(){
+  const btn = document.getElementById("ranking-more-btn");
+  const list = document.getElementById("ranking-all-list");
+  if(!btn||!list) return;
+  const isOpen = !list.classList.contains("hidden");
+  list.classList.toggle("hidden", isOpen);
+  btn.classList.toggle("open", !isOpen);
+  btn.querySelector(".more-arrow").textContent = isOpen ? "▾" : "▴";
+  const total = document.querySelectorAll("#ranking-all-list .all-item").length;
+  btn.innerHTML = `<span class="more-arrow">${isOpen?"▾":"▴"}</span>&nbsp; ${isOpen?"전체 순위 더보기":"접기"}`;
+}
+
+function renderStats(){
+  document.getElementById("stat-total").textContent    = WORKS.length;
+  document.getElementById("stat-creators").textContent = new Set(WORKS.map(w=>w.creator)).size;
+  document.getElementById("stat-chars").textContent    = new Set(WORKS.flatMap(w=>w.chars||[])).size;
+}
+
+function filterWorks(type, btn){
+  curFilter = type;
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderWorks();
+}
+
+renderStats(); renderWorks(); renderRanking(); renderCharIndex();
+
+/* ── 글리터 ── */
+(function(){
+  const wrap = document.getElementById("glitter");
+  const svg = (s,c) => `<svg width="${s}" height="${s}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0C10 0 10.6 7 13 10C10.6 13 10 20 10 20C10 20 9.4 13 7 10C9.4 7 10 0 10 0Z" fill="${c}" opacity=".9"/><path d="M0 10C0 10 7 10.6 10 13C13 10.6 20 10 20 10C20 10 13 9.4 10 7C7 9.4 0 10 0 10Z" fill="${c}" opacity=".9"/></svg>`;
+  const cols = ['rgba(220,180,255,.9)','rgba(255,180,220,.85)','rgba(255,210,240,.9)','rgba(200,160,255,.8)','rgba(255,200,230,.85)'];
+  [[4,10],[18,75],[38,20],[55,80],[72,15],[88,55],[10,45],[30,60],[62,38],[82,82],[94,25]].forEach(([x,y],i)=>{
+    const s = 5 + Math.random()*9;
+    const el = document.createElement("div");
+    el.className = "spark";
+    el.style.cssText = `left:${x}%;top:${y}%;width:${s}px;height:${s}px;`;
+    el.innerHTML = svg(s, cols[i%cols.length]);
+    wrap.appendChild(el);
+  });
+  /* 하트·별 이모지 장식 */
+  const decos = [
+    {ch:'♡', x:3, y:8,  fs:14, op:0.35, c:'#d090e0'},
+    {ch:'★', x:93,y:12, fs:11, op:0.3,  c:'#e090c0'},
+    {ch:'♡', x:6, y:78, fs:10, op:0.28, c:'#c0a0e8'},
+    {ch:'✦', x:90,y:72, fs:10, op:0.32, c:'#e0a0d0'},
+    {ch:'★', x:48,y:6,  fs:9,  op:0.25, c:'#d0a0f0'},
+    {ch:'♡', x:55,y:88, fs:11, op:0.3,  c:'#e0b0d8'},
+  ];
+  decos.forEach(d=>{
+    const el = document.createElement("span");
+    el.style.cssText = `position:absolute;left:${d.x}%;top:${d.y}%;font-size:${d.fs}px;opacity:${d.op};color:${d.c};pointer-events:none;z-index:1;`;
+    el.textContent = d.ch;
+    wrap.appendChild(el);
+  });
+})();
+</script>
+
+<!-- ══════════════════════════════════════
+     FORM MODAL
+══════════════════════════════════════ -->
+<style>
+/* ── 폼 모달 오버레이 ── */
+.form-modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 32px 20px 48px;
+  overflow-y: auto;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s;
+  /* 바깥 배경 - 살짝만 어둡게 */
+  background: rgba(60,30,80,0.18);
+}
+.form-modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.form-modal-inner {
+  width: 100%; max-width: 580px;
+  position: relative; z-index: 1;
+  /* 테두리 박스 */
+  background: #fdf6ff;
+  border: 2px solid #ddc8f0;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 60px rgba(120,60,180,0.18), 0 2px 12px rgba(120,60,180,0.1);
+  transform: translateY(20px) scale(0.98);
+  transition: transform 0.38s cubic-bezier(0.34,1.3,0.64,1);
+}
+.form-modal-overlay.show .form-modal-inner { transform: translateY(0) scale(1); }
+/* 도트 배경 - inner 안에만 */
+.form-modal-inner::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle, #d9b8f0 1.2px, transparent 1.2px),
+    radial-gradient(circle, #f0b8d9 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  opacity: 0.2;
+}
+/* inner 안의 모든 자식은 z-index 1 이상으로 */
+.form-modal-inner > * { position: relative; z-index: 1; }
+
+/* 모달 헤더 */
+.modal-header {
+  text-align: center;
+  padding: 36px 32px 24px;
+  position: relative;
+}
+.modal-header::after {
+  content: '✦ ✦ ✦';
+  display: block; font-size: 9px; letter-spacing: 6px;
+  color: #c8a0e0; opacity: 0.55; margin-top: 16px;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid rgba(200,160,240,0.45);
+  background: rgba(255,255,255,0.75);
+  color: #a07ac8; font-size: 12px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; z-index: 10;
+}
+.modal-close:hover { background: #fff; transform: rotate(90deg); }
+.modal-header-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  color: #a07ac8; text-transform: uppercase; margin-bottom: 12px;
+}
+.modal-header-title {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 100; color: #5a4870;
+  letter-spacing: 0.22em; margin-bottom: 12px; line-height: 1.1;
+}
+.modal-header-desc {
+  font-size: 12px; color: #8a7898; line-height: 1.8;
+}
+
+/* 폼 카드 */
+.form-card {
+  background: rgba(255,255,255,0.82);
+  border: 1.5px solid #e8d8f0;
+  border-radius: 16px;
+  padding: 32px 28px;
+  margin: 0 20px 28px;
+  box-shadow: 0 2px 16px rgba(160,90,200,0.07);
+}
+
+/* ── 필드 ── */
+.field { margin-bottom: 26px; }
+.field:last-of-type { margin-bottom: 0; }
+.field-label {
+  font-size: 11px; font-weight: 700;
+  color: #a07ac8; letter-spacing: 1px;
+  text-transform: uppercase; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.field-label .req { font-size: 13px; color: #e090c0; line-height: 1; }
+.field-hint { font-size: 11px; color: #b8a0cc; margin-bottom: 8px; line-height: 1.6; }
+.form-card input[type="text"],
+.form-card input[type="url"],
+.form-card textarea {
+  width: 100%; padding: 11px 16px;
+  background: #fff;
+  border: 1.5px solid #e8d8f0; border-radius: 12px;
+  font-size: 13px; font-family: var(--fn); color: #3a2850;
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+}
+.form-card input[type="text"]:focus,
+.form-card input[type="url"]:focus,
+.form-card textarea:focus {
+  border-color: #c890f0;
+  box-shadow: 0 0 0 3px rgba(200,144,240,0.15);
+}
+.form-card input::placeholder,
+.form-card textarea::placeholder { color: #b8a0cc; font-size: 12px; }
+.form-card textarea { resize: none; line-height: 1.7; }
+
+/* ── 타입 선택 ── */
+.type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.type-btn {
+  padding: 9px 4px; border-radius: 12px;
+  border: 1.5px solid #e8d8f0;
+  background: #fff; cursor: pointer;
+  font-size: 11px; font-weight: 700; color: #7a5a98;
+  font-family: var(--fn); text-align: center;
+  transition: all 0.15s; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; position: relative;
+}
+.type-btn .type-icon { font-size: 18px; line-height: 1; transition: transform 0.15s; }
+.type-btn:hover { border-color: #c890f0; color: #9060c0; }
+.type-btn:hover .type-icon { transform: scale(1.15); }
+.type-btn.active {
+  background: linear-gradient(135deg, rgba(200,144,240,0.22), rgba(240,160,200,0.18));
+  border-color: #9060c0; border-width: 2px; color: #9060c0;
+  box-shadow: 0 3px 12px rgba(144,96,192,0.25);
+  transform: translateY(-2px);
+}
+.type-btn.active .type-icon { transform: scale(1.2); filter: drop-shadow(0 2px 4px rgba(144,96,192,0.4)); }
+.type-btn.active::after {
+  content: '✓'; position: absolute; top: 5px; right: 7px;
+  font-size: 9px; font-weight: 900; color: #9060c0; line-height: 1;
+}
+.etc-input-wrap { margin-top: 8px; display: none; }
+.etc-input-wrap.show { display: block; }
+
+/* ── 캐릭터 코드 ── */
+.char-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.char-prefix-wrap {
+  flex: 1; display: flex; align-items: center;
+  background: #fff; border: 1.5px solid #e8d8f0; border-radius: 12px;
+  overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.char-prefix-wrap:focus-within {
+  border-color: #c890f0; box-shadow: 0 0 0 3px rgba(200,144,240,0.15);
+}
+.char-prefix {
+  padding: 11px 0 11px 14px;
+  font-size: 12px; font-weight: 700;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  color: #b8a0cc; letter-spacing: 0.5px; white-space: nowrap; user-select: none;
+}
+.char-prefix-wrap input {
+  border: none !important; box-shadow: none !important; border-radius: 0;
+  padding: 11px 14px 11px 4px;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  color: #9060c0; width: 60px; flex-shrink: 0;
+}
+.char-add-btn {
+  padding: 0 14px; border-radius: 12px;
+  border: 1.5px dashed rgba(160,122,200,0.4);
+  background: rgba(160,122,200,0.12); color: #9060c0;
+  font-size: 18px; cursor: pointer; flex-shrink: 0;
+  transition: all 0.12s; display: flex; align-items: center; justify-content: center;
+}
+.char-add-btn:hover { background: rgba(160,122,200,0.22); border-style: solid; }
+.char-chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 0; margin-top: 4px; }
+.char-chip-item {
+  display: flex; flex-direction: column; align-items: center;
+  width: 72px; border-radius: 12px;
+  background: rgba(160,122,200,0.08);
+  border: 1.5px solid rgba(160,122,200,0.3);
+  overflow: hidden; transition: box-shadow 0.1s;
+}
+.char-chip-item:hover { box-shadow: 0 2px 10px rgba(160,96,200,0.18); }
+.chip-thumb {
+  width: 100%; aspect-ratio: 1;
+  background: linear-gradient(135deg, #e8d0f8, #f8d0e8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; position: relative;
+}
+.chip-thumb-num {
+  position: absolute; bottom: 4px; right: 5px;
+  font-size: 8px; font-weight: 800;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  color: rgba(120,70,180,0.6);
+}
+.chip-code {
+  font-size: 8px; font-weight: 700; padding: 4px 4px 3px;
+  font-family: 'SF Mono','Fira Code','Courier New',monospace;
+  color: #9060c0; letter-spacing: 0.3px;
+  text-align: center; word-break: break-all; line-height: 1.3; width: 100%;
+}
+.chip-del {
+  display: block; width: 100%; padding: 3px 0; text-align: center;
+  cursor: pointer; color: #b8a0cc; font-size: 10px;
+  border-top: 1px solid rgba(160,122,200,0.15);
+  transition: color 0.1s, background 0.1s;
+}
+.chip-del:hover { color: #c04080; background: rgba(200,80,120,0.06); }
+.char-error { font-size: 11px; color: #c04080; margin-top: 5px; display: none; }
+.char-error.show { display: block; }
+
+/* ── 구분선 ── */
+.form-divider { border: none; border-top: 1.5px dashed #e8d8f0; margin: 28px 0; }
+
+/* ── 공개 여부 ── */
+.visibility-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vis-btn {
+  padding: 16px 14px; border-radius: 14px;
+  border: 1.5px solid #e8d8f0; background: #fff;
+  cursor: pointer; text-align: center; transition: all 0.15s;
+}
+.vis-btn:hover { border-color: #c890f0; }
+.vis-btn.active {
+  background: rgba(160,122,200,0.12);
+  border-color: rgba(160,122,200,0.4);
+  box-shadow: 0 2px 10px rgba(160,96,200,0.13);
+}
+.vis-icon { font-size: 22px; margin-bottom: 7px; line-height: 1; }
+.vis-title { font-size: 13px; font-weight: 700; color: #3a2850; margin-bottom: 5px; }
+.vis-btn.active .vis-title { color: #9060c0; }
+.vis-desc { font-size: 10px; color: #b8a0cc; line-height: 1.7; }
+.vis-btn.active .vis-desc { color: #7a5a98; }
+.vis-notice {
+  margin-top: 10px; font-size: 11px; color: #b8a0cc; line-height: 1.6;
+  padding: 8px 12px; border-radius: 8px;
+  background: rgba(160,122,200,0.05);
+  border-left: 2px solid rgba(160,122,200,0.25);
+}
+
+/* ── 링크 칩 ── */
+.link-chips { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.link-chip-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-radius: 10px;
+  background: rgba(160,122,200,0.06);
+  border: 1px solid rgba(160,122,200,0.2);
+  word-break: break-all;
+}
+.link-chip-icon { font-size: 13px; flex-shrink: 0; }
+.link-chip-url { flex: 1; font-size: 11px; color: #9060c0; text-decoration: none; }
+.link-chip-url:hover { text-decoration: underline; }
+.link-chip-del {
+  cursor: pointer; color: #b8a0cc; font-size: 11px;
+  flex-shrink: 0; transition: color 0.1s; padding: 2px 4px;
+}
+.link-chip-del:hover { color: #c04080; }
+
+/* ── 제출 버튼 ── */
+.submit-btn {
+  width: 100%; margin-top: 24px;
+  padding: 14px 24px; border-radius: 100px;
+  background: linear-gradient(135deg, #c890f0, #a060d8);
+  border: none; color: white;
+  font-size: 14px; font-weight: 700; font-family: var(--fn);
+  letter-spacing: 0.5px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(160,80,216,0.3);
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(160,80,216,0.4); }
+.submit-btn:active { transform: translateY(0); }
+
+/* 에러 */
+.form-card input.error, .form-card textarea.error {
+  border-color: #e07090 !important;
+  box-shadow: 0 0 0 3px rgba(220,100,130,0.1) !important;
+}
+
+/* ── 등재 완료 카드 ── */
+.complete-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(50,20,70,0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s;
+}
+.complete-overlay.show { opacity: 1; pointer-events: all; }
+.complete-card {
+  background: linear-gradient(145deg, #fdf0ff, #fff0f8, #f8f0ff);
+  border: 2px dashed #ddc0f0; border-radius: 24px;
+  padding: 40px 36px 32px; max-width: 400px; width: 100%;
+  text-align: center; position: relative; overflow: hidden;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 20px 60px rgba(120,60,180,0.3);
+}
+.complete-overlay.show .complete-card { transform: scale(1) translateY(0); }
+.complete-card::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle, #d9b8f0 1px, transparent 1px),
+    radial-gradient(circle, #f0b8d9 0.8px, transparent 0.8px);
+  background-size: 20px 20px, 10px 10px;
+  background-position: 0 0, 5px 5px; opacity: 0.2;
+}
+.complete-glitter { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.complete-icon { font-size: 44px; margin-bottom: 8px; position: relative; z-index: 1; animation: cBounce 0.5s 0.2s both; }
+@keyframes cBounce { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.complete-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #a07ac8; text-transform: uppercase; margin-bottom: 8px; position: relative; z-index: 1; }
+.complete-title { font-family: 'Josefin Sans',sans-serif; font-size: 20px; font-weight: 300; color: #5a4870; letter-spacing: 0.18em; margin-bottom: 20px; position: relative; z-index: 1; }
+.complete-info {
+  background: rgba(255,255,255,0.7); border: 1px solid rgba(220,200,240,0.7);
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 20px;
+  text-align: left; position: relative; z-index: 1;
+}
+.info-row { display: flex; gap: 10px; align-items: baseline; font-size: 12px; margin-bottom: 8px; }
+.info-row:last-child { margin-bottom: 0; }
+.info-key { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #b8a0cc; text-transform: uppercase; min-width: 52px; flex-shrink: 0; padding-top: 2px; }
+.info-val { font-size: 12px; color: #3a2850; font-weight: 500; line-height: 1.5; }
+.info-val.code-val { font-family: 'SF Mono','Fira Code','Courier New',monospace; font-size: 11px; color: #9060c0; }
+.complete-deco { font-size: 9px; letter-spacing: 5px; color: #b8a0cc; margin-bottom: 18px; position: relative; z-index: 1; }
+.complete-date { font-size: 10px; color: #b8a0cc; letter-spacing: 1px; margin-bottom: 20px; position: relative; z-index: 1; }
+.complete-actions { display: flex; gap: 8px; justify-content: center; position: relative; z-index: 1; }
+.action-btn {
+  padding: 8px 18px; border-radius: 100px;
+  font-size: 12px; font-weight: 700; font-family: var(--fn);
+  cursor: pointer; transition: all 0.12s; letter-spacing: 0.3px;
+}
+.action-btn.primary { background: linear-gradient(135deg,#c890f0,#a060d8); border: none; color: white; box-shadow: 0 3px 12px rgba(160,80,216,0.3); }
+.action-btn.primary:hover { transform: scale(1.03); }
+.action-btn.ghost { background: transparent; border: 1.5px solid rgba(160,122,200,0.4); color: #9060c0; }
+.action-btn.ghost:hover { background: rgba(160,122,200,0.12); }
+
+/* 글리터 파티클 */
+.glitter-particle { position: absolute; pointer-events: none; width: 8px; height: 8px; border-radius: 50%; animation: gFly 1.2s ease-out forwards; }
+@keyframes gFly { 0%{transform:translate(0,0) scale(1);opacity:1} 100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0} }
+.spark-svg-el { position: absolute; pointer-events: none; animation: sFly 1.6s ease-out forwards; }
+@keyframes sFly { 0%{transform:translate(0,0) rotate(0deg) scale(1);opacity:.9} 60%{opacity:.8} 100%{transform:translate(var(--tx),var(--ty)) rotate(180deg) scale(0);opacity:0} }
+
+@media (max-width: 480px) {
+  .form-card { padding: 24px 20px; }
+  .type-grid { gap: 5px; }
+  .type-btn { font-size: 10px; padding: 8px 2px; }
+  .type-btn .type-icon { font-size: 16px; }
+  .form-modal-inner { padding: 0 12px 48px; }
+  .complete-card { padding: 32px 20px 24px; }
+}
+</style>
+
+<!-- 폼 모달 -->
+<div class="form-modal-overlay" id="form-modal-overlay">
+  <div class="form-modal-inner" id="form-modal-inner">
+
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeFormModal()" title="닫기">✕</button>
+      <div class="modal-header-label">BIZ-OC-DOLL · ARCHIVE</div>
+      <div class="modal-header-title">REGISTER WORK</div>
+      <div class="modal-header-desc">
+        작품을 공식 아카이브에 등재합니다.<br>
+        공개 등록을 선택한 작품만 수록됩니다.
+      </div>
+    </div>
+
+    <div class="form-card">
+
+      <div class="field">
+        <div class="field-label">작품 제목 <span class="req">✦</span></div>
+        <input type="text" id="f-title" placeholder="등록할 작품의 제목을 입력해 주세요" maxlength="80">
+      </div>
+
+      <div class="field">
+        <div class="field-label">창작자 닉네임 <span class="req">✦</span></div>
+        <input type="text" id="f-creator" placeholder="활동명 또는 닉네임" maxlength="40">
+      </div>
+
+      <div class="field">
+        <div class="field-label">연락 가능한 SNS 또는 이메일 <span class="req">✦</span></div>
+        <div class="field-hint">등록 확인 및 문의 용도로만 사용됩니다. 공개되지 않습니다.</div>
+        <input type="text" id="f-contact" placeholder="@트위터ID / @인스타ID / example@email.com" maxlength="80">
+      </div>
+
+      <div class="field">
+        <div class="field-label">작품 유형 <span class="req">✦</span></div>
+        <div class="type-grid">
+          <button class="type-btn" data-type="웹툰/만화" onclick="selectType(this)"><span class="type-icon">📖</span>웹툰·만화</button>
+          <button class="type-btn" data-type="웹소설/소설" onclick="selectType(this)"><span class="type-icon">📝</span>소설·웹소설</button>
+          <button class="type-btn" data-type="게임" onclick="selectType(this)"><span class="type-icon">🎮</span>게임</button>
+          <button class="type-btn" data-type="일러스트" onclick="selectType(this)"><span class="type-icon">🎨</span>일러스트</button>
+          <button class="type-btn" data-type="굿즈" onclick="selectType(this)"><span class="type-icon">🛍️</span>굿즈</button>
+          <button class="type-btn" data-type="영상" onclick="selectType(this)"><span class="type-icon">🎬</span>영상</button>
+          <button class="type-btn" data-type="기타" onclick="selectType(this)"><span class="type-icon">✨</span>기타</button>
+        </div>
+        <div class="etc-input-wrap" id="etc-input-wrap">
+          <input type="text" id="f-type-etc" placeholder="어떤 유형인지 간단히 적어주세요" maxlength="30">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">등장 캐릭터 코드 <span class="req">✦</span></div>
+        <div class="field-hint">번호만 입력하고 + 버튼으로 추가하세요. 여러 명 등록 가능합니다.</div>
+        <div class="char-input-row">
+          <div class="char-prefix-wrap">
+            <span class="char-prefix">BIZOCDOLL</span>
+            <input type="text" id="char-input" placeholder="001" maxlength="3"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();addChar();}">
+          </div>
+          <button class="char-add-btn" onclick="addChar()">+</button>
+        </div>
+        <div class="char-error" id="char-error">1~200 사이의 번호를 입력해 주세요</div>
+        <div class="char-chips" id="char-chips"></div>
+      </div>
+
+      <hr class="form-divider">
+
+      <div class="field">
+        <div class="field-label">한 줄 소개 <span style="font-size:10px;color:#b8a0cc;font-weight:400;letter-spacing:0;text-transform:none">선택</span></div>
+        <textarea id="f-desc" rows="2" placeholder="작품을 한 줄로 소개해 주세요" maxlength="100"></textarea>
+      </div>
+
+      <div class="field">
+        <div class="field-label">작품 링크 <span style="font-size:10px;color:#b8a0cc;font-weight:400;letter-spacing:0;text-transform:none">선택 · 여러 개 가능</span></div>
+        <div class="char-input-row">
+          <input type="url" id="f-link-input" placeholder="https://..." style="font-size:12px;">
+          <button class="char-add-btn" onclick="addLink()">+</button>
+        </div>
+        <div class="link-chips" id="link-chips"></div>
+      </div>
+
+      <hr class="form-divider">
+
+      <div class="field">
+        <div class="field-label">공개 여부 <span class="req">✦</span></div>
+        <div class="visibility-grid">
+          <div class="vis-btn active" id="vis-public" onclick="selectVisibility('public')">
+            <div class="vis-icon">🌸</div>
+            <div class="vis-title">공개</div>
+            <div class="vis-desc">작품명·창작자·내용이<br>아카이브에 공개됩니다</div>
+          </div>
+          <div class="vis-btn" id="vis-private" onclick="selectVisibility('private')">
+            <div class="vis-icon">🔒</div>
+            <div class="vis-title">비공개</div>
+            <div class="vis-desc">작품명은 비공개,<br>캐릭터 출연 횟수만 집계됩니다</div>
+          </div>
+        </div>
+        <div class="vis-notice">* 제출 후 변경을 원하실 경우 폼을 재제출해 주시면 됩니다. 걱정 마세요 🌸</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        아카이브에 등재하기
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- 등재 완료 카드 -->
+<div class="complete-overlay" id="complete-overlay">
+  <div class="complete-card">
+    <div class="complete-glitter" id="complete-glitter"></div>
+    <div class="complete-icon">🎬</div>
+    <div class="complete-label">BIZ-OC-DOLL · ARCHIVE</div>
+    <div class="complete-title">REGISTERED</div>
+    <div class="complete-info" id="complete-info"></div>
+    <div class="complete-deco">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <div class="complete-date" id="complete-date"></div>
+    <div class="complete-actions">
+      <button class="action-btn ghost" onclick="closeComplete()">다른 작품 등록</button>
+      <button class="action-btn primary" onclick="closeAllModals()">아카이브로 돌아가기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ 모달 열기/닫기 ══ */
+function openFormModal(){
+  document.getElementById("form-modal-overlay").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+function closeFormModal(){
+  document.getElementById("form-modal-overlay").classList.remove("show");
+  document.body.style.overflow = "";
+}
+function closeAllModals(){
+  document.getElementById("complete-overlay").classList.remove("show");
+  closeFormModal();
+}
+
+/* ══ 폼 상태 ══ */
+let selectedTypes = new Set();
+let charList = [];
+let linkList = [];
+let visibility = "public";
+
+function selectType(btn){
+  const t = btn.dataset.type;
+  if(selectedTypes.has(t)){ selectedTypes.delete(t); btn.classList.remove("active"); }
+  else { selectedTypes.add(t); btn.classList.add("active"); }
+  const w = document.getElementById("etc-input-wrap");
+  if(w) w.classList.toggle("show", selectedTypes.has("기타"));
+}
+
+function selectVisibility(v){
+  visibility = v;
+  document.getElementById("vis-public").classList.toggle("active", v==="public");
+  document.getElementById("vis-private").classList.toggle("active", v==="private");
+}
+
+function addChar(){
+  const input = document.getElementById("char-input");
+  const num = parseInt(input.value.trim(), 10);
+  const errEl = document.getElementById("char-error");
+  if(!input.value.trim() || isNaN(num) || num<1 || num>200){
+    errEl.classList.add("show"); input.focus(); return;
+  }
+  const code = "BIZOCDOLL" + String(num).padStart(3,"0");
+  if(charList.includes(code)){
+    errEl.textContent="이미 추가된 코드예요"; errEl.classList.add("show"); return;
+  }
+  errEl.classList.remove("show");
+  errEl.textContent="1~200 사이의 번호를 입력해 주세요";
+  charList.push(code); input.value=""; renderChips(); input.focus();
+}
+function removeChar(code){ charList=charList.filter(c=>c!==code); renderChips(); }
+function renderChips(){
+  const emojis=["🌸","⭐","🎀","🌙","💫","🍀","🎵","🌈","🦋","💎","🔮","🌺","✨","🎪","🌟"];
+  document.getElementById("char-chips").innerHTML = charList.map(c=>{
+    const num=parseInt(c.replace("BIZOCDOLL",""),10);
+    const emoji=emojis[(num-1)%emojis.length];
+    const numStr=String(num).padStart(3,"0");
+    return `<div class="char-chip-item">
+      <div class="chip-thumb"><span>${emoji}</span><span class="chip-thumb-num">#${numStr}</span></div>
+      <div class="chip-code">${c}</div>
+      <span class="chip-del" onclick="removeChar('${c}')">✕ 제거</span>
+    </div>`;
+  }).join("");
+}
+
+function addLink(){
+  const input = document.getElementById("f-link-input");
+  const url = input.value.trim();
+  if(!url) return;
+  try { new URL(url); } catch(e){ input.classList.add("error"); return; }
+  input.classList.remove("error");
+  if(linkList.includes(url)) return;
+  linkList.push(url); input.value=""; renderLinks();
+}
+function removeLink(idx){ linkList.splice(idx,1); renderLinks(); }
+function renderLinks(){
+  const icons={"twitter.com":"🐦","x.com":"🐦","pixiv.net":"🎨","instagram.com":"📸","youtube.com":"🎬","youtu.be":"🎬","naver.com":"🟢","kakao":"🟡"};
+  document.getElementById("link-chips").innerHTML = linkList.map((url,i)=>{
+    let icon="🔗";
+    try{ const h=new URL(url).hostname.replace("www.",""); for(const[k,v] of Object.entries(icons)) if(h.includes(k)){icon=v;break;} }catch(e){}
+    const short=url.replace(/^https?:\/\/(www\.)?/,"").slice(0,40)+(url.length>50?"…":"");
+    return `<div class="link-chip-item">
+      <span class="link-chip-icon">${icon}</span>
+      <a class="link-chip-url" href="${fEsc(url)}" target="_blank" rel="noopener">${fEsc(short)}</a>
+      <span class="link-chip-del" onclick="removeLink(${i})">✕</span>
+    </div>`;
+  }).join("");
+}
+
+function validate(){
+  let ok=true;
+  ["f-title","f-creator","f-contact"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el.value.trim()){ el.classList.add("error"); ok=false; }
+    else el.classList.remove("error");
+  });
+  if(!selectedTypes.size) ok=false;
+  const ci=document.getElementById("char-input");
+  if(!charList.length){ ci.classList.add("error"); ok=false; }
+  else ci.classList.remove("error");
+  return ok;
+}
+
+function submitForm(){
+  if(!validate()){
+    const errEl=document.querySelector(".form-card input.error, .form-card textarea.error");
+    if(errEl) errEl.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  const data={
+    title:   document.getElementById("f-title").value.trim(),
+    creator: document.getElementById("f-creator").value.trim(),
+    contact: document.getElementById("f-contact").value.trim(),
+    type:    [...selectedTypes],
+    chars:   [...charList],
+    desc:    document.getElementById("f-desc").value.trim(),
+    links:   [...linkList],
+    typeEtc: document.getElementById("f-type-etc")?.value.trim()||"",
+    visibility,
+    date:    new Date().toISOString().slice(0,7),
+  };
+  showComplete(data);
+}
+
+function showComplete(data){
+  const dateStr=new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric"});
+  document.getElementById("complete-date").textContent="등재일 · "+dateStr;
+  document.getElementById("complete-info").innerHTML=`
+    <div class="info-row"><span class="info-key">Title</span><span class="info-val">${fEsc(data.title)}</span></div>
+    <div class="info-row"><span class="info-key">Creator</span><span class="info-val">${fEsc(data.creator)}</span></div>
+    <div class="info-row"><span class="info-key">Type</span><span class="info-val">${data.type.map(fEsc).join(", ")}</span></div>
+    <div class="info-row"><span class="info-key">공개</span><span class="info-val">${data.visibility==='public'?'🌸 공개':'🔒 비공개'}</span></div>
+    <div class="info-row"><span class="info-key">Cast</span><span class="info-val code-val">${data.chars.join(" · ")}</span></div>`;
+  document.getElementById("complete-overlay").classList.add("show");
+  setTimeout(()=>fireGlitter(),150);
+}
+
+function fireGlitter(){
+  const wrap=document.getElementById("complete-glitter"); wrap.innerHTML="";
+  const cx=200,cy=160;
+  const colors=["#e090f0","#f090c0","#c0a0f8","#f8d060","#80d0f0","#f0b080"];
+  const ss=(s,c)=>`<svg width="${s}" height="${s}" viewBox="0 0 20 20"><path d="M10 0C10 0 10.6 7 13 10C10.6 13 10 20 10 20C10 20 9.4 13 7 10C9.4 7 10 0 10 0Z" fill="${c}"/><path d="M0 10C0 10 7 10.6 10 13C13 10.6 20 10 20 10C20 10 13 9.4 10 7C7 9.4 0 10 0 10Z" fill="${c}"/></svg>`;
+  for(let i=0;i<28;i++){
+    const angle=(i/28)*Math.PI*2, dist=60+Math.random()*120;
+    const tx=Math.cos(angle)*dist+(Math.random()-.5)*40;
+    const ty=Math.sin(angle)*dist+(Math.random()-.5)*40;
+    const color=colors[i%colors.length], delay=Math.random()*.3, dur=.9+Math.random()*.6;
+    if(i%3===0){
+      const p=document.createElement("div"); p.className="glitter-particle";
+      const size=4+Math.random()*7;
+      p.style.cssText=`left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${color};--tx:${tx}px;--ty:${ty}px;animation-delay:${delay}s;animation-duration:${dur}s;`;
+      wrap.appendChild(p);
+    } else {
+      const s=document.createElement("div"); s.className="spark-svg-el";
+      const size=6+Math.random()*10;
+      s.style.cssText=`left:${cx}px;top:${cy}px;--tx:${tx}px;--ty:${ty}px;animation-delay:${delay}s;animation-duration:${dur}s;`;
+      s.innerHTML=ss(size,color); wrap.appendChild(s);
+    }
+  }
+}
+
+function closeComplete(){
+  document.getElementById("complete-overlay").classList.remove("show");
+  resetForm();
+}
+function resetForm(){
+  ["f-title","f-creator","f-contact","f-desc","f-link-input"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value="";
+  });
+  document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+  const etcW=document.getElementById("etc-input-wrap"); if(etcW) etcW.classList.remove("show");
+  const etcI=document.getElementById("f-type-etc"); if(etcI) etcI.value="";
+  selectedTypes.clear(); charList=[]; linkList=[]; visibility="public";
+  renderChips(); renderLinks(); selectVisibility("public");
+}
+
+function fEsc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+</script>
+</body>
+</html>
