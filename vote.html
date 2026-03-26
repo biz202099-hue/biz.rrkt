@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>오씨돌 인기투표 — biz.rrkt</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='5' fill='white' stroke='%23111' stroke-width='1.5'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='22' font-weight='700' fill='%23111'>B</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ===== 설정: VOTE_URL 아래 한 줄만 교체하세요 ===== */
 
@@ -144,6 +144,8 @@ input{font-family:var(--fn)}
 .char-card.voted .card-check{opacity:1}
 .card-info{padding:7px 8px 0}
 .card-name{font-size:11px;font-weight:600;color:var(--tx);line-height:1.35;margin-bottom:2px}
+.card-name-prefix{font-weight:300;letter-spacing:.3px;opacity:.7}
+.card-name-num{font-weight:700}
 .card-vcnt{font-size:9px;color:var(--tx3)}
 .card-vcnt span{color:var(--acc);font-weight:700}
 .card-vote-btn{
@@ -207,6 +209,50 @@ input{font-family:var(--fn)}
   #filter-bar{padding:8px 12px}
   .tb-sub{display:none}
 }
+
+/* ── SELECTION TRAY ── */
+#sel-tray{
+  display:none;flex-shrink:0;
+  background:var(--sb);border-bottom:1px solid var(--bd);
+  padding:8px 16px;gap:8px;flex-direction:column;
+}
+#sel-tray.show{display:flex}
+.tray-label{font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--tx3);text-transform:uppercase}
+#tray-list{
+  display:flex;flex-wrap:wrap;gap:6px;
+  align-items:flex-start;
+}
+.tray-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:var(--sm);border:1px solid var(--bd);border-radius:6px;
+  padding:4px 5px 5px;cursor:pointer;transition:all .12s;position:relative;
+  min-width:38px;
+}
+.tray-item:hover{border-color:#f87171;background:#fff5f5}
+.tray-thumb{
+  width:52px;height:69px;border-radius:4px;flex-shrink:0;
+}
+.tray-code{display:flex;flex-direction:column;align-items:center;gap:0px}
+.tray-code .tray-code-prefix{font-size:8px;font-weight:300;opacity:.55;letter-spacing:.3px;line-height:1.2;color:var(--tx2)}
+.tray-code .tray-code-num{font-size:11px;font-weight:700;color:#000;line-height:1}
+.tray-x{
+  position:absolute;top:-5px;right:-5px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--bd2);color:#fff;font-size:8px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+  transition:background .12s;
+}
+.tray-item:hover .tray-x{background:#f87171}
+.tray-empty{font-size:11px;color:var(--tx3);font-style:italic}
+
+/* ── DONE BANNER with retake ── */
+.done-retake{
+  margin-left:auto;font-size:11px;font-weight:600;
+  padding:4px 12px;border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);
+  border-radius:6px;background:transparent;color:var(--acc2);
+  cursor:pointer;transition:all .12s;white-space:nowrap;
+}
+.done-retake:hover{background:color-mix(in srgb,var(--acc) 12%,transparent)}
 </style>
 </head>
 <body>
@@ -239,6 +285,12 @@ input{font-family:var(--fn)}
   <button class="tab" id="tab-rank" onclick="switchTab('rank')">순위 보기</button>
 </div>
 
+<!-- 선택 트레이 (고정) -->
+<div id="sel-tray">
+  <div class="tray-label">선택 중 · <span id="tray-count">0</span>명</div>
+  <div id="tray-list"><span class="tray-empty">캐릭터를 선택해주세요</span></div>
+</div>
+
 <!-- 콘텐츠 -->
 <div id="content">
 
@@ -251,16 +303,13 @@ input{font-family:var(--fn)}
       <div class="done-text-main">투표가 완료됐어요!</div>
       <div class="done-text-sub">순위 탭에서 현재 순위를 확인해보세요.</div>
     </div>
+    <button class="done-retake" onclick="retakeVote()">재투표</button>
   </div>
 
   <!-- 투표 탭 -->
   <div id="vote-page">
     <div id="filter-bar">
-      <button class="filter-btn on" onclick="setFilter('ALL',this)">ALL</button>
-      <button class="filter-btn" onclick="setFilter('A',this)">A타입</button>
-      <button class="filter-btn" onclick="setFilter('B',this)">B타입</button>
-      <button class="filter-btn" onclick="setFilter('C',this)">C타입</button>
-      <input type="text" id="search-input" placeholder="캐릭터 검색..." oninput="onSearch(this.value)">
+      <input type="text" id="search-input" placeholder="코드 검색... (예: 001)" oninput="onSearch(this.value)">
       <span id="result-count">200명</span>
     </div>
     <div id="char-grid"></div>
@@ -282,40 +331,27 @@ input{font-family:var(--fn)}
 
 <script src="config.js"></script>
 <script>
-// VOTE_URL → config.js 에서 불러옵니다
+// API 주소는 config.js 에서 불러옵니다
 
 // 캐릭터 데이터
-var FIRSTNAMES = ['아이','유이','하루','미오','사쿠라','린','아카네','유나','미나','코토','하나','시오리','아야','나오','레이','에마','노아','세나','리나','아스나','히나','카나','미유','소라','츠바키','마야','이쿠','나나','유리','세리','아키','카호','루이','미사','사야','이부키','코노미','히나타','아나','세이카','란','치나츠','후우카','유카','이치카','니나','미라이','아스카','카린','메이','리오','마호','시오','나기','히요리','유즈','모모','이로하','코코','후타바','아오이','카에데','스즈','마도카','호타루','미나미','유우키','사에','코유키','무츠미','아마네','카이','이즈미','노노','하야테','토카','우미','키라라','치히로','아키라','나루','오리히메','이치요','아리스','사야카','레미','루카','아쿠아','아리아','히메','유이나','카구야','칸나','미코토','아이리','카코','하즈키','루루','미오나','코하루'];
-var LASTNAMES  = ['야마다','타나카','스즈키','사토','와타나베','이토','나카무라','코바야시','카토','요시다','야마모토','마츠모토','이노우에','키무라','하야시','시미즈','야마구치','사이토','마츠다','이케다','오가와','하세가와','요코야마','미야자키','오카모토','나카가와','코지마','마에다','후지와라','오노','타마키','시오미','하기와라','후쿠다','이마이','오오시마','쿠로다','노다','쿠보','후지타','히라야마','이시카와','나카지마','하마다','오쿠다','토쿠나가','시바타','나카니시','오오타','카와구치','카와무라','아오키','마루야마','스기우라','타카하시','후나하시','야마시타','타카기','타케우치','우에다','타케다','코마츠','키노시타','후지모토','마루타','미야타','오카와','하마노','시모다','타니모토','쿠라모토','나리타','마에지마','카이도','시노다','아베','아라이','타케시타','우에노','유아사','카와카미','타카노','야마자키','아사노','노자와','오오이','쿠와하라','마키','키리시마','후지사키','마시마','미조구치','코노','후쿠시마','소가','치바','이에나가','시라이','카토우'];
-
-var TYPE_COLORS = {A:'#d97706', B:'#db2777', C:'#0ea5e9'};
-var GRADS_A = ['160deg,#fffbeb,#fde68a','160deg,#fef9c3,#fbbf24','160deg,#fff7ed,#fed7aa'];
-var GRADS_B = ['160deg,#fdf2f8,#f9a8d4','160deg,#fce7f3,#f472b6','160deg,#fff0f9,#fb7185'];
-var GRADS_C = ['160deg,#eff6ff,#93c5fd','160deg,#f5f3ff,#a78bfa','160deg,#f0fdf4,#6ee7b7','160deg,#fff7ed,#fb923c'];
-
-// 타입 배열 생성 + 셔플
-var TYPES = [];
-for (var i = 0; i < 200; i++) {
-  if (i < 30) TYPES.push('A');
-  else if (i < 100) TYPES.push('B');
-  else TYPES.push('C');
-}
-for (var i = TYPES.length - 1; i > 0; i--) {
-  var j = Math.floor(Math.random() * (i + 1));
-  var tmp = TYPES[i]; TYPES[i] = TYPES[j]; TYPES[j] = tmp;
-}
+var GRADS_GRAY = [
+  '160deg,#f0f0f0,#d0d0d0',
+  '160deg,#ebebeb,#c8c8c8',
+  '160deg,#e8e8e8,#c4c4c4',
+  '160deg,#f2f2f2,#d4d4d4',
+  '160deg,#ededed,#cccccc',
+  '160deg,#e6e6e6,#bebebe',
+  '160deg,#f5f5f5,#dedede',
+  '160deg,#eaeaea,#c6c6c6',
+];
 
 // 캐릭터 목록 생성
 var CHARS = [];
 for (var i = 0; i < 200; i++) {
-  var t = TYPES[i];
-  var grads = t === 'A' ? GRADS_A : t === 'B' ? GRADS_B : GRADS_C;
   CHARS.push({
-    id: i + 1,
-    firstname: FIRSTNAMES[i % FIRSTNAMES.length],
-    lastname:  LASTNAMES[i % LASTNAMES.length],
-    type: t,
-    grad: grads[i % grads.length],
+    id:   i + 1,
+    code: 'BIZOCDOLL' + String(i + 1).padStart(3, '0'),
+    grad: GRADS_GRAY[i % GRADS_GRAY.length],
   });
 }
 
@@ -335,11 +371,12 @@ if (hasDone) {
 }
 updateSelBadge();
 renderGrid();
+renderTray();
 loadVoteData();
 
 // ---- 득표 데이터 로드 ----
 function loadVoteData(cb) {
-  fetch(VOTE_URL)
+  fetch(API + '?action=getVotes')
     .then(function(r){ return r.json(); })
     .then(function(json){
       if (json.ok) {
@@ -356,7 +393,7 @@ function submitVote() {
   if (hasDone || selected.length === 0) return;
   document.getElementById('loading-overlay').classList.add('show');
 
-  var url = VOTE_URL + '?action=vote&ids=' + encodeURIComponent(JSON.stringify(selected));
+  var url = API + '?action=vote&ids=' + encodeURIComponent(JSON.stringify(selected));
   fetch(url)
     .then(function(r){ return r.json(); })
     .then(function(json){
@@ -402,15 +439,75 @@ function updateSelBadge() {
   document.getElementById('sel-badge').textContent = n + '명 선택';
   var btn = document.getElementById('submit-btn');
   if (!hasDone) btn.disabled = n === 0;
+  renderTray();
+}
+
+// ---- 선택 트레이 렌더 ----
+function renderTray() {
+  var tray = document.getElementById('sel-tray');
+  var list = document.getElementById('tray-list');
+  var countEl = document.getElementById('tray-count');
+  if (hasDone) { tray.classList.remove('show'); return; }
+  if (selected.length === 0) {
+    tray.classList.remove('show');
+    return;
+  }
+  tray.classList.add('show');
+  if (countEl) countEl.textContent = selected.length;
+  list.innerHTML = selected.map(function(id) {
+    var c = CHARS.find(function(x){ return x.id === id; });
+    if (!c) return '';
+    var num = String(c.id).padStart(3,'0');
+    return '<div class="tray-item" onclick="toggleChar(' + id + ')" title="클릭하면 선택 취소">' +
+      '<div class="tray-x">✕</div>' +
+      '<div class="tray-thumb" style="background:linear-gradient(' + c.grad + ')"></div>' +
+      '<div class="tray-code"><span class="tray-code-prefix">BIZOCDOLL</span><span class="tray-code-num">' + num + '</span></div>' +
+    '</div>';
+  }).join('');
+}
+
+// ---- 재투표 ----
+function retakeVote() {
+  if (!confirm('투표를 취소하고 다시 선택하시겠어요?')) return;
+  var prevSelected = JSON.parse(localStorage.getItem('ocidol_sel') || '[]');
+  if (prevSelected.length === 0) return;
+
+  document.getElementById('loading-overlay').classList.add('show');
+
+  var url = API + '?action=cancelVote&ids=' + encodeURIComponent(JSON.stringify(prevSelected));
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      document.getElementById('loading-overlay').classList.remove('show');
+      if (json.ok) {
+        prevSelected.forEach(function(id){
+          voteData[id] = Math.max(0, (voteData[id] || 0) - 1);
+        });
+        hasDone = false;
+        selected = [];
+        localStorage.removeItem('ocidol_done');
+        localStorage.removeItem('ocidol_sel');
+        document.getElementById('done-banner').classList.remove('show');
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('submit-btn').textContent = '투표하기';
+        updateSelBadge();
+        renderGrid();
+        updateGridCounts();
+      } else {
+        alert('취소 중 오류가 발생했어요: ' + (json.error || '알 수 없는 오류'));
+      }
+    })
+    .catch(function(){
+      document.getElementById('loading-overlay').classList.remove('show');
+      alert('네트워크 오류가 발생했어요. 다시 시도해주세요.');
+    });
 }
 
 // ---- 그리드 렌더 ----
 function renderGrid() {
   var q = searchQ.toLowerCase();
   var filtered = CHARS.filter(function(c){
-    var typeOk = filterType === 'ALL' || c.type === filterType;
-    var nameOk = !q || c.firstname.toLowerCase().includes(q) || c.lastname.toLowerCase().includes(q) || (c.lastname + c.firstname).includes(q);
-    return typeOk && nameOk;
+    return !q || c.code.toLowerCase().includes(q);
   });
   document.getElementById('result-count').textContent = filtered.length + '명';
   document.getElementById('char-grid').innerHTML = filtered.map(function(c){
@@ -418,13 +515,12 @@ function renderGrid() {
     var cnt   = voteData[c.id] || 0;
     return '<div class="char-card' + (voted ? ' voted' : '') + '" data-id="' + c.id + '" onclick="toggleChar(' + c.id + ')">' +
       '<div class="card-thumb" style="background:linear-gradient(' + c.grad + ')">' +
-        '<div class="card-type" style="background:' + TYPE_COLORS[c.type] + '">' + c.type + '</div>' +
         '<div class="card-check">' +
           '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>' +
         '</div>' +
       '</div>' +
       '<div class="card-info">' +
-        '<div class="card-name">' + c.lastname + ' ' + c.firstname + '</div>' +
+        '<div class="card-name"><span class="card-name-prefix">BIZOCDOLL</span><span class="card-name-num">' + String(c.id).padStart(3,'0') + '</span></div>' +
         '<div class="card-vcnt">득표 <span id="vcnt-' + c.id + '">' + cnt + '</span></div>' +
       '</div>' +
       '<button class="card-vote-btn" onclick="event.stopPropagation();toggleChar(' + c.id + ')">' + (voted ? '선택 취소' : '투표') + '</button>' +
@@ -467,9 +563,8 @@ function renderRank() {
       '<div class="rank-num ' + nCls + '">' + (i+1) + '</div>' +
       '<div class="rank-thumb" style="background:linear-gradient(' + c.grad + ')"></div>' +
       '<div class="rank-info">' +
-        '<div class="rank-name">' + c.lastname + ' ' + c.firstname + '</div>' +
+        '<div class="rank-name"><span style="font-weight:300;opacity:.7;letter-spacing:.3px">BIZOCDOLL</span><span style="font-weight:700">' + String(c.id).padStart(3,'0') + '</span></div>' +
         '<div class="rank-row2">' +
-          '<span class="rank-type" style="background:' + TYPE_COLORS[c.type] + '">' + c.type + '</span>' +
           '<div class="rank-bar-wrap"><div class="rank-bar" style="width:' + pct + '%"></div></div>' +
         '</div>' +
       '</div>' +
@@ -480,14 +575,6 @@ function renderRank() {
 
 function reloadRank() {
   loadVoteData(renderRank);
-}
-
-// ---- 필터/검색 ----
-function setFilter(t, btn) {
-  filterType = t;
-  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
-  renderGrid();
 }
 
 function onSearch(v) {
