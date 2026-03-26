@@ -3155,7 +3155,7 @@ function goRecentWork(projId,volId,epId,dollCatId){
 
 function clickProj(id){
   if(S.activeProj!==id){S.activeProj=id;S.subTab="ALL";S.activeVol=null;S.activeEp=null;S.activeDollCat=null;}
-  S.view="intro";
+  // S.view="intro" 제거 — 프로젝트 클릭 시 상세페이지로 이동하지 않음
   const dw={"blood-highschool":240,"x-project":240,"biz-oc-doll":240}[id]||240;
   document.documentElement.style.setProperty("--sm-w",dw+"px");
   closeMobMenu();pushHash();render();
