@@ -2,7 +2,7 @@
 // 1. SHEET_ID를 본인 스프레드시트 ID로 교체하세요
 // 2. 배포 > 새 배포 > 웹앱 > 액세스: 모든 사용자
 
-var SHEET_ID   = 'YOUR_SHEET_ID_HERE';
+var SHEET_ID   = '19UUoMegsFTR3jeAo-dml6DSZEmWsqv6zM6EaiJPGbfk';
 var SHEET_NAME = 'votes';
 
 function initSheet(sheet) {
