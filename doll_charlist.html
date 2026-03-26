@@ -44,14 +44,27 @@ button{font-family:var(--fn);cursor:pointer}
 .char-card:hover .char-thumb{box-shadow:0 2px 10px #0002;transform:translateY(-2px)}
 .char-thumb{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--bd);overflow:hidden;transition:transform .14s,box-shadow .14s;display:flex;align-items:center;justify-content:center;position:relative;background:#d8d8d8}
 .char-thumb-inner{width:100%;height:100%;filter:grayscale(1);opacity:.6}
-.char-name-row{display:flex;align-items:center;justify-content:center;margin-top:5px}
-.char-code{font-size:12px;font-weight:600;color:var(--tx);font-family:'Inter',monospace;letter-spacing:.5px}
+.char-thumb-face{width:100%;height:100%}
+.char-like-overlay{position:absolute;top:6px;right:6px;z-index:2;background:transparent;border:1.5px solid rgba(255,255,255,0.8);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;line-height:1;transition:all .15s;padding:0;padding-top:1.5px;color:rgba(255,255,255,0.15);-webkit-text-stroke:1.2px rgba(255,255,255,0.85)}
+.char-like-overlay:hover{border-color:#fff;transform:scale(1.1);color:rgba(255,255,255,0.2);-webkit-text-stroke:1.2px #fff}
+.char-like-overlay.liked{border-color:rgba(255,255,255,0.4);color:#f43f5e;-webkit-text-stroke:0px}
+.char-name-row{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:5px;gap:1px}
+.char-code-prefix{font-size:9px;font-weight:400;color:var(--tx3);font-family:'Inter',monospace;letter-spacing:.5px}
+.char-code{font-size:13px;font-weight:600;color:var(--tx);font-family:'Inter',monospace;letter-spacing:.5px}
 .char-sub{font-size:11px;color:var(--tx3);margin-top:1px}
 .char-empty{grid-column:1/-1;padding:48px 0;text-align:center;font-size:12px;color:var(--tx3)}
 .char-sort-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 12px;background:var(--sb);border:1px solid var(--bd);border-radius:8px;font-size:12px;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .12s;white-space:nowrap;font-family:var(--fn)}
 .char-sort-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
 .char-sort-btn.asc .sort-arrow{display:inline-block;transform:scaleY(-1)}
 .sort-arrow{display:inline-block;font-size:10px;transition:transform .15s}
+.char-tab.liked-tab{letter-spacing:.5px}
+
+/* ── SHEET ACTION BTNS ── */
+.sheet-action-btns{margin-left:auto;display:flex;flex-direction:column;gap:7px;align-self:center}
+.sheet-action-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;background:transparent;border:1px solid var(--bd);border-radius:8px;font-size:12px;font-weight:500;color:var(--tx2);font-family:var(--fn);cursor:pointer;transition:all .12s;min-width:120px;letter-spacing:.3px}
+.sheet-action-btn:hover{background:var(--bg);border-color:var(--bd2);color:var(--tx)}
+.sheet-action-btn svg{width:13px;height:13px;flex-shrink:0;opacity:.45;transition:opacity .12s}
+.sheet-action-btn:hover svg{opacity:.8}
 
 /* ── CHAR DETAIL ── */
 .sheet-wrap{max-width:800px;margin:0 auto;padding:32px 32px 48px;transition:max-width .2s}
@@ -148,7 +161,12 @@ button{font-family:var(--fn);cursor:pointer}
         <div class="sheet-holder-label">Holder</div>
         <div class="sheet-holder-value" id="detail-holder">—</div>
       </div>
-      <span class="sheet-meta-right">biz-OC-doll · 2026</span>
+
+      <div class="sheet-action-btns">
+        <button class="sheet-action-btn" onclick="alert('archive')">Archive<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8"/></svg></button>
+        <button class="sheet-action-btn" onclick="alert('episode')">Episode<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8"/></svg></button>
+      </div>
+
     </div>
 
     <div class="sheet-slot">
@@ -187,7 +205,7 @@ if(window.CHARACTERS) return;
 
   window.CHARACTERS = Array.from({length:10},(_,i)=>{
     const serial=String(i+1).padStart(3,"0");
-    const idCode=`BIZOC2026${serial}`;
+    const idCode=`BIZOCDOLL${serial}`;
     return {id:i+1, type:TYPE_SEQ[i], grad:GRADIENTS[i], idCode, holder:"—"};
   });
 })();
@@ -197,11 +215,24 @@ window.charState = window.charState || { filter:"ALL", search:"", activeId:null,
 window.charState.activeId = null;
 const state = window.charState;
 
+/* ── LIKED ── */
+function getLiked(){ try{return new Set(JSON.parse(localStorage.getItem('doll_liked')||'[]'))}catch{return new Set()} }
+function saveLiked(s){ localStorage.setItem('doll_liked', JSON.stringify([...s])) }
+window.toggleLike = function(id, e){
+  e.stopPropagation();
+  const liked = getLiked();
+  liked.has(id) ? liked.delete(id) : liked.add(id);
+  saveLiked(liked);
+  renderList();
+};
+
 /* ── RENDER LIST ── */
 function renderList(){
   const q = state.search.trim().toLowerCase();
+  const liked = getLiked();
+
   let filtered = window.CHARACTERS.filter(c=>
-    (state.filter==="ALL" || c.type===state.filter) &&
+    (state.filter==="ALL" || c.type===state.filter || (state.filter==="♥" && liked.has(c.id))) &&
     (!q || c.idCode.toLowerCase().includes(q))
   );
 
@@ -218,28 +249,91 @@ function renderList(){
 
   const counts={ALL:0,M:0,N:0,F:0,O:0};
   window.CHARACTERS.forEach(c=>{counts[c.type]++;counts.ALL++;});
+  const likedCount = liked.size;
 
-  document.getElementById('filter-tabs').innerHTML = ["ALL","M","N","F","O"].map(t=>`
-    <button class="char-tab ${state.filter===t?"active":""}" onclick="setFilter('${t}')">
-      ${t} <span style="font-size:10px;opacity:.5">${counts[t]}</span>
+  const tabs = [
+    {key:"ALL", label:"ALL", count:counts.ALL},
+    {key:"M",   label:"M",  count:counts.M},
+    {key:"N",   label:"N",  count:counts.N},
+    {key:"F",   label:"F",  count:counts.F},
+    {key:"O",   label:"O",  count:counts.O},
+    {key:"♥",   label:"♥",    count:likedCount},
+  ];
+
+  document.getElementById('filter-tabs').innerHTML = tabs.map(t=>`
+    <button class="char-tab ${state.filter===t.key?"active":""} ${t.key==="♥"?"liked-tab":""}" onclick="setFilter('${t.key}')">
+      ${t.label} <span style="font-size:10px;opacity:.5">${t.count}</span>
     </button>
   `).join("");
 
   document.getElementById('char-count-lbl').textContent = filtered.length + "개 표시";
 
   document.getElementById('char-grid').innerHTML = filtered.length===0
-    ? `<div class="char-empty">검색 결과 없음</div>`
-    : filtered.map(c=>`
+    ? `<div class="char-empty">${state.filter==="♥" ? "좋아요한 캐릭터가 없습니다 ♥" : "검색 결과 없음"}</div>`
+    : filtered.map(c=>{
+        const isLiked = liked.has(c.id);
+        const face001 = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+          <rect width="100" height="100" fill="#c8dff0"/>
+          <rect width="100" height="100" fill="url(#bg001)"/>
+          <defs>
+            <linearGradient id="bg001" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#b8d8f0"/>
+              <stop offset="100%" stop-color="#e8c8d8"/>
+            </linearGradient>
+            <linearGradient id="hair001" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a1a2a"/>
+              <stop offset="100%" stop-color="#2e2e42"/>
+            </linearGradient>
+            <clipPath id="clip001"><rect width="100" height="100"/></clipPath>
+          </defs>
+          <g clip-path="url(#clip001)">
+            <ellipse cx="50" cy="120" rx="36" ry="28" fill="#f5c8a0" opacity=".18"/>
+            <ellipse cx="50" cy="115" rx="30" ry="22" fill="#e8b890"/>
+            <ellipse cx="50" cy="68" rx="26" ry="32" fill="#fde8cc"/>
+            <ellipse cx="50" cy="60" rx="24" ry="28" fill="#fde8cc"/>
+            <path d="M26 52 Q28 20 50 16 Q72 20 74 52 Q72 34 50 30 Q28 34 26 52Z" fill="url(#hair001)"/>
+            <ellipse cx="50" cy="14" rx="26" ry="10" fill="#1a1a2a"/>
+            <path d="M24 52 Q22 30 36 22" stroke="#1a1a2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M76 52 Q78 30 64 22" stroke="#1a1a2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M24 46 Q26 26 38 20 Q50 15 62 20 Q74 26 76 46" fill="#1a1a2a"/>
+            <path d="M50 16 Q38 20 30 30 L26 50 Q28 24 50 18 Q72 24 74 50 L70 30 Q62 20 50 16Z" fill="#2a2a3e"/>
+            <ellipse cx="38" cy="56" rx="7" ry="7.5" fill="white"/>
+            <ellipse cx="62" cy="56" rx="7" ry="7.5" fill="white"/>
+            <circle cx="38" cy="57" r="5" fill="#c87840"/>
+            <circle cx="62" cy="57" r="5" fill="#c87840"/>
+            <circle cx="38" cy="57" r="3.5" fill="#2a1a0a"/>
+            <circle cx="62" cy="57" r="3.5" fill="#2a1a0a"/>
+            <circle cx="39.5" cy="55.5" r="1.2" fill="white" opacity=".95"/>
+            <circle cx="63.5" cy="55.5" r="1.2" fill="white" opacity=".95"/>
+            <path d="M32 51 Q38 48.5 44 51" stroke="#3a2a1a" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <path d="M56 51 Q62 48.5 68 51" stroke="#3a2a1a" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <ellipse cx="33" cy="65" rx="4" ry="2" fill="#f0a0a0" opacity=".55"/>
+            <ellipse cx="67" cy="65" rx="4" ry="2" fill="#f0a0a0" opacity=".55"/>
+            <path d="M44 70 Q50 74 56 70" stroke="#d07888" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <path d="M46 70 Q50 72 54 70" fill="#e898a8" opacity=".6"/>
+            <ellipse cx="50" cy="62" rx="2" ry="2.5" fill="#fdd8b8" stroke="#e0a888" stroke-width=".5"/>
+            <path d="M42 85 Q50 88 58 85 Q64 90 50 95 Q36 90 42 85Z" fill="#e8b890"/>
+            <path d="M40 84 Q50 92 60 84" fill="#d4a070" opacity=".4"/>
+            <rect x="35" y="92" width="30" height="8" rx="4" fill="#e8c8b0" opacity=".5"/>
+          </g>
+        </svg>`;
+        const thumbContent = c.id === 1
+          ? face001
+          : `<div class="char-thumb-inner" style="background:linear-gradient(${c.grad})"></div>`;
+        return `
         <div class="char-card" onclick="openChar(${c.id})">
           <div class="char-thumb">
-            <div class="char-thumb-inner" style="background:linear-gradient(${c.grad})"></div>
+            ${thumbContent}
+            <button class="char-like-overlay${isLiked?" liked":""}" onclick="toggleLike(${c.id},event)" title="좋아요">
+              ♥
+            </button>
           </div>
           <div class="char-name-row">
+            <span class="char-code-prefix">BIZOCDOLL</span>
             <span class="char-code">${String(c.id).padStart(3,"0")}</span>
           </div>
-          <div class="char-sub">-</div>
-        </div>`
-      ).join("");
+        </div>`;
+      }).join("");
 }
 
 /* ── RENDER DETAIL ── */
