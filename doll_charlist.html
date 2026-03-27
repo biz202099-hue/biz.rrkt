@@ -102,6 +102,17 @@ button{font-family:var(--fn);cursor:pointer}
 .detail-overlay-inner{background:var(--bg);margin:40px auto;max-width:800px;border-radius:14px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.18);transition:max-width .2s}
 .detail-overlay-inner.wide{max-width:1080px}
 
+/* ── ARCHIVE OVERLAY ── */
+#archive-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);align-items:center;justify-content:center}
+#archive-overlay.open{display:flex}
+.archive-modal{width:min(92vw,960px);height:min(90vh,800px);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 12px 60px rgba(0,0,0,0.25);display:flex;flex-direction:column;position:relative}
+.archive-modal-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#faf9fb;border-bottom:1px solid #e8e2f0;flex-shrink:0}
+.archive-modal-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#a07ac8;text-transform:uppercase;flex:1}
+.archive-modal-code{font-size:11px;font-family:'Share Tech Mono',monospace;color:#6a4a90;background:rgba(160,122,200,0.1);padding:3px 10px;border-radius:100px;letter-spacing:.5px}
+.archive-modal-close{width:26px;height:26px;border-radius:50%;border:1px solid #e0d8ec;background:transparent;color:#a07ac8;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;font-family:var(--fn)}
+.archive-modal-close:hover{background:#f0e8f8;color:#7040a0}
+.archive-modal iframe{flex:1;border:none;width:100%;height:100%;display:block}
+
 /* ── WIDTH CONTROL ── */
 .char-page-inner{max-width:720px;margin:0 auto;transition:max-width .2s}
 .char-page-inner.wide{max-width:none}
@@ -163,7 +174,7 @@ button{font-family:var(--fn);cursor:pointer}
       </div>
 
       <div class="sheet-action-btns">
-        <button class="sheet-action-btn" onclick="alert('archive')">Archive<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8"/></svg></button>
+        <button class="sheet-action-btn" onclick="openArchive()">Archive<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8"/></svg></button>
         <button class="sheet-action-btn" onclick="alert('episode')">Episode<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8"/></svg></button>
       </div>
 
@@ -181,6 +192,18 @@ button{font-family:var(--fn);cursor:pointer}
     <button class="ep-nav-btn" id="nav-next" onclick="navChar(1)"><span class="ep-nav-title" id="nav-next-name"></span><span>→</span></button>
   </div>
   </div><!-- /detail-overlay-inner -->
+</div>
+
+<!-- ── ARCHIVE OVERLAY ── -->
+<div id="archive-overlay" onclick="if(event.target===this)closeArchive()">
+  <div class="archive-modal">
+    <div class="archive-modal-bar">
+      <span class="archive-modal-title">Archive</span>
+      <span class="archive-modal-code" id="archive-modal-code"></span>
+      <button class="archive-modal-close" onclick="closeArchive()" title="닫기">✕</button>
+    </div>
+    <iframe id="archive-iframe" src="" title="Archive"></iframe>
+  </div>
 </div>
 
 <script>
@@ -356,6 +379,24 @@ function renderDetail(id){
   document.getElementById('nav-next').className = "ep-nav-btn"+(next?"":" disabled");
 }
 
+
+/* ── ARCHIVE INTEGRATION ── */
+window.openArchive = function(){
+  const c = window.CHARACTERS.find(ch=>ch.id===state.activeId);
+  if(!c) return;
+  const code = c.idCode; // e.g. "BIZOCDOLL001"
+  document.getElementById('archive-modal-code').textContent = code;
+  const iframe = document.getElementById('archive-iframe');
+  iframe.src = 'archive.html?embed=1#' + code;
+  document.getElementById('archive-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.closeArchive = function(){
+  document.getElementById('archive-overlay').classList.remove('open');
+  // iframe src 초기화 (뒤로가기 히스토리 방지)
+  setTimeout(()=>{ document.getElementById('archive-iframe').src = ''; }, 200);
+  document.body.style.overflow = '';
+};
 
 /* ── ACTIONS ── */
 window.toggleSheetWidth = function(){
