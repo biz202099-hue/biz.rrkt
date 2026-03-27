@@ -25,31 +25,11 @@ html, body { background: var(--white); color: var(--gray-900); font-family: var(
 
 /* ── HERO ── */
 .hero {
-  background: #fdf6ff;
-  padding: 36px 24px 32px;
+  background: var(--white);
+  padding: 36px 24px 8px;
   text-align: center;
   position: relative;
   overflow: hidden;
-  border-bottom: 2px dashed #e8d8f0;
-}
-/* 동인 느낌 배경 도트 패턴 */
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle, #d9b8f0 1.2px, transparent 1.2px),
-    radial-gradient(circle, #f0b8d9 1px, transparent 1px);
-  background-size: 28px 28px, 14px 14px;
-  background-position: 0 0, 7px 7px;
-  opacity: 0.28;
-  pointer-events: none;
-}
-/* 모서리 별 장식 */
-.hero::after {
-  content: '✦ ✦ ✦';
-  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-  font-size: 9px; letter-spacing: 6px; color: #c8a0e0; opacity: 0.6;
-  pointer-events: none;
 }
 .glitter-wrap { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .spark { position: absolute; pointer-events: none; opacity: 0.7; }
@@ -71,11 +51,20 @@ html, body { background: var(--white); color: var(--gray-900); font-family: var(
   letter-spacing: 0.3px;
 }
 .btn-register:hover { background: rgba(160,122,200,0.22); transform: scale(1.02); }
+.hero-title-row { display: inline-flex; align-items: center; gap: 10px; position: relative; z-index: 2; margin-bottom: 10px; }
+.btn-add-inline {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(160,122,200,0.12); border: 1.5px solid rgba(160,122,200,0.4);
+  color: #9060c0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px; line-height: 1; text-decoration: none;
+  transition: background 0.15s, transform 0.15s; flex-shrink: 0;
+}
+.btn-add-inline:hover { background: rgba(160,122,200,0.25); transform: scale(1.08); }
 
 /* ── PAGE ── */
 .page { max-width: 864px; margin: 0 auto; padding: 0 32px 80px; }
 .sec { padding-top: 40px; margin-top: 36px; border-top: 1px solid var(--gray-200); }
-.sec-first { border-top: none; padding-top: 0; margin-top: 28px; }
+.sec-first { border-top: none; padding-top: 0; margin-top: 8px; }
 .sec-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: var(--blue); text-transform: uppercase; margin-bottom: 8px; }
 .sec-title { font-size: 20px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.03em; margin-bottom: 6px; }
 .sec-sub { font-size: 13px; color: var(--gray-400); line-height: 1.6; margin-bottom: 22px; }
@@ -513,7 +502,8 @@ html, body { background: var(--white); color: var(--gray-900); font-family: var(
 
 @media (max-width: 580px) {
   .page { padding: 0 16px 64px; }
-  .hero { padding: 40px 20px 36px; }
+  .hero { padding: 24px 20px 8px; }
+  .sec-first { margin-top: 8px; }
   .works-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .hero-stat { padding: 0 16px; }
   .hero-stat-n { font-size: 22px; }
@@ -529,33 +519,14 @@ html, body { background: var(--white); color: var(--gray-900); font-family: var(
   <div class="glitter-wrap" id="glitter"></div>
 
   <div class="hero-label">BIZ-OC-DOLL · ARCHIVE</div>
-  <div class="hero-title">FILMOGRAPHY</div>
-  <div class="hero-desc">
-    캐릭터들이 배우로서 등장한 창작물의 공식 기록입니다.<br>
-    웹툰·소설·게임·굿즈 등 공개 등록된 작품을 아카이빙합니다.
+  <div class="hero-title-row">
+    <span class="hero-title" style="margin-bottom:0;">FILMOGRAPHY</span>
+    <a class="btn-add-inline" href="#" onclick="openFormModal();return false;" title="작품 등록">+</a>
   </div>
-
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-n" id="stat-total">0</div>
-      <div class="hero-stat-l">Total Works</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-n" id="stat-creators">0</div>
-      <div class="hero-stat-l">Creators</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-n" id="stat-chars">0</div>
-      <div class="hero-stat-l">Characters Cast</div>
-    </div>
-  </div>
-
-  <div class="hero-btns">
-    <a class="btn-register" href="#" onclick="openFormModal();return false;">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      작품 등록 폼
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-    </a>
+  <div class="hero-stats" style="display:none;">
+    <div class="hero-stat"><div class="hero-stat-n" id="stat-total">0</div><div class="hero-stat-l">Total Works</div></div>
+    <div class="hero-stat"><div class="hero-stat-n" id="stat-creators">0</div><div class="hero-stat-l">Creators</div></div>
+    <div class="hero-stat"><div class="hero-stat-n" id="stat-chars">0</div><div class="hero-stat-l">Characters Cast</div></div>
   </div>
 </div>
 
