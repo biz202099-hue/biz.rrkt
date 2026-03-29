@@ -27,7 +27,7 @@ var CONFIG = {
   //  Gemini API 키 (Google AI Studio — 무료)
   //  aistudio.google.com → Get API Key → 복사 후 붙여넣기
   // --------------------------------------------------
-  GEMINI_KEY: 'AIzaSyDmhgAnxRq_wij8Z4RxOOxldg2rgKem6R8',
+  GEMINI_KEY: 'AIzaSyCaonhj7uHAAmtNbmhvfzAxzOiTPxrRirc',
 
 };
 
