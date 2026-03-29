@@ -23,6 +23,12 @@ var CONFIG = {
   // --------------------------------------------------
   API: 'https://script.google.com/macros/s/AKfycbyQ9DiU6MuIZQGue3o12fEKd38HBTFVvSn1KVDpz7Nsqzu7KJDzQCBeRJGZ3vHRwZMg0Q/exec',
 
+  // --------------------------------------------------
+  //  Gemini API 키 (Google AI Studio — 무료)
+  //  aistudio.google.com → Get API Key → 복사 후 붙여넣기
+  // --------------------------------------------------
+  GEMINI_KEY: 'AIzaSyDmhgAnxRq_wij8Z4RxOOxldg2rgKem6R8',
+
 };
 
 // =====================================================
@@ -30,3 +36,4 @@ var CONFIG = {
 // =====================================================
 var API      = CONFIG.API;
 var VOTE_URL = CONFIG.API; // vote.html 기존 코드 호환용
+var GEMINI_KEY  = CONFIG.GEMINI_KEY; // 챗봇용
