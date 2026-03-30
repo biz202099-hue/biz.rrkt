@@ -172,8 +172,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px}
 .home-logo-big{font-size:28px;font-weight:700;color:#111;letter-spacing:-.04em}
 .home-clock{font-size:28px;font-weight:300;color:var(--tx2);letter-spacing:.02em;font-variant-numeric:tabular-nums}
-/* 3-column: about | recent-work | right-panel */
-.home-body{display:grid;grid-template-columns:220px 1fr 260px;gap:18px;align-items:start}
+/* 3-column: status | recent-work | right-panel */
+.home-body{display:grid;grid-template-columns:180px 1fr 220px;gap:18px;align-items:start}
 /* ── About card (left) ── */
 .home-about-card{background:var(--sb);border:1px solid var(--bd);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
 .home-about-card-hd{padding:8px 12px;border-bottom:1px solid var(--bd);font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase}
@@ -298,13 +298,27 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-author-note-text{font-size:12px;color:var(--tx2);line-height:1.75}
 .home-author-note-date{font-size:9px;color:var(--tx3);margin-top:8px}
 
-/* ── HOME VISITOR SIMPLE ── */
-.home-visitor-simple{padding:6px 2px 2px}
-.home-visitor-simple-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
-.home-visitor-simple-row{display:flex;align-items:baseline;gap:5px}
-.home-visitor-n{font-size:16px;font-weight:300;color:var(--tx2)}
-.home-visitor-l{font-size:10px;color:var(--tx3)}
-.home-visitor-sep{font-size:12px;color:var(--bd2);margin:0 4px}
+/* ── HOME VISITOR COUNTRY WIDGET ── */
+.vis-widget{background:var(--sb);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.vis-hd{padding:10px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.vis-hd-lbl{font-size:8px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--tx3)}
+.vis-hd-total{font-size:12px;font-weight:600;color:var(--tx);font-variant-numeric:tabular-nums}
+.vis-list{padding:9px 13px;display:flex;flex-direction:column;gap:7px}
+.vis-row{display:grid;grid-template-columns:14px 20px 1fr 36px;align-items:center;gap:6px}
+.vis-rank{font-size:9px;color:var(--tx3);text-align:right}
+.vis-flag{width:16px;height:12px;border-radius:1px;object-fit:cover;display:block}
+.vis-right{display:flex;flex-direction:column;gap:2px}
+.vis-meta{display:flex;justify-content:space-between;align-items:baseline}
+.vis-name{font-size:10px;font-weight:500;color:var(--tx)}
+.vis-pct{font-size:8px;color:var(--tx3)}
+.vis-track{width:100%;background:var(--bd);border-radius:2px;height:3px;overflow:hidden}
+.vis-fill{height:3px;border-radius:2px;background:var(--tx)}
+.vis-n{font-size:10px;font-weight:500;color:var(--tx2);text-align:right;font-variant-numeric:tabular-nums}
+.vis-sep{height:1px;background:var(--bd);margin:2px 0}
+.vis-ft{padding:7px 13px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.vis-ft-l{font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:4px}
+.vis-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;display:inline-block;animation:visPulse 2.4s ease-in-out infinite}
+@keyframes visPulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── CALENDAR ── */
 .cal-page{padding:24px 20px 28px;max-width:calc(100% - 160px);margin:0 auto}
@@ -1667,12 +1681,63 @@ const getProj=id=>PROJECTS.find(p=>p.id===id);
 const ds=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const stClass=s=>s==="완료"?"done":s==="작업중"?"wip":"plan";
 
-/* Visitor counter */
-const totalVisits=parseInt(localStorage.getItem("biz_visits")||"0")+1;
-localStorage.setItem("biz_visits",totalVisits);
-const isKo=navigator.language.startsWith("ko");
-if(!isKo){const fv=parseInt(localStorage.getItem("biz_foreign")||"0")+1;localStorage.setItem("biz_foreign",fv);}
-const foreignVisits=parseInt(localStorage.getItem("biz_foreign")||"0");
+/* ── Global Visitor Counter — Cloudflare Workers ── */
+const VIS_WORKER_URL = 'https://biz-visitor.YOUR_SUBDOMAIN.workers.dev';
+
+const VIS_NAMES = {
+  KR:'Korea',JP:'Japan',US:'USA',CN:'China',TW:'Taiwan',
+  GB:'UK',DE:'Germany',FR:'France',SG:'Singapore',HK:'Hong Kong',
+  TH:'Thailand',PH:'Philippines',VN:'Vietnam',ID:'Indonesia',MY:'Malaysia',
+  AU:'Australia',CA:'Canada',BR:'Brazil',ES:'Spain',IT:'Italy',
+  RU:'Russia',IN:'India',MX:'Mexico',NL:'Netherlands',SE:'Sweden',
+};
+
+let _visFetched = false;
+function fetchGlobalVisits(){
+  if(_visFetched) return;
+  _visFetched = true;
+  fetch(VIS_WORKER_URL + '/hit', {method:'POST'})
+    .then(r=>r.json())
+    .then(d=>_renderVisWidget(d))
+    .catch(()=>_renderVisWidget(null));
+}
+
+function _renderVisWidget(d){
+  const totalEl = document.getElementById('vis-total');
+  const listEl  = document.getElementById('vis-list');
+  const ccEl    = document.getElementById('vis-country-count');
+  if(!d || !d.countries){
+    if(listEl) listEl.innerHTML='<div style="padding:14px 0;text-align:center;font-size:10px;color:var(--tx3)">—</div>';
+    return;
+  }
+  if(totalEl) totalEl.textContent = Number(d.total).toLocaleString();
+  const countries = d.countries.slice(0,8);
+  const max = countries[0] ? countries[0].count : 1;
+  const BAR_COLORS = ['#3a86ff','#06d6a0','#ffbe0b','#fb5607','#8338ec','#ff006e','#0096c7','#adb5bd'];
+  let html = '';
+  countries.forEach((c,i)=>{
+    const cc   = (c.code||'').toUpperCase();
+    const name = VIS_NAMES[cc] || cc;
+    const pct  = d.total ? Math.round(c.count/d.total*100) : 0;
+    const w    = Math.round(c.count/max*100);
+    const flag = `https://flagcdn.com/16x12/${cc.toLowerCase()}.png`;
+    if(i===3) html += '<div class="vis-sep"></div>';
+    html += `<div class="vis-row">
+      <span class="vis-rank">${i+1}</span>
+      <img class="vis-flag" src="${flag}" alt="${cc}" loading="lazy">
+      <div class="vis-right">
+        <div class="vis-meta">
+          <span class="vis-name">${name}</span>
+          <span class="vis-pct">${pct}%</span>
+        </div>
+        <div class="vis-track"><div class="vis-fill" style="width:${w}%;background:${BAR_COLORS[i]||'#888'}"></div></div>
+      </div>
+      <span class="vis-n">${Number(c.count).toLocaleString()}</span>
+    </div>`;
+  });
+  if(listEl) listEl.innerHTML = html || '<div style="padding:14px 0;text-align:center;font-size:10px;color:var(--tx3)">방문자 없음</div>';
+  if(ccEl) ccEl.textContent = d.countries.length;
+}
 
 setInterval(()=>{const el=document.getElementById("home-clock");if(el)el.textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});},1000);
 function setLang(lang){
@@ -2370,21 +2435,6 @@ function renderAbout(){
         <div style="font-size:26px;font-weight:700;color:#111;letter-spacing:-.04em">biz.rrkt</div>
       </div>
 
-      <!-- 프로필 카드 -->
-      <div style="background:var(--sb);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:20px">
-        <div style="display:flex;align-items:center;gap:20px;padding:24px 28px;border-bottom:1px solid var(--bd)">
-          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#e8e8e8,#c8c8c8);border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px">🎨</div>
-          <div>
-            <div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:4px">rrkt</div>
-            <div style="font-size:13px;color:var(--tx2);line-height:1.6">창작자 · 작가</div>
-          </div>
-        </div>
-        <div style="padding:20px 28px;font-size:14px;color:var(--tx2);line-height:1.8">
-          이곳은 작업물과 프로젝트들을 정리하는 아카이브입니다.<br>
-          여기에 소개글을 자유롭게 작성하세요.
-        </div>
-      </div>
-
       <!-- 프로젝트 통계 -->
       <div style="background:var(--sb);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:20px">
         <div style="padding:14px 20px;border-bottom:1px solid var(--bd);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase">Projects</div>
@@ -2531,21 +2581,6 @@ function renderProgress(){
 function renderHome(){
   const now=new Date();
   const timeStr=now.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  const y=S.homeMiniY,m=S.homeMiniM;
-  const firstDay=new Date(y,m,1).getDay();
-  const days=new Date(y,m+1,0).getDate();
-  const DNAMES=["일","월","화","수","목","금","토"],DCLS=["sun","","","","","","sat"];
-  let miniCells="";
-  for(let i=0;i<firstDay;i++)miniCells+=`<div class="hmc-cell"></div>`;
-  for(let d=1;d<=days;d++){
-    const ds_=ds(y,m,d),hasW=!!WORK_LOG[ds_],dow=(firstDay+d-1)%7;
-    let cls="hmc-cell";
-    if(hasW)cls+=" has-w";
-    const _tn=new Date();if(y===_tn.getFullYear()&&m===_tn.getMonth()&&d===_tn.getDate())cls+=" today";
-    if(dow===0)cls+=" sun-c";if(dow===6)cls+=" sat-c";
-    const dot=hasW?WORK_LOG[ds_][0].acc:null;
-    miniCells+=`<div class="${cls}"><span>${d}</span>${dot?`<div class="hmc-dot" style="background:${dot}"></div>`:""}</div>`;
-  }
   const allRecent=Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w}))).sort((a,b)=>b.date.localeCompare(a.date));
   const doneItems=allRecent.filter(w=>w.status==="완료").slice(0,6);
   const wipItems=allRecent.filter(w=>w.status==="작업중").slice(0,5);
@@ -2666,9 +2701,6 @@ function renderHome(){
       }).join("")}
     </div>`;
 
-  // ── 작가 노트 날짜 ──
-  const noteDate=new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric"});
-
   document.getElementById("content").innerHTML=`
     <div class="home-page">
       <div class="home-header" style="position:relative">
@@ -2710,22 +2742,8 @@ function renderHome(){
         </div>
       </div>
       <div class="home-body">
-        <!-- ① About card (left) -->
+        <!-- ① Status card (left) -->
         <div class="home-about-card">
-          <div class="home-about-card-hd">About</div>
-          <div class="home-about-avatar-wrap">
-            <div class="home-about-popart">${popArtSVG}</div>
-          </div>
-          <div class="home-about-info">
-            <div class="home-about-name">biz.rrkt</div>
-            <div class="home-about-bio">창작 / 글 / 그림<br>웹소설 · 웹툰 · OC</div>
-            <div class="home-about-tags">
-              <span class="home-about-tag">웹소설</span>
-              <span class="home-about-tag">웹툰</span>
-              <span class="home-about-tag">애니</span>
-              <span class="home-about-tag">게임</span>
-            </div>
-          </div>
           ${buildAuthorStatus()}
           ${buildFocusWidget()}
         </div>
@@ -2743,30 +2761,24 @@ function renderHome(){
         </div>
         <!-- ③ Right column -->
         <div class="home-right">
-          <div class="home-author-note">
-            <div class="home-author-note-hd">작가 노트</div>
-            <div class="home-author-note-body">
-              <div class="home-author-note-text">${AUTHOR_NOTE.text}</div>
-              <div class="home-author-note-date">${noteDate}</div>
+          <div class="vis-widget">
+            <div class="vis-hd">
+              <span class="vis-hd-lbl">Visitors by country</span>
+              <span class="vis-hd-total" id="vis-total">—</span>
             </div>
-          </div>
-          <div class="home-mini-cal">
-            <div class="hmc-head"><span class="hmc-month">${new Date(y,m,1).toLocaleDateString("ko-KR",{year:"numeric",month:"long"})}</span><div class="hmc-nav"><button class="hmc-btn" onclick="miniPrev()">&#8249;</button><button class="hmc-btn" onclick="miniNext()">&#8250;</button></div></div>
-            <div class="hmc-grid">${DNAMES.map((n,i)=>`<div class="hmc-dn ${DCLS[i]}">${n}</div>`).join("")}${miniCells}</div>
-          </div>
-          <div class="home-visitor-simple">
-            <div class="home-visitor-simple-lbl">방문자</div>
-            <div class="home-visitor-simple-row">
-              <span class="home-visitor-n">${totalVisits.toLocaleString()}</span>
-              <span class="home-visitor-l">총 방문</span>
-              <span class="home-visitor-sep">·</span>
-              <span class="home-visitor-n">${foreignVisits.toLocaleString()}</span>
-              <span class="home-visitor-l">해외</span>
+            <div class="vis-list" id="vis-list">
+              <div style="padding:14px 0;text-align:center;font-size:10px;color:var(--tx3)">loading...</div>
+            </div>
+            <div class="vis-ft">
+              <span class="vis-ft-l"><span class="vis-dot"></span><span id="vis-country-count">—</span> countries</span>
+              <span style="font-size:9px;color:var(--tx3)">all time</span>
             </div>
           </div>
         </div>
       </div>
     </div>`;
+  // 렌더 후 글로벌 방문자 수 비동기 로드
+  setTimeout(fetchGlobalVisits, 0);
 }
 
 /* ── CALENDAR ── */
@@ -4041,7 +4053,7 @@ function googleTranslateElementInit(){
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <!-- ★ 챗봇 — config.js 다음에 로드해요 ★ -->
-<script src="chatbot.js"></script>
+
 
 </body>
 </html>
