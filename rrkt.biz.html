@@ -992,7 +992,7 @@ body{top:0!important}
 <div id="float-ep-nav">
   <button class="fep-btn" id="fep-prev" onclick="floatEpNav('prev')">&#8249;</button>
   <div class="fep-div"></div>
-  <span class="fep-mid" onclick="floatEpNav('list')">목록</span>
+  <span class="fep-mid" onclick="floatEpNav('list')" data-i18n="ep_list">목록</span>
   <div class="fep-div"></div>
   <button class="fep-btn" id="fep-next" onclick="floatEpNav('next')">&#8250;</button>
 </div>
@@ -1043,7 +1043,7 @@ body{top:0!important}
 <div class="ep-picker-modal hidden" id="ep-picker-modal" onclick="closeEpPicker(event)">
   <div class="ep-picker-inner" onclick="event.stopPropagation()">
     <div class="ep-picker-hd">
-      <span class="ep-picker-title" id="ep-picker-title">에피소드 목록</span>
+      <span class="ep-picker-title" id="ep-picker-title" data-i18n="ep_picker_title">에피소드 목록</span>
       <button class="ep-picker-close" onclick="closeEpPickerBtn()">&#10005;</button>
     </div>
     <div class="ep-picker-list" id="ep-picker-list"></div>
@@ -1740,22 +1740,100 @@ function _renderVisWidget(d){
 }
 
 setInterval(()=>{const el=document.getElementById("home-clock");if(el)el.textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});},1000);
+/* ── 번역 캐시 (DeepL 결과 저장 → 재호출 방지) ── */
+var _tlCache = {};
+
 function setLang(lang){
   if(lang==='ko'){
-    // KO: 쿠키 삭제 후 리로드
+    /* KO: data-orig 원본 복원 후 Google 쿠키 삭제 → 리로드 */
+    document.querySelectorAll('[data-orig]').forEach(function(n){
+      n.textContent = n.dataset.orig;
+    });
     document.cookie='googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';
     document.cookie='googtrans=;path=/;domain=.'+location.hostname+';expires=Thu, 01 Jan 1970 00:00:00 GMT';
     location.reload();
     return;
   }
-  // 위젯이 이미 로드된 경우 직접 select 제어
-  var sel=document.querySelector('.goog-te-combo');
+
+  /* 캐시 히트 → 즉시 적용 (API 호출 없음) */
+  if(_tlCache[lang]){
+    _tlApply(_tlCache[lang]);
+    return;
+  }
+
+  /* DeepL 설정 확인 */
+  var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
+  if(cfg.enabled && cfg.proxyUrl){
+    _tlDeepL(lang, cfg);
+  } else {
+    /* DeepL 미설정 → Google 바로 사용 */
+    _tlGoogle(lang);
+  }
+}
+
+/* ── ① DeepL 번역 시도 ── */
+function _tlDeepL(lang, cfg){
+  var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-i18n]'));
+  if(!nodes.length){ _tlGoogle(lang); return; }
+
+  /* 원본 텍스트 보존 */
+  nodes.forEach(function(n){
+    if(!n.dataset.orig) n.dataset.orig = n.textContent.trim();
+  });
+  var texts = nodes.map(function(n){ return n.dataset.orig; });
+
+  /* DeepL 언어 코드 변환 (zh-CN/zh-TW → ZH, 나머지 대문자) */
+  var dlLang = (lang==='zh-CN'||lang==='zh-TW') ? 'ZH' : lang.split('-')[0].toUpperCase();
+
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, cfg.timeout || 5000);
+
+  fetch(cfg.proxyUrl, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ text: texts, target_lang: dlLang }),
+    signal: ctrl.signal
+  })
+  .then(function(res){
+    clearTimeout(timer);
+    /* 456 = 쿼터 초과, 5xx = 서버 오류 → 폴백 */
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    return res.json();
+  })
+  .then(function(data){
+    var dict = {};
+    nodes.forEach(function(n, i){
+      dict[n.dataset.i18n] = data.translations[i].text;
+    });
+    _tlCache[lang] = dict;
+    _tlApply(dict);
+    /* DeepL 성공 시 Google도 함께 구동 (동적 콘텐츠 커버) */
+    _tlGoogle(lang);
+  })
+  .catch(function(err){
+    clearTimeout(timer);
+    console.warn('[DeepL] 실패 → Google 폴백:', err.message);
+    _tlGoogle(lang);
+  });
+}
+
+/* ── DOM에 번역 딕셔너리 적용 ── */
+function _tlApply(dict){
+  document.querySelectorAll('[data-i18n]').forEach(function(n){
+    var k = n.dataset.i18n;
+    if(dict[k]) n.textContent = dict[k];
+  });
+}
+
+/* ── ② Google Translate 폴백 (기존 동작 그대로) ── */
+function _tlGoogle(lang){
+  var sel = document.querySelector('.goog-te-combo');
   if(sel){
-    sel.value=lang;
+    sel.value = lang;
     sel.dispatchEvent(new Event('change'));
     return;
   }
-  // 위젯 미로드 시 쿠키 방식 폴백
+  /* 위젯 미로드 시 쿠키 방식 */
   document.cookie='googtrans=/ko/'+lang+';path=/';
   document.cookie='googtrans=/ko/'+lang+';path=/;domain=.'+location.hostname;
   location.reload();
