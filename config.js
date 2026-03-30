@@ -29,7 +29,59 @@ var CONFIG = {
   // --------------------------------------------------
   GEMINI_KEY: 'AIzaSyCaonhj7uHAAmtNbmhvfzAxzOiTPxrRirc',
 
+
+  // --------------------------------------------------
+  //  DeepL 번역 프록시 (Cloudflare Workers)
+  //
+  //  사용법:
+  //  1. https://dash.cloudflare.com → Workers → 새 Worker 생성
+  //  2. 아래 Worker 코드를 붙여넣고 배포
+  //  3. 배포된 URL을 proxyUrl에 입력
+  //
+  //  Worker 코드 (복사해서 사용):
+  //  ────────────────────────────────────────────────
+  //  export default {
+  //    async fetch(request) {
+  //      if (request.method === 'OPTIONS') {
+  //        return new Response(null, { headers: {
+  //          'Access-Control-Allow-Origin': '*',
+  //          'Access-Control-Allow-Methods': 'POST',
+  //          'Access-Control-Allow-Headers': 'Content-Type'
+  //        }});
+  //      }
+  //      const { text, target_lang } = await request.json();
+  //      const res = await fetch('https://api-free.deepl.com/v2/translate', {
+  //        method: 'POST',
+  //        headers: {
+  //          'Authorization': 'DeepL-Auth-Key YOUR_DEEPL_API_KEY_HERE',
+  //          'Content-Type': 'application/json'
+  //        },
+  //        body: JSON.stringify({ text, target_lang })
+  //      });
+  //      const data = await res.json();
+  //      return new Response(JSON.stringify(data), {
+  //        headers: {
+  //          'Content-Type': 'application/json',
+  //          'Access-Control-Allow-Origin': '*'
+  //        },
+  //        status: res.status
+  //      });
+  //    }
+  //  }
+  //  ────────────────────────────────────────────────
+  //
+  //  proxyUrl: Workers 배포 후 아래에 URL 입력
+  //  enabled:  false 로 바꾸면 DeepL 건너뛰고 Google만 사용
+  // --------------------------------------------------
+  DEEPL: {
+    proxyUrl: '',   // 예: 'https://my-translate.username.workers.dev'
+    timeout:  5000, // 응답 대기 최대 ms (초과 시 Google 폴백)
+    enabled:  true  // false = DeepL 비활성화, Google만 사용
+  },
+
 };
+
+
 
 // =====================================================
 //  단축 변수 (HTML에서 API 바로 사용 가능)
