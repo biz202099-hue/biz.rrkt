@@ -53,7 +53,7 @@ var CONFIG = {
   //      const res = await fetch('https://api-free.deepl.com/v2/translate', {
   //        method: 'POST',
   //        headers: {
-  //          'Authorization': 'DeepL-Auth-Key YOUR_DEEPL_API_KEY_HERE',
+  //          'Authorization': 'DeepL-Auth-Key DeepL-Auth-Key 99a02a07-9049-4a56-b3f9-03f4eda8987a:fx',
   //          'Content-Type': 'application/json'
   //        },
   //        body: JSON.stringify({ text, target_lang })
@@ -74,18 +74,16 @@ var CONFIG = {
   //  enabled:  false 로 바꾸면 DeepL 건너뛰고 Google만 사용
   // --------------------------------------------------
   DEEPL: {
-    proxyUrl: '',   // 예: 'https://my-translate.username.workers.dev'
+    proxyUrl: 'https://rrktbiz-translate.biz202099.workers.dev',
     timeout:  5000, // 응답 대기 최대 ms (초과 시 Google 폴백)
     enabled:  true  // false = DeepL 비활성화, Google만 사용
   },
 
 };
 
-
-
 // =====================================================
 //  단축 변수 (HTML에서 API 바로 사용 가능)
 // =====================================================
 var API      = CONFIG.API;
-var VOTE_URL = CONFIG.API; // vote.html 기존 코드 호환용
+var VOTE_URL    = CONFIG.API;       // vote.html 기존 코드 호환용
 var GEMINI_KEY  = CONFIG.GEMINI_KEY; // 챗봇용
