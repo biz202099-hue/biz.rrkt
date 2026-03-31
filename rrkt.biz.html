@@ -867,7 +867,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .ep-lang-btn.active{background:var(--tx);color:#fff;border-color:var(--tx)}
 #deepl-translate-btn{
   display:none;align-items:center;gap:5px;
-  margin-top:12px;padding:6px 12px;
+  padding:6px 12px;
   font-size:11px;font-weight:600;font-family:var(--fn);
   border:1px solid #b5d4f4;border-radius:6px;
   background:#e8f0fe;color:#1a4c9e;
@@ -877,7 +877,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 #deepl-translate-btn.done{background:#dbeafe;color:#1e40af;border-color:#93c5fd;cursor:default}
 #deepl-retranslate-btn{
   display:none;align-items:center;gap:4px;
-  margin-top:12px;margin-left:6px;padding:6px 10px;
+  padding:6px 10px;
   font-size:11px;font-weight:600;font-family:var(--fn);
   border:1px solid var(--bd);border-radius:6px;
   background:transparent;color:var(--tx3);
@@ -3570,14 +3570,16 @@ function renderContentView(){
             'background:#f0f0f0;color:#aaa'
           }">${epObj.status}</span>
         </div>
-        <button id="deepl-translate-btn" onclick="onDeepLBtnClick()">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:12px">
+        <button id="deepl-translate-btn" onclick="onDeepLBtnClick()" style="margin-top:0">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
           DeepL로 번역
         </button>
-        <button id="deepl-retranslate-btn" onclick="onDeepLRetranslateClick()">
+        <button id="deepl-retranslate-btn" onclick="onDeepLRetranslateClick()" style="margin-top:0;margin-left:0">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
           재번역
         </button>
+        </div>
       </div>
       <div class="postype-body" id="postype-body">
         <div class="postype-loading">
