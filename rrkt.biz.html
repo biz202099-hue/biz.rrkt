@@ -237,7 +237,8 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-twitter-btn{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#000;color:#fff;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;width:100%;justify-content:center}
 .home-twitter-btn:hover{background:#1a1a1a}
 /* ── FOCUS WIDGET ── */
-.focus-widget-inner{padding:10px 12px 12px;border-top:1px solid var(--bd)}
+/* ── FOCUS WIDGET ── */
+.focus-widget-inner{padding:10px 12px 12px}
 .focus-widget-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .focus-widget-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
 .focus-badge{font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;background:#fff4e0;color:#c47a0a;border:1px solid #ffe0a0;white-space:nowrap;flex-shrink:0}
@@ -246,25 +247,17 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .focus-lbl{font-size:10px;color:var(--tx2);width:74px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .focus-bar-wrap{flex:1;background:var(--bd);border-radius:3px;height:5px;overflow:hidden}
 .focus-bar{height:5px;border-radius:3px;transition:width .3s ease}
-.focus-cnt{min-width:14px;text-align:right}
-/* ── AUTHOR STATUS WIDGET ── */
-.author-status{border-top:1px solid var(--bd);background:var(--sb)}
-.author-status-bar{display:flex;align-items:center;gap:8px;padding:9px 12px}
-.author-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:statusPulse 2.4s ease-in-out infinite}
-@keyframes statusPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.author-status-dot.active{background:#22c55e;box-shadow:0 0 0 2px #22c55e33}
-.author-status-dot.slow{background:#f59e0b;animation:none}
-.author-status-dot.away{background:#94a3b8;animation:none}
-.author-status-label{font-size:14px;font-weight:500;color:var(--tx)}
-.author-status-body{padding:0 12px 12px;font-size:13px;color:var(--tx2);line-height:1.55}
-/* ── EVAL WIDGET ── */
-.eval-widget{border-radius:8px;border:1px solid var(--bd);overflow:hidden;display:flex;align-items:center;gap:0}
-.eval-banner{padding:8px 12px;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.eval-emoji{font-size:16px;flex-shrink:0;line-height:1}
-.eval-text{min-width:0}
-.eval-title{font-size:12px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.eval-msg{font-size:10px;color:var(--tx2);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.eval-chips{display:flex;gap:3px;padding:8px 10px 8px 0;align-items:center;flex-shrink:0;flex-wrap:nowrap}
+.focus-cnt{min-width:14px;text-align:right;font-size:11px;color:var(--tx3)}
+/* ── LAST UPDATE WIDGET ── */
+.last-update-widget{background:var(--sb);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.last-update-hd{padding:8px 12px;border-bottom:1px solid var(--bd);font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase}
+.last-update-body{padding:14px 14px 16px}
+.last-update-num-row{display:flex;align-items:baseline;gap:4px;margin-bottom:8px}
+.last-update-num{font-size:40px;font-weight:300;color:var(--tx);line-height:1;letter-spacing:-0.04em}
+.last-update-unit{font-size:14px;color:var(--tx2)}
+.last-update-dot-row{display:flex;align-items:center;gap:6px}
+.last-update-dot{width:5px;height:5px;border-radius:50%;background:var(--bd2);flex-shrink:0}
+.last-update-date{font-size:11px;color:var(--tx3)}
 .eval-chip{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:#fff;border:1px solid var(--bd);color:var(--tx2);white-space:nowrap}
 /* legacy - kept for safety */
 .home-about{background:var(--sb);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
@@ -1459,57 +1452,38 @@ function buildWorkLog(){
 buildWorkLog();
 
 /* ── AUTHOR STATUS WIDGET ── */
-function buildAuthorStatus(){
-  const now = new Date();
-  const allEntries = Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
+function buildLastUpdateWidget(){
   const sortedDates = Object.keys(WORK_LOG).sort();
-  const lastWorkStr = sortedDates[sortedDates.length-1]||null;
-  const daysSince = lastWorkStr ? Math.floor((now-new Date(lastWorkStr))/86400000) : null;
-
-  // 이번 달 작업 수
-  const thisMonStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
-  const thisMonCnt=allEntries.filter(e=>e.date.startsWith(thisMonStr)).length;
-
-  // 최근 7일 작업 수
-  const recentCnt=allEntries.filter(e=>{
-    if(!e.date)return false;
-    return Math.floor((now-new Date(e.date))/86400000)<=7;
-  }).length;
-
-  let dotCls, label, body;
-
-  if(allEntries.length===0||daysSince===null){
-    dotCls="away"; label="상태 미정";
-    body="아직 작업 기록이 없어요.";
-  } else if(daysSince===0){
-    dotCls="active"; label="마감 완료 ✍️";
-    body="오늘도 작업 중이에요. 새 업데이트를 기대해 주세요!";
-  } else if(daysSince<=7&&recentCnt>=2){
-    dotCls="active"; label="작업 중 🖊️";
-    body="활발하게 작업하고 있어요. 곧 새 내용을 올릴게요.";
-  } else if(daysSince<=7){
-    dotCls="active"; label="작업 중 🖊️";
-    body="조금 뜸하지만 꾸준히 쓰고 있어요.";
-  } else if(daysSince<=14){
-    dotCls="slow"; label="잠시 쉬는 중 🌿";
-    body="잠깐 숨 고르는 중이에요. 곧 돌아올게요.";
-  } else if(daysSince<=30){
-    dotCls="slow"; label="휴재 중 💤";
-    body="현재 업로드가 잠시 멈춰 있어요. 기다려 주셔서 감사해요.";
-  } else if(daysSince<=60){
-    dotCls="away"; label="바쁜 현생 중 🌀";
-    body="현생으로 인해 연재 중지 상태예요. 조금만 기다려 주세요!";
-  } else {
-    dotCls="away"; label="장기 휴재 중 🕰️";
-    body="오랫동안 자리를 비웠어요. 언젠가 꼭 돌아올게요.";
-  }
-
-  return`<div class="author-status">
-    <div class="author-status-bar">
-      <span class="author-status-dot ${dotCls}"></span>
-      <span class="author-status-label">${label}</span>
+  const lastDateStr = sortedDates[sortedDates.length-1] || null;
+  if(!lastDateStr) return `<div class="last-update-widget">
+    <div class="last-update-hd">마지막 업데이트</div>
+    <div class="last-update-body">
+      <div class="last-update-num-row">
+        <span class="last-update-num">—</span>
+      </div>
+      <div class="last-update-dot-row">
+        <div class="last-update-dot"></div>
+        <span class="last-update-date">기록 없음</span>
+      </div>
     </div>
-    <div class="author-status-body">${body}</div>
+  </div>`;
+  const daysSince = Math.floor((new Date() - new Date(lastDateStr)) / 86400000);
+  let numDisplay, unitDisplay;
+  if(daysSince === 0){ numDisplay = "오늘"; unitDisplay = ""; }
+  else if(daysSince === 1){ numDisplay = "어제"; unitDisplay = ""; }
+  else { numDisplay = daysSince; unitDisplay = "일 전"; }
+  return `<div class="last-update-widget">
+    <div class="last-update-hd">마지막 업데이트</div>
+    <div class="last-update-body">
+      <div class="last-update-num-row">
+        <span class="last-update-num">${numDisplay}</span>
+        ${unitDisplay ? `<span class="last-update-unit">${unitDisplay}</span>` : ''}
+      </div>
+      <div class="last-update-dot-row">
+        <div class="last-update-dot"></div>
+        <span class="last-update-date">${lastDateStr} 업로드</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -1520,7 +1494,6 @@ function buildFocusWidget(){
   const allEntries = Object.entries(WORK_LOG).flatMap(([date,ws])=>ws.map(w=>({date,...w})));
   const thisMonEntries = allEntries.filter(e=>e.date.startsWith(thisMonStr));
 
-  // 프로젝트별 집계 (기록 없으면 0) — active 프로젝트만
   const countMap = {};
   thisMonEntries.forEach(e=>{ countMap[e.projId] = (countMap[e.projId]||0) + 1; });
   const sorted = PROJECTS
@@ -1530,7 +1503,6 @@ function buildFocusWidget(){
   const maxCount = sorted[0].count || 1;
   const hasData = thisMonEntries.length > 0;
 
-  // 상단 문구: 데이터 있을 때만 "현재 XXX 중점으로 집필 중"
   let topLine = "";
   if(hasData){
     const top = sorted.find(p=>p.count>0);
@@ -3203,7 +3175,9 @@ function renderHome(){
         <!-- ② Right column: Status card + Visitors -->
         <div class="home-right">
           <div class="home-about-card">
-            ${buildAuthorStatus()}
+            ${buildLastUpdateWidget()}
+          </div>
+          <div class="home-about-card">
             ${buildFocusWidget()}
           </div>
           <div class="vis-widget">
