@@ -1800,6 +1800,7 @@ function setLang(lang){
   /* 캐시 히트 → 즉시 적용 (API 호출 없음) */
   if(_tlCache[lang]){
     _tlApply(_tlCache[lang]);
+    _updateEpLangBtns(lang);
     return;
   }
 
@@ -1808,11 +1809,13 @@ function setLang(lang){
 
   /* 본문 뷰어 열려있으면 → DeepL 버튼 표시, 자동번역 안 함 */
   if(S.view === 'content' && cfg.enabled && cfg.proxyUrl){
+    _updateEpLangBtns(lang);
     _tlShowDeepLBtn(lang, cfg);
     _tlGoogle(lang);
     return;
   }
 
+  _updateEpLangBtns(lang);
   if(cfg.enabled && cfg.proxyUrl){
     _tlDeepL(lang, cfg);
   } else {
@@ -2051,6 +2054,16 @@ function _tlBadgeReset(){
   el.className='';
   el.textContent='';
   _epOriginalLines = null; /* 원본 초기화 */
+  _updateEpLangBtns('ko'); /* 버튼 복원 */
+}
+
+/* ── 번역 모드에 따라 에피소드 언어 버튼 표시 제어 ── */
+function _updateEpLangBtns(lang){
+  var btnKo  = document.querySelector('.ep-lang-btn[data-lang="ko"]');
+  var btnJa  = document.querySelector('.ep-lang-btn[data-lang="jp"]');
+  var isTranslating = lang && lang !== 'ko';
+  if(btnKo) btnKo.style.display = isTranslating ? 'none' : '';
+  if(btnJa) btnJa.style.display = isTranslating ? 'none' : '';
 }
 function _tlGoogle(lang){
   _tlBadge('google');
@@ -3708,7 +3721,10 @@ async function _loadPostypeContent(textId, acc){
     /* 언어 선택 상태면 DeepL 버튼 표시 (자동번역 아님) */
     if(_currentLang && _currentLang !== 'ko'){
       var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
-      if(cfg.enabled && cfg.proxyUrl) _tlShowDeepLBtn(_currentLang, cfg);
+      if(cfg.enabled && cfg.proxyUrl){
+        _updateEpLangBtns(_currentLang);
+        _tlShowDeepLBtn(_currentLang, cfg);
+      }
     }
   } catch(err){
     el.innerHTML = `<div class="postype-error"><strong>본문 파일을 찾을 수 없습니다</strong><br><small style="color:#a03030">${textId}</small><br><pre>${err.message}</pre></div>`;
