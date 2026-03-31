@@ -865,6 +865,16 @@ body.nav-pinned #nav-backdrop{display:none!important}
 }
 .ep-lang-btn:hover{background:var(--bg);color:var(--tx);border-color:var(--bd2)}
 .ep-lang-btn.active{background:var(--tx);color:#fff;border-color:var(--tx)}
+#deepl-translate-btn{
+  display:none;align-items:center;gap:5px;
+  margin-top:12px;padding:6px 12px;
+  font-size:11px;font-weight:600;font-family:var(--fn);
+  border:1px solid #b5d4f4;border-radius:6px;
+  background:#e8f0fe;color:#1a4c9e;
+  cursor:pointer;transition:all .12s;
+}
+#deepl-translate-btn:hover{background:#d0e3fc;border-color:#85b7eb}
+#deepl-translate-btn.done{background:#e8f7f2;color:#0a6e56;border-color:#9fe1cb;cursor:default}
 
 /* Google Translate */
 .goog-te-banner-frame,.goog-te-menu-frame{display:none!important}
@@ -1786,9 +1796,9 @@ function setLang(lang){
   /* DeepL 설정 확인 */
   var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
 
-  /* 본문 뷰어 열려있으면 → 에피소드 본문만 DeepL, UI는 Google */
+  /* 본문 뷰어 열려있으면 → DeepL 버튼 표시, 자동번역 안 함 */
   if(S.view === 'content' && cfg.enabled && cfg.proxyUrl){
-    _tlDeepLEpisode(lang, cfg);
+    _tlShowDeepLBtn(lang, cfg);
     _tlGoogle(lang);
     return;
   }
@@ -1856,8 +1866,50 @@ function _tlApply(dict){
   });
 }
 
+/* ── 에피소드 본문 DeepL 버튼 표시/숨김 ── */
+function _tlShowDeepLBtn(lang, cfg){
+  var btn = document.getElementById('deepl-translate-btn');
+  if(!btn) return;
+  /* ko로 돌아가면 숨김 */
+  if(!lang || lang === 'ko'){
+    btn.style.display = 'none';
+    return;
+  }
+  /* 이미 캐시된 번역이 있으면 완료 상태로 바로 표시 */
+  var cacheKey = 'dl_ep_'+S.activeProj+'_'+S.activeVol+'_'+S.activeEp+'_'+lang;
+  var cached = false;
+  try { cached = !!localStorage.getItem(cacheKey); } catch(e){}
+  btn.style.display = 'flex';
+  if(cached){
+    btn.className = 'done';
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> DeepL 번역됨';
+    btn.onclick = null;
+    /* 캐시 있으면 본문도 바로 적용 */
+    _tlDeepLEpisode(lang, cfg);
+  } else {
+    btn.className = '';
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> DeepL로 번역';
+    btn.onclick = function(){ onDeepLBtnClick(); };
+  }
+}
+
+window.onDeepLBtnClick = function(){
+  var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
+  if(!cfg.enabled || !cfg.proxyUrl || !_currentLang || _currentLang === 'ko') return;
+  var btn = document.getElementById('deepl-translate-btn');
+  if(btn){ btn.style.opacity='0.5'; btn.style.pointerEvents='none'; }
+  _tlDeepLEpisode(_currentLang, cfg, function(){
+    if(!btn) return;
+    btn.style.opacity='';
+    btn.style.pointerEvents='';
+    btn.className='done';
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> DeepL 번역됨';
+    btn.onclick=null;
+  });
+};
+
 /* ── 에피소드 본문 DeepL 번역 (localStorage 캐시) ── */
-function _tlDeepLEpisode(lang, cfg){
+function _tlDeepLEpisode(lang, cfg, onDone){
   var el = document.getElementById('postype-body');
   if(!el) return;
 
@@ -1910,6 +1962,7 @@ function _tlDeepLEpisode(lang, cfg){
     _tlBadge('deepl');
     /* localStorage에 저장 */
     try { localStorage.setItem(cacheKey, html); } catch(e){}
+    if(typeof onDone === 'function') onDone();
   })
   .catch(function(err){
     clearTimeout(timer);
@@ -3445,6 +3498,10 @@ function renderContentView(){
             'background:#f0f0f0;color:#aaa'
           }">${epObj.status}</span>
         </div>
+        <button id="deepl-translate-btn" onclick="onDeepLBtnClick()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          DeepL로 번역
+        </button>
       </div>
       <div class="postype-body" id="postype-body">
         <div class="postype-loading">
@@ -3568,12 +3625,10 @@ async function _loadPostypeContent(textId, acc){
   try{
     const text = await fetchEpText(textId);
     el.innerHTML = `<div class="postype-text">${text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}</div>`;
-    /* 언어가 선택된 상태면 자동 번역 */
+    /* 언어 선택 상태면 DeepL 버튼 표시 (자동번역 아님) */
     if(_currentLang && _currentLang !== 'ko'){
       var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
-      if(cfg.enabled && cfg.proxyUrl){
-        _tlDeepLEpisode(_currentLang, cfg);
-      }
+      if(cfg.enabled && cfg.proxyUrl) _tlShowDeepLBtn(_currentLang, cfg);
     }
   } catch(err){
     el.innerHTML = `<div class="postype-error"><strong>본문 파일을 찾을 수 없습니다</strong><br><small style="color:#a03030">${textId}</small><br><pre>${err.message}</pre></div>`;
