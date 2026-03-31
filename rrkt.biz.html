@@ -1919,7 +1919,7 @@ function _tlDeepLEpisode(lang, cfg, onDone){
   try {
     var cached = localStorage.getItem(cacheKey);
     if(cached){
-      el.innerHTML = '<div class="postype-text">'+cached+'</div>';
+      el.innerHTML = '<div class="postype-text notranslate">'+cached+'</div>';
       _tlBadge('deepl');
       return;
     }
@@ -1946,7 +1946,7 @@ function _tlDeepLEpisode(lang, cfg, onDone){
   fetch(cfg.proxyUrl, {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ text: [originalText], target_lang: dlLang }),
+    body: JSON.stringify({ text: [originalText], target_lang: dlLang, split_sentences: 'nonewlines', preserve_formatting: true }),
     signal: ctrl.signal
   })
   .then(function(res){
@@ -1958,7 +1958,7 @@ function _tlDeepLEpisode(lang, cfg, onDone){
     var translated = data.translations && data.translations[0] && data.translations[0].text;
     if(!translated) throw new Error('번역 결과 없음');
     var html = translated.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-    el.innerHTML = '<div class="postype-text">'+html+'</div>';
+    el.innerHTML = '<div class="postype-text notranslate">'+html+'</div>';
     _tlBadge('deepl');
     /* localStorage에 저장 */
     try { localStorage.setItem(cacheKey, html); } catch(e){}
@@ -1969,7 +1969,7 @@ function _tlDeepLEpisode(lang, cfg, onDone){
     console.warn('[DeepL 본문] 실패:', err.message);
     /* 실패 시 원본 복원 */
     var restoredHtml = originalText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-    el.innerHTML = '<div class="postype-text">'+restoredHtml+'</div>';
+    el.innerHTML = '<div class="postype-text notranslate">'+restoredHtml+'</div>';
   });
 }
 
@@ -3624,7 +3624,7 @@ async function _loadPostypeContent(textId, acc){
   }
   try{
     const text = await fetchEpText(textId);
-    el.innerHTML = `<div class="postype-text">${text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}</div>`;
+    el.innerHTML = `<div class="postype-text notranslate">${text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}</div>`;
     /* 언어 선택 상태면 DeepL 버튼 표시 (자동번역 아님) */
     if(_currentLang && _currentLang !== 'ko'){
       var cfg = (typeof CONFIG !== 'undefined' && CONFIG.DEEPL) ? CONFIG.DEEPL : {};
