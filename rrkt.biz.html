@@ -321,6 +321,18 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-trans-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase}
 .home-trans-body{font-size:12px;color:#2a2a3a;line-height:1.75;margin:0}
 .home-trans-body strong{font-weight:700;color:#1a1a1a}
+/* ── COPYRIGHT NOTICE ── */
+.home-copy-notice{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--sb);border:1px solid var(--bd);border-radius:10px;
+  padding:13px 16px;margin-bottom:18px;
+}
+.home-copy-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+.home-copy-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase}
+.home-copy-body{font-size:12px;color:#2a2a3a;line-height:1.75;margin:0}
+.home-copy-links{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap}
+.home-copy-link{font-size:11px;color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--bd2);padding-bottom:1px;transition:color .12s}
+.home-copy-link:hover{color:var(--tx)}
 #lang-detect-banner{
   display:none;align-items:center;gap:12px;
   background:#e8f0fe;border:1px solid #b5d4f4;border-radius:10px;
@@ -3143,6 +3155,18 @@ function renderHome(){
         <div class="home-trans-text">
           <span class="home-trans-title">번역 안내</span>
           <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="home-copy-notice">
+        <span class="home-trans-icon">©</span>
+        <div class="home-copy-text">
+          <span class="home-copy-title">저작권 안내</span>
+          <p class="home-copy-body">이 사이트의 콘텐츠는 작가 본인이 포스타입에 백업 업로드하고 있습니다. 타 사이트에서 동일한 콘텐츠를 발견하더라도 공식 업로드이므로, 불펌으로 오해하지 않으시길 바랍니다. 저작권은 작가에게 있습니다.</p>
+          <div class="home-copy-links">
+            <span style="font-size:11px;color:var(--tx3)">백업 주소 →</span>
+            <a class="home-copy-link" href="https://www.postype.com/@biz202099" target="_blank">postype.com/@biz202099</a>
+            <a class="home-copy-link" href="https://www.postype.com/@rrkt2022" target="_blank">postype.com/@rrkt2022</a>
+          </div>
         </div>
       </div>
       <div class="home-body">
