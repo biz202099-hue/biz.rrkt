@@ -1962,7 +1962,7 @@ function _tlDeepLEpisode(lang, cfg, onDone){
     }
   } catch(e){}
 
-  /* 원본 텍스트 추출 */
+  /* 원본 텍스트 추출 → 줄 배열로 분리 */
   var textEl = el.querySelector('.postype-text');
   if(!textEl || !textEl.textContent.trim()){
     console.warn('[DeepL] 본문 없음, 스킵');
@@ -1972,39 +1972,63 @@ function _tlDeepLEpisode(lang, cfg, onDone){
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<[^>]+>/g, '');
 
+  /* 줄 단위 배열로 — 빈 줄도 빈 문자열로 보존 */
+  var lines = originalText.split('\n');
+
+  /* 빈 줄은 DeepL에 안 보내고 인덱스만 기록 */
+  var indices = [], texts = [];
+  lines.forEach(function(l, i){
+    if(l.trim()){ indices.push(i); texts.push(l); }
+  });
+
   var dlLang = (lang==='zh-CN'||lang==='zh-TW') ? 'ZH' : lang.split('-')[0].toUpperCase();
 
   /* 로딩 표시 */
   el.innerHTML = '<div class="postype-loading"><div class="postype-spinner"></div><span>DeepL 번역 중…</span></div>';
 
-  var ctrl = new AbortController();
-  var timer = setTimeout(function(){ ctrl.abort(); }, cfg.timeout || 10000);
+  /* 50개 초과 시 배치 분할 */
+  var BATCH = 50;
+  var batches = [];
+  for(var i=0; i<texts.length; i+=BATCH){
+    batches.push(texts.slice(i, i+BATCH));
+  }
 
-  fetch(cfg.proxyUrl, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ text: [originalText], target_lang: dlLang, split_sentences: 'nonewlines', preserve_formatting: true }),
-    signal: ctrl.signal
-  })
-  .then(function(res){
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, cfg.timeout || 15000);
+
+  Promise.all(batches.map(function(batch){
+    return fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ text: batch, target_lang: dlLang }),
+      signal: ctrl.signal
+    }).then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
+    }).then(function(data){
+      return data.translations.map(function(t){ return t.text; });
+    });
+  }))
+  .then(function(results){
     clearTimeout(timer);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    return res.json();
-  })
-  .then(function(data){
-    var translated = data.translations && data.translations[0] && data.translations[0].text;
-    if(!translated) throw new Error('번역 결과 없음');
-    var html = translated.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    /* 배치 결과 합치기 */
+    var translated = [].concat.apply([], results);
+    /* 원본 줄 구조에 번역 삽입 */
+    var output = lines.slice();
+    indices.forEach(function(origIdx, ti){
+      output[origIdx] = translated[ti] || lines[origIdx];
+    });
+    var html = output
+      .map(function(l){ return l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); })
+      .join('<br>');
     el.innerHTML = '<div class="postype-text notranslate">'+html+'</div>';
     _tlBadge('deepl');
-    /* localStorage에 저장 */
     try { localStorage.setItem(cacheKey, html); } catch(e){}
     if(typeof onDone === 'function') onDone();
   })
   .catch(function(err){
     clearTimeout(timer);
     console.warn('[DeepL 본문] 실패:', err.message);
-    /* 실패 시 원본 복원 */
     var restoredHtml = originalText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     el.innerHTML = '<div class="postype-text notranslate">'+restoredHtml+'</div>';
   });
