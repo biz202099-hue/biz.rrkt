@@ -313,6 +313,17 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-trans-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase}
 .home-trans-body{font-size:12px;color:#2a2a3a;line-height:1.75;margin:0}
 .home-trans-body strong{font-weight:700;color:#1a1a1a}
+#lang-detect-banner{
+  display:none;align-items:center;gap:12px;
+  background:#e8f0fe;border:1px solid #b5d4f4;border-radius:10px;
+  padding:12px 16px;margin-bottom:12px;
+}
+#lang-detect-banner .ldb-text{flex:1;font-size:12px;color:#1a3a6e;line-height:1.6}
+#lang-detect-banner .ldb-btns{display:flex;gap:6px;flex-shrink:0}
+#lang-detect-banner .ldb-yes{font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:none;background:#1a4c9e;color:#fff;cursor:pointer;transition:background .12s}
+#lang-detect-banner .ldb-yes:hover{background:#1239786}
+#lang-detect-banner .ldb-no{font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid #b5d4f4;background:transparent;color:#1a4c9e;cursor:pointer;transition:all .12s}
+#lang-detect-banner .ldb-no:hover{background:#d0e3fc}
 
 /* ── HOME VISITOR COUNTRY WIDGET ── */
 .vis-widget{background:var(--sb);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
@@ -1779,6 +1790,66 @@ function _renderVisWidget(d){
 }
 
 setInterval(()=>{const el=document.getElementById("home-clock");if(el)el.textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});},1000);
+/* ── 브라우저 언어 감지 배너 ── */
+(function(){
+  /* 이미 언어 선택했거나 무시한 적 있으면 패스 */
+  try { if(localStorage.getItem('ld_dismissed')) return; } catch(e){}
+
+  var nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
+  /* 한국어, 일본어 브라우저는 스킵 (작가 언어) */
+  if(!nav || nav.startsWith('ko') || nav.startsWith('ja')) return;
+
+  /* 언어코드 → 표시명 매핑 (주요 언어만) */
+  var NAMES = {
+    en:'English', 'en-us':'English', 'en-gb':'English',
+    zh:'Chinese', 'zh-cn':'Chinese (Simplified)', 'zh-tw':'Chinese (Traditional)',
+    fr:'Français', de:'Deutsch', es:'Español', pt:'Português',
+    ru:'Русский', ar:'العربية', th:'ภาษาไทย', vi:'Tiếng Việt',
+    id:'Bahasa Indonesia', ms:'Bahasa Melayu', tr:'Türkçe',
+    it:'Italiano', nl:'Nederlands', pl:'Polski', sv:'Svenska',
+  };
+
+  var code = nav.split('-')[0];
+  var displayName = NAMES[nav] || NAMES[code] || nav.toUpperCase();
+
+  /* setLang에 넘길 코드 결정 */
+  var langCode = nav.startsWith('zh') ? (nav.includes('tw') ? 'zh-TW' : 'zh-CN') : code;
+
+  window._ldLangCode = langCode;
+  window._ldLangName = displayName;
+
+  /* 홈 렌더 후 배너 표시 (DOM 준비 후) */
+  window._ldPending = true;
+})();
+
+window.ldBannerShow = function(){
+  if(!window._ldPending || !window._ldLangCode) return;
+  var banner = document.getElementById('lang-detect-banner');
+  if(!banner) return;
+  banner.querySelector('.ldb-text').textContent =
+    'Your browser is set to ' + window._ldLangName + '. Would you like to view this site in ' + window._ldLangName + '?';
+  banner.querySelector('.ldb-yes').textContent = 'View in ' + window._ldLangName;
+  banner.style.display = 'flex';
+};
+
+window.ldBannerAccept = function(){
+  var banner = document.getElementById('lang-detect-banner');
+  if(banner) banner.style.display = 'none';
+  window._ldPending = false;
+  try { localStorage.setItem('ld_dismissed','1'); } catch(e){}
+  if(window._ldLangCode) setLang(window._ldLangCode);
+  /* topbar label도 업데이트 */
+  var lbl = document.getElementById('tb-lang-label');
+  if(lbl && window._ldLangName) lbl.textContent = window._ldLangName;
+};
+
+window.ldBannerDismiss = function(){
+  var banner = document.getElementById('lang-detect-banner');
+  if(banner) banner.style.display = 'none';
+  window._ldPending = false;
+  try { localStorage.setItem('ld_dismissed','1'); } catch(e){}
+};
+
 /* ── 번역 캐시 (DeepL 결과 저장 → 재호출 방지) ── */
 var _tlCache = {};
 var _currentLang = 'ko';
@@ -3059,11 +3130,18 @@ function renderHome(){
           </div>
         </div>
       </div>
+      <div id="lang-detect-banner">
+        <div class="ldb-text"></div>
+        <div class="ldb-btns">
+          <button class="ldb-yes" onclick="ldBannerAccept()"></button>
+          <button class="ldb-no" onclick="ldBannerDismiss()">No thanks</button>
+        </div>
+      </div>
       <div class="home-trans-notice">
         <span class="home-trans-icon">🌐</span>
         <div class="home-trans-text">
           <span class="home-trans-title">번역 안내</span>
-          <p class="home-trans-body">이 페이지는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.</p>
+          <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.</p>
         </div>
       </div>
       <div class="home-body">
@@ -3104,6 +3182,8 @@ function renderHome(){
     </div>`;
   // 렌더 후 글로벌 방문자 수 비동기 로드
   setTimeout(fetchGlobalVisits, 0);
+  // 언어 감지 배너 표시
+  setTimeout(window.ldBannerShow, 100);
 }
 
 /* ── CALENDAR ── */
