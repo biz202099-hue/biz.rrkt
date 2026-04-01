@@ -312,21 +312,18 @@ body.nav-pinned #nav-backdrop{display:none!important}
 
 /* ── HOME TRANSLATION NOTICE ── */
 .home-trans-notice{
-  display:flex;align-items:flex-start;gap:12px;
   background:var(--sb);border:1px solid var(--bd);border-radius:10px;
-  padding:13px 16px;margin-bottom:18px;
+  overflow:hidden;margin-bottom:18px;
 }
+.home-notice-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px}
+.home-notice-sep{height:1px;background:var(--bd);margin:0}
 .home-trans-icon{font-size:20px;line-height:1;flex-shrink:0;margin-top:1px}
 .home-trans-text{display:flex;flex-direction:column;gap:4px;min-width:0}
 .home-trans-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase}
 .home-trans-body{font-size:12px;color:#2a2a3a;line-height:1.75;margin:0}
 .home-trans-body strong{font-weight:700;color:#1a1a1a}
 /* ── COPYRIGHT NOTICE ── */
-.home-copy-notice{
-  display:flex;align-items:flex-start;gap:12px;
-  background:var(--sb);border:1px solid var(--bd);border-radius:10px;
-  padding:13px 16px;margin-bottom:18px;
-}
+.home-copy-notice{display:none}
 .home-copy-text{display:flex;flex-direction:column;gap:4px;min-width:0}
 .home-copy-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase}
 .home-copy-body{font-size:12px;color:#2a2a3a;line-height:1.75;margin:0}
@@ -3151,21 +3148,24 @@ function renderHome(){
         </div>
       </div>
       <div class="home-trans-notice">
-        <span class="home-trans-icon">🌐</span>
-        <div class="home-trans-text">
-          <span class="home-trans-title">번역 안내</span>
-          <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.</p>
+        <div class="home-notice-row">
+          <span class="home-trans-icon">🌐</span>
+          <div class="home-trans-text">
+            <span class="home-trans-title">번역 안내</span>
+            <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.</p>
+          </div>
         </div>
-      </div>
-      <div class="home-copy-notice">
-        <span class="home-trans-icon">©</span>
-        <div class="home-copy-text">
-          <span class="home-copy-title">저작권 안내</span>
-          <p class="home-copy-body">이 사이트의 콘텐츠는 작가 본인이 포스타입에 백업 업로드하고 있습니다. 타 사이트에서 동일한 콘텐츠를 발견하더라도 공식 업로드이므로, 불펌으로 오해하지 않으시길 바랍니다. 저작권은 작가에게 있습니다.</p>
-          <div class="home-copy-links">
-            <span style="font-size:11px;color:var(--tx3)">백업 주소 →</span>
-            <a class="home-copy-link" href="https://www.postype.com/@biz202099" target="_blank">postype.com/@biz202099</a>
-            <a class="home-copy-link" href="https://www.postype.com/@rrkt2022" target="_blank">postype.com/@rrkt2022</a>
+        <div class="home-notice-sep"></div>
+        <div class="home-notice-row">
+          <span class="home-trans-icon">©</span>
+          <div class="home-copy-text">
+            <span class="home-copy-title">저작권 안내</span>
+            <p class="home-copy-body">이 사이트의 콘텐츠는 작가 본인이 포스타입에 백업 업로드하고 있습니다. 타 사이트에서 동일한 콘텐츠를 발견하더라도 공식 업로드이므로, 불펌으로 오해하지 않으시길 바랍니다. 저작권은 작가에게 있습니다.</p>
+            <div class="home-copy-links">
+              <span style="font-size:11px;color:var(--tx3)">백업 주소 →</span>
+              <a class="home-copy-link" href="https://www.postype.com/@biz202099" target="_blank">postype.com/@biz202099</a>
+              <a class="home-copy-link" href="https://www.postype.com/@rrkt2022" target="_blank">postype.com/@rrkt2022</a>
+            </div>
           </div>
         </div>
       </div>
@@ -3174,15 +3174,25 @@ function renderHome(){
         <div class="home-recent-panel">
           <div class="home-recent-panel-hd">
             <span class="home-recent-panel-lbl">Updates</span>
-            <span style="font-size:9px;color:var(--tx3)">클릭하면 해당 화로 이동</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              ${(()=>{
+                const sortedDates=Object.keys(WORK_LOG).sort();
+                const lastDateStr=sortedDates[sortedDates.length-1]||null;
+                if(!lastDateStr) return '';
+                const days=Math.floor((new Date()-new Date(lastDateStr))/86400000);
+                const txt=days===0?'오늘':days===1?'어제':`${days}일 전`;
+                const unit=days<=1?'':' 전';
+                return `<span style="font-size:9px;color:var(--tx3)">마지막 업데이트</span>
+                  <span style="font-size:15px;font-weight:300;color:var(--tx);letter-spacing:-0.03em;line-height:1">${days<=1?txt:days}<span style="font-size:10px;font-weight:400;color:var(--tx2)">${days<=1?'':unit.trim()}</span></span>
+                  <span style="width:1px;height:11px;background:var(--bd);display:inline-block"></span>`;
+              })()}
+              <span style="font-size:9px;color:var(--tx3)">클릭하면 해당 화로 이동</span>
+            </div>
           </div>
           ${hlHtml}
         </div>
-        <!-- ② Right column: Status card + Visitors -->
+        <!-- ② Right column: Focus + Visitors -->
         <div class="home-right">
-          <div class="home-about-card">
-            ${buildLastUpdateWidget()}
-          </div>
           <div class="home-about-card">
             ${buildFocusWidget()}
           </div>
