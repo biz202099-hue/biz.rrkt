@@ -3115,6 +3115,7 @@ function renderHome(){
             <div class="home-chat-dot" id="hc-dot"></div>
           </button>
         </div>
+        <span style="font-size:11px;font-style:italic;color:var(--tx3)">for the first visitor</span>
         <div id="home-chat-panel">
           <div class="home-chat-hd">
             <div class="home-chat-hd-dot"></div>
@@ -3159,8 +3160,8 @@ function renderHome(){
                 </div>
                 <!-- 텍스트 + 버튼 -->
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:7px;display:flex;align-items:center;gap:5px">
-                    <span style="font-size:12px;color:var(--tx3)">✦</span> 소개
+                  <div style="font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--tx3);margin-bottom:7px;display:flex;align-items:center;gap:5px">
+                    <span>✦</span> 소개
                   </div>
                   <div class="home-hero-tagline" style="margin-bottom:12px">원작 창작 → IP 확장 · 비즈니스 협업을 목표로 창작하는 크리에이터, rrkt.biz</div>
                   <button class="home-hero-btn-p" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:11px;flex:unset" onclick="goAbout()">
@@ -3199,7 +3200,7 @@ function renderHome(){
             <div style="flex:1;height:1px;background:var(--bd)"></div>
             <div style="text-align:center">
               <div style="font-size:18px;font-weight:700;letter-spacing:-.04em;color:var(--tx)">Project Report</div>
-              <div style="font-size:10px;color:var(--tx3);margin-top:2px">진행중 프로젝트 현황</div>
+              <div style="font-size:10px;color:var(--tx3);margin-top:2px;font-style:italic">for the business</div>
             </div>
             <div style="flex:1;height:1px;background:var(--bd)"></div>
           </div>
@@ -3207,7 +3208,7 @@ function renderHome(){
           <!-- 2행: 진행 현황 미리보기 -->
           <div style="background:var(--sb);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 12px #0000000a">
             <!-- 헤더 -->
-            <div style="padding:10px 14px;border-bottom:1px solid var(--bd);font-size:13px;font-weight:700;color:var(--tx);display:flex;justify-content:space-between;align-items:center">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--tx3);display:flex;justify-content:space-between;align-items:center">
               진행 현황
               <button onclick="goProgress()" style="font-size:9px;color:var(--tx3);background:transparent;border:none;cursor:pointer;font-family:var(--fn)">전체보기 →</button>
             </div>
