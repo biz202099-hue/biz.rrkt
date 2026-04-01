@@ -749,7 +749,7 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .mob2-vol-badge{position:absolute;top:5px;right:5px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px}
 .mob2-vol-type{position:absolute;top:5px;left:5px;font-size:8px;font-weight:600;padding:2px 5px;border-radius:3px;background:#00000060;color:#fff}
 .mob2-vol-title{font-size:11px;font-weight:500;color:var(--tx);line-height:1.4}
-.mob2-progress{display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd);margin-top:8px}
+
 .mob2-cat-list{display:flex;flex-direction:column;gap:8px;padding:10px 12px 20px}
 .mob2-cat-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;border:1px solid var(--bd);border-radius:8px;cursor:pointer;transition:background .12s}
 .mob2-cat-item:hover{background:var(--bg)}
@@ -1353,18 +1353,6 @@ const VOLUMES = {
       {id:14, title:"번외 2화", date:null, status:"예정", textId:null},
       {id:15, title:"번외 3화", date:null, status:"예정", textId:null},
     ]},
-    {id:"webtoon-1", num:1, label:"[웹툰]블러드하이스쿨 ~용의 부활~", sub:"1부", grad:"150deg,#1a0000,#900000,#cc3020", type:"웹툰", tags:["웹툰","판타지"],
-     coverId:null,
-     synopsis:"웹소설 1부를 웹툰으로 각색한 버전.",
-     episodes:[]},
-    {id:"webtoon-2", num:2, label:"[웹툰]블러드하이스쿨 ~류오가편~", sub:"2부", grad:"150deg,#1a0010,#6b0030,#c0304a", type:"웹툰", tags:["웹툰","판타지"],
-     coverId:null,
-     synopsis:"웹소설 2부를 웹툰으로 각색한 버전.",
-     episodes:[]},
-    {id:"webtoon-3", num:3, label:"[웹툰]블러드하이스쿨 3부", sub:"3부", grad:"150deg,#1a0000,#700000,#aa2020", type:"웹툰", tags:["웹툰","판타지"],
-     coverId:null,
-     synopsis:"웹소설 3부를 웹툰으로 각색한 버전.",
-     episodes:[]},
   ],
   "x-project": [
     {id:1, label:"시즌1 Origin", sub:"Origin Arc", grad:"150deg,#000814,#0a1a38,#1e3a8a", type:"그 외", tags:["SF","디스토피아"],
@@ -1721,14 +1709,10 @@ let _visFetched = false;
 function fetchGlobalVisits(){
   if(_visFetched) return;
   _visFetched = true;
-  // 본인 브라우저면 /hit 스킵하고 /stats만 조회
-  const isOwner = localStorage.getItem('biz_owner') === '1';
-  const endpoint = isOwner ? '/stats' : '/hit';
-  const method   = isOwner ? 'GET'  : 'POST';
-  fetch(VIS_WORKER_URL + endpoint, {method})
+  fetch(VIS_WORKER_URL + '/hit', {method:'POST'})
     .then(r=>r.json())
     .then(d=>_renderVisWidget(d))
-    .catch(()=>{ _visFetched = false; _renderVisWidget(null); });
+    .catch(()=>_renderVisWidget(null));
 }
 
 function _renderVisWidget(d){
@@ -2368,49 +2352,12 @@ function _subHeader(proj){
 
 function renderDefaultSub(proj){
   const vols=VOLUMES[proj.id]||[];
-  const allEps=vols.flatMap(v=>v.episodes);
-  const cnt=s=>allEps.filter(e=>e.status===s).length;
-  const total=cnt("완료")+cnt("작업중")+cnt("예정");
-  const r=22, circ=2*Math.PI*r;
-  function arc(val,offset){
-    if(!total||!val) return '';
-    const len=(val/total)*circ;
-    return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
-  }
-  const doneLen=(cnt("완료")/Math.max(total,1))*circ;
-  const wipLen=(cnt("작업중")/Math.max(total,1))*circ;
-  const doneOffset=0;
-  const wipOffset=doneLen;
-  const pct=total?Math.round(cnt("완료")/total*100):0;
   const hasNovel=vols.some(v=>v.type==="웹소설");
-  const hasWebtoon=vols.some(v=>v.type==="웹툰");
-  const tabs=["ALL",...(hasNovel?["웹소설"]:[]),(hasWebtoon?["웹툰"]:[])].flat();
+  const tabs=["ALL",...(hasNovel?["웹소설"]:[])].flat();
   const filtered=S.subTab==="ALL"?vols:vols.filter(v=>v.type===S.subTab);
   document.getElementById("sm-inner").innerHTML=`
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
-    <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
-      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
-        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="#c0392b" stroke-width="5" ${arc(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
-      </svg>
-      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">완료</span>
-          <span style="font-size:14px;font-weight:700;color:#c0392b">${cnt("완료")}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">작업중</span>
-          <span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">예정</span>
-          <span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span>
-        </div>
-      </div>
-    </div>
     <div class="sm-tabs">
       ${tabs.map(t=>`<button class="sm-tab ${S.subTab===t?"active":""}" style="--tacc:${proj.acc}" onclick="setSubTabFn('${t}')">${t}</button>`).join("")}
     </div>
@@ -2437,17 +2384,6 @@ function renderYtSub(proj){
 
 function renderDollSub(proj){
   const dv=VOLUMES["biz-oc-doll"];
-  const allEps=Object.values(dv.episodes).flat();
-  const cnt=s=>allEps.filter(e=>e.status===s).length;
-  const total=allEps.length;
-  const r=22, circ=2*Math.PI*r;
-  function arc(val,offset){
-    if(!total||!val) return '';
-    const len=(val/total)*circ;
-    return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
-  }
-  const doneLen=(cnt("완료")/Math.max(total,1))*circ;
-  const pct=total?Math.round(cnt("완료")/total*100):0;
   document.getElementById("sm-inner").innerHTML=`
     ${_subHeader(proj)}
     <button class="sm-intro-link" onclick="goIntro('${proj.id}')">프로젝트 소개글 &#9654;</button>
@@ -2455,28 +2391,6 @@ function renderDollSub(proj){
     <button class="sm-char-link" onclick="openArchiveOverlay()">아카이브 &#9654;</button>
     <button class="sm-char-link" onclick="openEventOverlay()">이벤트 &#9654;</button>
     <button class="sm-char-link" onclick="openVoteOverlay()" style="background:#5a90b0;color:#fff;border-color:#5a90b0;font-weight:700">인기 투표</button>
-    <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--bd)">
-      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
-        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="${proj.acc}" stroke-width="5" ${arc(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
-      </svg>
-      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">완료</span>
-          <span style="font-size:14px;font-weight:700;color:${proj.acc}">${cnt("완료")}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">작업중</span>
-          <span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:var(--tx3);letter-spacing:.5px">예정</span>
-          <span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span>
-        </div>
-      </div>
-    </div>
     <div class="doll-banners" style="margin-top:10px">
       ${dv.categories.map(cat=>`
         <div class="doll-banner" onclick="clickDollCat('${cat.id}')"
@@ -2599,30 +2513,6 @@ function mobShowSub(projId){
   // 진행 상황 (doll 제외한 기본 / doll)
   if(p.subType==="doll"){
     const dv=VOLUMES["biz-oc-doll"];
-    const allEps=Object.values(dv.episodes).flat();
-    const cnt=s=>allEps.filter(e=>e.status===s).length;
-    const total=allEps.length;
-    const r=22,circ=2*Math.PI*r;
-    function arc(val,offset){
-      if(!total||!val)return'';
-      const len=(val/total)*circ;
-      return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
-    }
-    const doneLen=(cnt("완료")/Math.max(total,1))*circ;
-    const pct=total?Math.round(cnt("완료")/total*100):0;
-    html+=`<div class="mob2-progress">
-      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
-        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="${p.acc}" stroke-width="5" ${arc(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
-      </svg>
-      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">완료</span><span style="font-size:14px;font-weight:700;color:${p.acc}">${cnt("완료")}</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">작업중</span><span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">예정</span><span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span></div>
-      </div>
-    </div>`;
     // 카테고리 목록
     html+=`<div class="mob2-cat-list">`;
     dv.categories.forEach(cat=>{
@@ -2637,30 +2527,6 @@ function mobShowSub(projId){
   } else if(p.subType!=="youtube"){
     // 기본 (웹소설/웹툰 볼륨 목록)
     const vols=VOLUMES[p.id]||[];
-    const allEps=vols.flatMap(v=>v.episodes);
-    const cnt=s=>allEps.filter(e=>e.status===s).length;
-    const total=cnt("완료")+cnt("작업중")+cnt("예정");
-    const r=22,circ=2*Math.PI*r;
-    function arc2(val,offset){
-      if(!total||!val)return'';
-      const len=(val/total)*circ;
-      return `stroke-dasharray="${len.toFixed(1)} ${(circ-len).toFixed(1)}" stroke-dashoffset="${(-offset).toFixed(1)}"`;
-    }
-    const doneLen=(cnt("완료")/Math.max(total,1))*circ;
-    const pct=total?Math.round(cnt("완료")/total*100):0;
-    html+=`<div class="mob2-progress">
-      <svg width="54" height="54" viewBox="0 0 54 54" style="flex-shrink:0">
-        <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bd)" stroke-width="5"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc2(cnt("작업중"),doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <circle cx="27" cy="27" r="22" fill="none" stroke="${p.acc}" stroke-width="5" ${arc2(cnt("완료"),0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
-      </svg>
-      <div style="display:flex;flex-direction:column;gap:5px;flex:1">
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">완료</span><span style="font-size:14px;font-weight:700;color:${p.acc}">${cnt("완료")}</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">작업중</span><span style="font-size:14px;font-weight:700;color:#F9CB4C">${cnt("작업중")}</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="font-size:9px;color:var(--tx3)">예정</span><span style="font-size:14px;font-weight:700;color:#999">${cnt("예정")}</span></div>
-      </div>
-    </div>`;
     // 볼륨 그리드
     html+=`<div class="mob2-vol-grid">`;
     vols.forEach(v=>{
@@ -2888,7 +2754,6 @@ function renderProgress(){
   }
 
   const novels  = bhVols.filter(v=>v.type==="웹소설" && v.episodes.length>0);
-  const webtoons= bhVols.filter(v=>v.type==="웹툰"   && v.episodes.length>0);
 
   function bhSection(label, vols){
     if(!vols.length) return "";
@@ -2902,7 +2767,7 @@ function renderProgress(){
       </div>`;
   }
 
-  const bhInner = bhSection("웹소설", novels) + bhSection("웹툰", webtoons);
+  const bhInner = bhSection("웹소설", novels);
 
   // biz-OC-doll — 4열 카드 + 캐릭터 200 행
   const ocProj = PROJECTS.find(p=>p.id==="biz-oc-doll");
