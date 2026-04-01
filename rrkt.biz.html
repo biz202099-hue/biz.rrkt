@@ -1728,7 +1728,7 @@ function fetchGlobalVisits(){
   fetch(VIS_WORKER_URL + endpoint, {method})
     .then(r=>r.json())
     .then(d=>_renderVisWidget(d))
-    .catch(()=>_renderVisWidget(null));
+    .catch(()=>{ _visFetched = false; _renderVisWidget(null); });
 }
 
 function _renderVisWidget(d){
