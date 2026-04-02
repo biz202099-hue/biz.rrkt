@@ -338,8 +338,23 @@ body.nav-pinned #nav-backdrop{display:none!important}
 .home-trans-notice{
   box-shadow:0 2px 12px #0000000a;
   background:var(--sb);border:1px solid var(--bd);border-radius:10px;
-  overflow:hidden;margin-bottom:18px;
+  overflow:hidden;margin-bottom:0;
+  transition:background .2s,border-color .2s,box-shadow .2s;
 }
+.home-trans-notice.notice-collapsed{
+  background:transparent;border-color:transparent;box-shadow:none;
+}
+.home-trans-notice-wrap{position:relative;margin-bottom:18px}
+.home-notice-toggle{
+  position:absolute;top:-11px;right:14px;z-index:2;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--sb);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .12s,border-color .12s;
+  box-shadow:0 1px 4px #0000000f;
+}
+.home-notice-toggle:hover{background:var(--bg);border-color:var(--bd2)}
+.home-notice-toggle svg{transition:transform .24s;display:block}
 .home-notice-row{display:flex;align-items:flex-start;gap:14px;padding:16px 20px}
 .home-notice-sep{height:1px;background:var(--bd);margin:0}
 .home-trans-icon{font-size:20px;line-height:1;flex-shrink:0;margin-top:1px}
@@ -1223,6 +1238,8 @@ const PROJECTS = [
     id:"blood-highschool",
     label:"블러드하이스쿨",
     acc:"#c0392b", acc2:"#c0392b",
+    illust:"",
+    illustDesc:"학원 배경의 다크 판타지 스토리",
     status:"active",
     keepSub:true, landOnIntro:true,
     subType:"default",
@@ -1234,6 +1251,8 @@ const PROJECTS = [
     id:"biz-oc-doll",
     label:"biz-OC-doll",
     acc:"#5a90b0", acc2:"#4a7a98",
+    illust:"",
+    illustDesc:"오리지널 캐릭터 기반 인형 IP 프로젝트",
     status:"active",
     keepSub:true, landOnIntro:true,
     subType:"doll",
@@ -1244,6 +1263,8 @@ const PROJECTS = [
     id:"x-project",
     label:"X project",
     acc:"#111827", acc2:"#1e3a8a",
+    illust:"",
+    illustDesc:"캐릭터 기반 버추얼 콘텐츠 프로젝트",
     status:"active",
     keepSub:true, landOnIntro:true,
     subType:"youtube",
@@ -3048,24 +3069,33 @@ function renderHome(){
             </div>
           </div>
           <!-- 번역/저작권 안내 -->
-          <div class="home-trans-notice" style="margin-bottom:0">
-            <div class="home-notice-row">
-              <span class="home-trans-icon">🌐</span>
-              <div class="home-trans-text">
-                <span class="home-trans-title">번역 안내</span>
-                <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.<br><br>콘텐츠는 <strong>한국어로 먼저 완성</strong>된 후 <strong>영어 · 일본어 · 중국어 순서</strong>로 정식 번역될 예정입니다. 정식 번역본이 제공되기 전까지는 자동 번역 기능을 이용해 주세요.</p>
-              </div>
-            </div>
-            <div class="home-notice-sep"></div>
-            <div class="home-notice-row">
-              <span class="home-trans-icon">©</span>
-              <div class="home-copy-text">
-                <span class="home-copy-title">저작권 안내</span>
-                <p class="home-copy-body">이 사이트의 콘텐츠는 작가 본인이 포스타입에 백업 업로드하고 있습니다. 타 사이트에서 동일한 콘텐츠를 발견하더라도 공식 업로드이므로, 불펌으로 오해하지 않으시길 바랍니다. 저작권은 작가에게 있습니다.</p>
-                <div class="home-copy-links">
-                  <span style="font-size:11px;color:var(--tx3)">백업 주소 →</span>
-                  <a class="home-copy-link" href="https://www.postype.com/@biz202099" target="_blank">postype.com/@biz202099</a>
-                  <a class="home-copy-link" href="https://www.postype.com/@rrkt2022" target="_blank">postype.com/@rrkt2022</a>
+          <div class="home-trans-notice-wrap">
+            <button class="home-notice-toggle" id="noticeToggle" onclick="toggleNotice()" title="접기/펼치기">
+              <svg id="noticeChevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="var(--tx2)" stroke-width="1.8">
+                <path d="M2 6.5l3-3 3 3"/>
+              </svg>
+            </button>
+            <div class="home-trans-notice" id="noticeCard">
+              <div class="home-notice-body" id="noticeBody">
+                <div class="home-notice-row">
+                  <span class="home-trans-icon">🌐</span>
+                  <div class="home-trans-text">
+                    <span class="home-trans-title">번역 안내</span>
+                    <p class="home-trans-body">이 사이트는 <strong>DeepL</strong>과 <strong>Google 번역</strong>을 함께 사용합니다. 상단에서 언어를 선택하면 DeepL이 먼저 번역을 시도하고, 월 사용량 초과 등의 이유로 이용할 수 없는 경우 Google 번역으로 자동 전환됩니다. 번역 품질은 DeepL 사용 시 더 자연스러울 수 있습니다.<br><br>콘텐츠는 <strong>한국어로 먼저 완성</strong>된 후 <strong>영어 · 일본어 · 중국어 순서</strong>로 정식 번역될 예정입니다. 정식 번역본이 제공되기 전까지는 자동 번역 기능을 이용해 주세요.</p>
+                  </div>
+                </div>
+                <div class="home-notice-sep"></div>
+                <div class="home-notice-row">
+                  <span class="home-trans-icon">©</span>
+                  <div class="home-copy-text">
+                    <span class="home-copy-title">저작권 안내</span>
+                    <p class="home-copy-body">이 사이트의 콘텐츠는 작가 본인이 포스타입에 백업 업로드하고 있습니다. 타 사이트에서 동일한 콘텐츠를 발견하더라도 공식 업로드이므로, 불펌으로 오해하지 않으시길 바랍니다. 저작권은 작가에게 있습니다.</p>
+                    <div class="home-copy-links">
+                      <span style="font-size:11px;color:var(--tx3)">백업 주소 →</span>
+                      <a class="home-copy-link" href="https://www.postype.com/@biz202099" target="_blank">postype.com/@biz202099</a>
+                      <a class="home-copy-link" href="https://www.postype.com/@rrkt2022" target="_blank">postype.com/@rrkt2022</a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3120,7 +3150,7 @@ function renderHome(){
               </div>`;
             })()}
             <!-- 도넛 3개 가로 -->
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd)">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);align-items:start">
               ${(()=>{
                 const r=22, circ=2*Math.PI*r;
                 function arc(val,total,offset){
@@ -3146,18 +3176,30 @@ function renderHome(){
                   }
                   const pct=total?Math.round(done/total*100):0;
                   const doneLen=(done/Math.max(total,1))*circ;
-                  return `<div style="background:var(--sb);padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:8px">
-                    <svg width="58" height="58" viewBox="0 0 54 54">
-                      <circle cx="27" cy="27" r="${r}" fill="none" stroke="var(--bd)" stroke-width="5"/>
-                      <circle cx="27" cy="27" r="${r}" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(wip,total,doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-                      <circle cx="27" cy="27" r="${r}" fill="none" stroke="${p.acc}" stroke-width="5" ${arc(done,total,0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
-                      <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
-                    </svg>
-                    <div style="font-size:10px;font-weight:600;color:var(--tx);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 4px">${p.label}</div>
-                    <div style="display:flex;gap:6px;justify-content:center">
-                      <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:${p.acc};display:inline-block"></span>${done}</span>
-                      <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:#F9CB4C;display:inline-block"></span>${wip}</span>
-                      <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:var(--bd2);display:inline-block"></span>${plan}</span>
+                  const illustSlot = p.illust
+                    ? `<img src="${p.illust}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">`
+                    : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--sm)"><span style="font-size:9px;color:var(--tx3);opacity:.45">illustration</span></div>`;
+                  return `<div style="background:var(--sb);display:flex;flex-direction:column;">
+                    <div style="padding:16px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:8px">
+                      <svg width="58" height="58" viewBox="0 0 54 54">
+                        <circle cx="27" cy="27" r="${r}" fill="none" stroke="var(--bd)" stroke-width="5"/>
+                        <circle cx="27" cy="27" r="${r}" fill="none" stroke="#F9CB4C" stroke-width="5" ${arc(wip,total,doneLen)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+                        <circle cx="27" cy="27" r="${r}" fill="none" stroke="${p.acc}" stroke-width="5" ${arc(done,total,0)} stroke-linecap="butt" transform="rotate(-90 27 27)"/>
+                        <text x="27" y="31" text-anchor="middle" font-family="var(--fn)" font-size="11" font-weight="700" fill="var(--tx)">${pct}%</text>
+                      </svg>
+                      <div style="font-size:10px;font-weight:600;color:var(--tx);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 4px">${p.label}</div>
+                      <div style="display:flex;gap:6px;justify-content:center">
+                        <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:${p.acc};display:inline-block"></span>${done}</span>
+                        <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:#F9CB4C;display:inline-block"></span>${wip}</span>
+                        <span style="font-size:9px;color:var(--tx3);display:flex;align-items:center;gap:2px"><span style="width:5px;height:5px;border-radius:50%;background:var(--bd2);display:inline-block"></span>${plan}</span>
+                      </div>
+                    </div>
+                    <div style="position:relative;aspect-ratio:1/1;width:100%;overflow:hidden;border-top:1px solid var(--bd)">
+                      ${illustSlot}
+                      <div class="proj-illust-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(10px,2vw,20px) clamp(10px,2vw,20px) clamp(12px,2.2vw,22px)">
+                        <div style="font-size:clamp(13px,2.4vw,30px);font-weight:400;color:#fff;text-shadow:0 1px 6px #0009;line-height:1.2;margin-bottom:clamp(2px,.4vw,6px)">${p.label}</div>
+                        <div style="font-size:clamp(10px,1.5vw,18px);font-weight:400;color:rgba(255,255,255,.85);text-shadow:0 1px 4px #0007;line-height:1.4">${p.illustDesc||''}</div>
+                      </div>
                     </div>
                   </div>`;
                 }).join('');
@@ -4348,6 +4390,29 @@ function rebuildWorkLog(){
     snapRestore();
     dragging=false; openDrag=false;
   }, {passive:true});
+})();
+
+/* ── 번역/저작권 안내 접기 ── */
+(function(){
+  var _open=true;
+  window.toggleNotice=function(){
+    var body=document.getElementById('noticeBody');
+    var chev=document.getElementById('noticeChevron');
+    var card=document.getElementById('noticeCard');
+    if(!body) return;
+    if(_open){
+      body.style.maxHeight=body.scrollHeight+'px';
+      requestAnimationFrame(function(){body.style.maxHeight='0';});
+      chev.style.transform='rotate(180deg)';
+      setTimeout(function(){if(card)card.classList.add('notice-collapsed');},240);
+    } else {
+      if(card)card.classList.remove('notice-collapsed');
+      body.style.maxHeight=body.scrollHeight+'px';
+      setTimeout(function(){body.style.maxHeight='';},250);
+      chev.style.transform='';
+    }
+    _open=!_open;
+  };
 })();
 
 /* ── 투표 오버레이 (iframe) ── */
