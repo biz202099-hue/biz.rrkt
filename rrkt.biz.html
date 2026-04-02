@@ -339,23 +339,22 @@ body.nav-pinned #nav-backdrop{display:none!important}
   box-shadow:0 2px 12px #0000000a;
   background:var(--sb);border:1px solid var(--bd);border-radius:10px;
   overflow:hidden;margin-bottom:0;
-  transition:background .2s,border-color .2s,box-shadow .2s;
 }
 .home-trans-notice.notice-collapsed{
   background:transparent;border-color:transparent;box-shadow:none;
 }
-.home-trans-notice-wrap{position:relative;margin-bottom:18px;transition:margin-bottom .24s ease}
+.home-trans-notice-wrap{position:relative;margin-bottom:18px}
 .home-notice-toggle{
   position:absolute;top:-11px;right:14px;z-index:2;
   width:22px;height:22px;border-radius:50%;
   background:var(--sb);border:1px solid var(--bd);
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:background .12s,border-color .12s,top .24s ease,width .24s ease,height .24s ease,border-radius .24s ease,padding .24s ease;
+  cursor:pointer;transition:background .12s,border-color .12s;
   box-shadow:0 1px 4px #0000000f;
   overflow:hidden;white-space:nowrap;
 }
 .home-notice-toggle:hover{background:var(--bg);border-color:var(--bd2)}
-.home-notice-toggle svg{transition:transform .24s;display:block;flex-shrink:0}
+.home-notice-toggle svg{display:block;flex-shrink:0}
 .home-notice-toggle.expanded{
   width:auto;height:auto;border-radius:6px;
   padding:6px 12px;gap:6px;font-size:12px;font-weight:500;
@@ -3080,17 +3079,25 @@ function renderHome(){
             </div>
           </div>
           <!-- 번역/저작권 안내 -->
-          <div class="home-trans-notice-wrap">
-            <button class="home-notice-toggle" id="noticeToggle" onclick="toggleNotice()" title="접기/펼치기">
+          ${(()=>{
+            const closed=localStorage.getItem('rrkt_notice_open')==='false';
+            const wrapMb=closed?'margin-bottom:-20px':'margin-bottom:18px';
+            const cardCls=closed?' notice-collapsed':'';
+            const bodyStyle=closed?'max-height:0':'';
+            const btnTop=closed?'top:-65px':'top:-11px';
+            const btnCls=closed?' expanded':'';
+            const chevRot=closed?'rotate(180deg)':'';
+            return `<div class="home-trans-notice-wrap" style="${wrapMb}">
+            <button class="home-notice-toggle${btnCls}" id="noticeToggle" onclick="toggleNotice()" title="접기/펼치기" style="${btnTop}">
               <span class="notice-btn-label">
                 번역 안내 <span class="notice-btn-div">/</span> 저작권 안내
               </span>
-              <svg id="noticeChevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="var(--tx2)" stroke-width="1.8">
+              <svg id="noticeChevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="var(--tx2)" stroke-width="1.8" style="transform:${chevRot}">
                 <path d="M2 6.5l3-3 3 3"/>
               </svg>
             </button>
-            <div class="home-trans-notice" id="noticeCard">
-              <div class="home-notice-body" id="noticeBody">
+            <div class="home-trans-notice${cardCls}" id="noticeCard">
+              <div class="home-notice-body" id="noticeBody" style="${bodyStyle}">
                 <div class="home-notice-row">
                   <span class="home-trans-icon">🌐</span>
                   <div class="home-trans-text">
@@ -3113,7 +3120,8 @@ function renderHome(){
                 </div>
               </div>
             </div>
-          </div>
+          </div>`;
+          })()}
           <!-- 진행 현황 + Project Report -->
           <div style="background:var(--sb);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 12px #0000000a">
             <!-- 헤더 -->
@@ -3234,8 +3242,6 @@ function renderHome(){
   setTimeout(fetchGlobalVisits, 0);
   // 언어 감지 배너 표시
   setTimeout(window.ldBannerShow, 100);
-  // 번역/저작권 안내 접힘 상태 복원
-  setTimeout(function(){ if(window._applyNoticeState) window._applyNoticeState(); }, 0);
 }
 
 /* ── CALENDAR ── */
@@ -4448,18 +4454,14 @@ function rebuildWorkLog(){
       card && card.classList.remove('notice-collapsed');
       if(wrap) wrap.style.marginBottom='18px';
       if(btn)  { btn.style.top='-11px'; btn.classList.remove('expanded'); }
-      body.style.maxHeight=body.scrollHeight+'px';
-      setTimeout(function(){body.style.maxHeight='';},250);
+      body.style.maxHeight='';
       if(chev) chev.style.transform='';
     } else {
-      body.style.maxHeight=body.scrollHeight+'px';
-      requestAnimationFrame(function(){body.style.maxHeight='0';});
+      body.style.maxHeight='0';
       if(chev) chev.style.transform='rotate(180deg)';
-      setTimeout(function(){
-        card && card.classList.add('notice-collapsed');
-        if(wrap) wrap.style.marginBottom='-20px';
-        if(btn)  { btn.style.top='-65px'; btn.classList.add('expanded'); }
-      },240);
+      card && card.classList.add('notice-collapsed');
+      if(wrap) wrap.style.marginBottom='-20px';
+      if(btn)  { btn.style.top='-65px'; btn.classList.add('expanded'); }
     }
   };
 })();
