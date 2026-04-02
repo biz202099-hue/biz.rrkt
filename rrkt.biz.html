@@ -3114,21 +3114,14 @@ function renderHome(){
               </div>
             </div>
           </div>
-          <!-- ── PROJECT REPORT ── -->
-          <div style="display:flex;align-items:center;gap:14px;margin:28px 0 18px">
-            <div style="flex:1;height:1px;background:var(--bd)"></div>
-            <div style="text-align:center">
-              <div style="font-size:18px;font-weight:700;letter-spacing:-.04em;color:var(--tx)">Project Report</div>
-              <div style="font-size:10px;color:var(--tx3);margin-top:2px;font-style:italic">for the business</div>
-            </div>
-            <div style="flex:1;height:1px;background:var(--bd)"></div>
-          </div>
-
-          <!-- 2행: 진행 현황 미리보기 -->
+          <!-- 진행 현황 + Project Report -->
           <div style="background:var(--sb);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 12px #0000000a">
             <!-- 헤더 -->
-            <div style="padding:10px 14px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--tx3);display:flex;justify-content:space-between;align-items:center">
-              진행 현황
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <span style="font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--tx3)">Project Report</span>
+                <span style="font-size:10px;color:var(--tx3);font-style:italic">for the business</span>
+              </div>
               <button onclick="goProgress()" style="font-size:9px;color:var(--tx3);background:transparent;border:none;cursor:pointer;font-family:var(--fn)">전체보기 →</button>
             </div>
             <!-- 도넛+일러스트 3개 가로 -->
