@@ -3234,6 +3234,8 @@ function renderHome(){
   setTimeout(fetchGlobalVisits, 0);
   // 언어 감지 배너 표시
   setTimeout(window.ldBannerShow, 100);
+  // 번역/저작권 안내 접힘 상태 복원
+  setTimeout(function(){ if(window._applyNoticeState) window._applyNoticeState(); }, 0);
 }
 
 /* ── CALENDAR ── */
@@ -4402,56 +4404,64 @@ function rebuildWorkLog(){
 /* ── 번역/저작권 안내 접기 ── */
 (function(){
   var STORE_KEY='rrkt_notice_open';
-  var _open=localStorage.getItem(STORE_KEY)!=='false';
 
-  function applyState(animate){
+  function isOpen(){
+    return localStorage.getItem(STORE_KEY)!=='false';
+  }
+
+  function applyState(){
     var body=document.getElementById('noticeBody');
     var chev=document.getElementById('noticeChevron');
     var card=document.getElementById('noticeCard');
     var wrap=document.querySelector('.home-trans-notice-wrap');
     var btn=document.getElementById('noticeToggle');
     if(!body) return;
-    if(_open){
-      if(card) card.classList.remove('notice-collapsed');
+    if(isOpen()){
+      card && card.classList.remove('notice-collapsed');
       if(wrap) wrap.style.marginBottom='18px';
       if(btn)  { btn.style.top='-11px'; btn.classList.remove('expanded'); }
-      if(animate){
-        body.style.maxHeight=body.scrollHeight+'px';
-        setTimeout(function(){body.style.maxHeight='';},250);
-      } else {
-        body.style.maxHeight='';
-      }
-      chev.style.transform='';
+      body.style.maxHeight='';
+      if(chev) chev.style.transform='';
     } else {
-      if(animate){
-        body.style.maxHeight=body.scrollHeight+'px';
-        requestAnimationFrame(function(){body.style.maxHeight='0';});
-        chev.style.transform='rotate(180deg)';
-        setTimeout(function(){
-          if(card) card.classList.add('notice-collapsed');
-          if(wrap) wrap.style.marginBottom='-20px';
-          if(btn)  { btn.style.top='-65px'; btn.classList.add('expanded'); }
-        },240);
-      } else {
-        body.style.maxHeight='0';
-        chev.style.transform='rotate(180deg)';
-        if(card) card.classList.add('notice-collapsed');
+      body.style.maxHeight='0';
+      if(chev) chev.style.transform='rotate(180deg)';
+      setTimeout(function(){
+        card && card.classList.add('notice-collapsed');
         if(wrap) wrap.style.marginBottom='-20px';
         if(btn)  { btn.style.top='-65px'; btn.classList.add('expanded'); }
-      }
+      },0);
     }
   }
 
-  window.toggleNotice=function(){
-    _open=!_open;
-    localStorage.setItem(STORE_KEY, _open);
-    applyState(true);
-  };
+  window._applyNoticeState=applyState;
 
-  document.addEventListener('DOMContentLoaded',function(){
-    applyState(false);
-  });
-  setTimeout(function(){ applyState(false); }, 0);
+  window.toggleNotice=function(){
+    var body=document.getElementById('noticeBody');
+    var chev=document.getElementById('noticeChevron');
+    var card=document.getElementById('noticeCard');
+    var wrap=document.querySelector('.home-trans-notice-wrap');
+    var btn=document.getElementById('noticeToggle');
+    if(!body) return;
+    var opening=!isOpen();
+    localStorage.setItem(STORE_KEY, opening);
+    if(opening){
+      card && card.classList.remove('notice-collapsed');
+      if(wrap) wrap.style.marginBottom='18px';
+      if(btn)  { btn.style.top='-11px'; btn.classList.remove('expanded'); }
+      body.style.maxHeight=body.scrollHeight+'px';
+      setTimeout(function(){body.style.maxHeight='';},250);
+      if(chev) chev.style.transform='';
+    } else {
+      body.style.maxHeight=body.scrollHeight+'px';
+      requestAnimationFrame(function(){body.style.maxHeight='0';});
+      if(chev) chev.style.transform='rotate(180deg)';
+      setTimeout(function(){
+        card && card.classList.add('notice-collapsed');
+        if(wrap) wrap.style.marginBottom='-20px';
+        if(btn)  { btn.style.top='-65px'; btn.classList.add('expanded'); }
+      },240);
+    }
+  };
 })();
 
 /* ── 투표 오버레이 (iframe) ── */
